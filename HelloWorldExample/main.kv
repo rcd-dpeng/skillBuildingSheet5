@@ -1,0 +1,12 @@
+<MainScene>:    #start scene with a button and label
+    name: 'main'
+    FloatLayout:
+        size_hint: None, None  #Needed to be able to define define height and width of widgets
+        Button:
+            size_hint: None,None
+            text: 'Hello World!'
+            font_size: 20
+            size: 500, 75
+            background_color: .1,.1,1,1
+            center: root.center
+            on_release: root.tappedButton()
