@@ -104,6 +104,45 @@ A very important part of Kivy is parent child relationships. These define what i
             size: self.parent.size
             background_color: .1,.1,1,1
             center: root.center
-            on_release: root.manager.current = 'touch'
+            on_release: root.something()
 ```            
 
+In this example we have our screen ```main``` with a child ```floatlayout```. Next we have the ```Button``` which is a child of ```FloatLayout```. In the properties we can see a few new lines referencing ```parent``` and ```root```.
+
+The line:
+
+```
+size: self.parent.size
+```
+sets the size of the button to the size of its parent. 
+
+```center: root.center``` sets the center of the widget to the center of ```<MainScreen>``` and ```on_release: root.something()``` calls the ```something()``` function of ```MainScreen``` in the .py file
+
+```
+class MainScreen(Screen): 
+    def something(self):
+        pass
+```
+
+For the most part you will just be getting size or position from the parent  widget, or call function with root. But you can also use this to access data from your .py file like in this example.
+
+```
+<TouchScreen>:
+    name: 'touch' 
+    FloatLayout:
+        size_hint: None,None
+        TouchWidget:
+            size_hint: None,None
+            center_x: root.center_x - 30
+            center_y: root.center_y
+            Label:
+                text: self.parent.tpos
+                color: 0,0,0,1
+                font_size: 50
+                size_hint: None, None
+                x: self.parent.width + self.parent.x + 300
+                y: 600
+```          
+In this case the text of the label is being set to the variable ```tpos``` from the ```TouchWidget``` Class.
+
+Another important thing to notice is the ```self.``` infront of calls to parent. This is telling the code to reference the current widget. This is not needed with ```root``` because ```root``` always refers to the base widget of any rule. Rule reffering to anything included under ```<NAME>``` in the kv language.
