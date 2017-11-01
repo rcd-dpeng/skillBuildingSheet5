@@ -109,3 +109,5 @@ Now we have a new function tappedQuit() that calls quit() upon press. quit() is 
 ![](https://s1.postimg.org/1vt68jzp5b/Capture2.png)
 
 And if you tap the quit button, the app should exit!
+
+If you want to make more interesting and complex UIs there are a variety of examples availible here: https://kivy.org/docs/gettingstarted/intro.html
