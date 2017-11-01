@@ -29,3 +29,24 @@ You can then add screens (or 'scenes') to this screen manager which can then be 
 sm.add_widget(MainScene(name='main'))
 ```
 where ```MainScene``` is replaced with the scene class name and ```'main'``` is replaced with the name of the scene. 
+
+### Screens
+
+Screens are where most of your programming will be done. While your app is running, the UI will be occupied by one screen at a time. This screen will have buttons, labels, and other types of objects that the user will be able to interact with. To create a custom screen, you will need to edit both the .py file and the .kv file. To start, open the .kv file and add this:
+```
+<MainScreen>:   
+    name: 'main'
+    FloatLayout:
+        size_hint: None, None  
+```
+This block of code will define a new screen calle ```MainScreen``` with the name ```'main'```. This name is what will be referenced whenever you want to transition to this scene. 
+Most likely, this scene will contain buttons or other objects that will have something happen upon an event occuring (like tapping or dragging). In order to handle these events, there must be a place to declare the functions that handle them in your .py file. This is done by creating a new class like this:
+
+```
+class MainScreen(Screen): 
+    def something(self):
+        pass
+```
+This block of code will create a new class with the name ```MainScreen```. Note that this name is the same as the name in the <> of the .kv file and NOT the ```name:``` property. In this example, there is one function called ```something``` which at this point does nothing. This function can be attatched to a button press or similar event as we will show later.
+
+### Widgets
