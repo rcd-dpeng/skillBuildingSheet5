@@ -56,3 +56,33 @@ sm.add_widget(MainScreen(name='main'))
 where ```sm``` is the screen manager variable you created earlier, ```MainScreen``` is the class type we just declared and ```'main'``` is the ```name:``` property you set in the .kv file.
 
 ### Widgets
+
+Widgets are the building blocks with which you will build your UI. Widgets include Buttons, Sliders, Labels, and various other things which can be found here https://kivy.org/docs/api-kivy.uix.html under UX widgets. 
+
+You will add widgets into your .kv file like so
+
+```
+Button:
+    text: 'Im a Button'
+    size_hint: None,None
+    size:200,100
+    x: root.width - self.width -500
+    y: root.height *.45
+    background_color: .1,.1,1,1
+    on_release: root.something()
+ ```
+ This block of code declares a button and gives it all of its properties.
+ 
+ ```text``` is the text displayed on the buton.
+ ```size_hint: None,None``` allows us to assign an absolute size to our widget
+ 
+ ```size``` is the size in pixels
+ 
+ ```x``` is x position
+ 
+ ```y``` is y position
+ 
+ ```background_color``` is the color of the button in r,g,b,a
+ 
+ ```on_release: root.something()``` is how we tie a function to the button.
+ 
