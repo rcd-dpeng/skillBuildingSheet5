@@ -39,9 +39,9 @@ Screens are where most of your programming will be done. While your app is runni
     FloatLayout:
         size_hint: None, None  
 ```
-This block of code will define a new screen calle ```MainScreen``` with the name ```'main'```. This name is what will be referenced whenever you want to transition to this scene. ```FloatLayout``` is the easiest layout type we will use. The layout type basically controls how objects are moved when the screen size changes. Since our screen sizes are relatively constant, we will prefer the FloatLaout because we can place objects in a X,Y coordinate system. Other layout types can be read about here: https://kivy.org/docs/gettingstarted/layouts.html
+This block of code will define a new screen called ```MainScreen``` with the name ```'main'```. This name is what will be referenced whenever you want to transition to this scene. ```FloatLayout``` is the most basic layout type we will use. The layout type basically controls how objects are moved when the screen size changes. Since our screen sizes are relatively constant, we will prefer the FloatLaout because we can place objects in a X,Y coordinate system. Other layout types can be read about here: https://kivy.org/docs/gettingstarted/layouts.html
 
-Most likely, this scene will contain buttons or other objects that will have something happen upon an event occuring (like tapping or dragging). In order to handle these events, there must be a place to declare the functions that handle them in your .py file. This is done by creating a new class like this:
+Most likely, this scene will contain buttons or other objects that will have something happen upon an event occuring (like tapping or dragging). In order to handle these events, there must be a place to declare the functions that handle them in your .py file. This is done by creating a new class like this in your .py file:
 
 ```
 class MainScreen(Screen): 
