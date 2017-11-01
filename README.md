@@ -86,3 +86,6 @@ Button:
  
  ```on_release: root.something()``` is how we tie a function to the button.
  
+All of the properties you can asign to widgets can be found on this page https://kivy.org/docs/api-kivy.uix.widget.html
+
+###Parent/Child Formatting
