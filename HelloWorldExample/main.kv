@@ -10,3 +10,11 @@
             background_color: .1,.1,1,1
             center: root.center
             on_release: root.tappedButton()
+        Button:
+            size_hint: None,None
+            text: 'Quit'
+            font_size: 20
+            size: 200, 75
+            background_color: .1,.1,1,1
+            center: root.center_x, root.center_y - 200
+            on_release: root.tappedQuit()
