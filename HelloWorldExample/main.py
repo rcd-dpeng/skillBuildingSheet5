@@ -13,7 +13,9 @@ Window.clearcolor = (.95,.95,.95, 1) # Background Color
 class MainScene(Screen):  # creates a scene called MainScene
     def tappedButton(self):
         print("Hello!!")
-
+    def tappedQuit(self):
+        quit()
+        
 class MyApp(App):
     def build(self):
         return sm
