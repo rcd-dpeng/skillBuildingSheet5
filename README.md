@@ -84,8 +84,8 @@ Button:
  
  ```background_color``` is the color of the button in r,g,b,a
  
- ```on_release: root.something()``` is how we tie a function to the button.
+ ```on_release: root.something()``` is how we tie a function to the button. This function is declared in your .py file under the class for this screen. 
  
 All of the properties you can asign to widgets can be found on this page https://kivy.org/docs/api-kivy.uix.widget.html
 
-###Parent/Child Formatting
+### Parent/Child Formatting
