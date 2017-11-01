@@ -1,7 +1,7 @@
 ## RaspberryPi OS Installation w/ Kivy Instructions:
 
 1. Download KivyPi 0.9B from http://kivypie.mitako.eu/kivy-download.html (NOT version 1.0)
-2. Flash .zip image to SD card using Etcher: https://etcher.io/ or another SD Card flash software
+2. Flash .zip image to SD card using Etcher: https://etcher.io/ or another SD Card flash software. Make sure your SD card is at least 8gb.
 3. Login with default username and password (username: sysop password: posys)
 4. Change root password - `sudo passwd root`
 5. Restart Raspberry pi - `sudo reboot`
