@@ -152,4 +152,7 @@ Another important thing to notice is the ```self.``` infront of calls to parent.
 
 ### Examples
 
-See the README.md in the example folder of this repository for further examples.
+See the README.md in the HelloWorldExample folder.
+
+https://github.com/dpengineering/RaspberryPiCommon/tree/master/HelloWorldExample
+
