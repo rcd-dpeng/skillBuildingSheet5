@@ -39,7 +39,8 @@ Screens are where most of your programming will be done. While your app is runni
     FloatLayout:
         size_hint: None, None  
 ```
-This block of code will define a new screen calle ```MainScreen``` with the name ```'main'```. This name is what will be referenced whenever you want to transition to this scene. 
+This block of code will define a new screen calle ```MainScreen``` with the name ```'main'```. This name is what will be referenced whenever you want to transition to this scene. ```FloatLayout``` is the easiest layout type we will use. The layout type basically controls how objects are moved when the screen size changes. Since our screen sizes are relatively constant, we will prefer the FloatLaout because we can place objects in a X,Y coordinate system. Other layout types can be read about here: https://kivy.org/docs/gettingstarted/layouts.html
+
 Most likely, this scene will contain buttons or other objects that will have something happen upon an event occuring (like tapping or dragging). In order to handle these events, there must be a place to declare the functions that handle them in your .py file. This is done by creating a new class like this:
 
 ```
@@ -48,5 +49,10 @@ class MainScreen(Screen):
         pass
 ```
 This block of code will create a new class with the name ```MainScreen```. Note that this name is the same as the name in the <> of the .kv file and NOT the ```name:``` property. In this example, there is one function called ```something``` which at this point does nothing. This function can be attatched to a button press or similar event as we will show later.
+Finally, this scene must be added to the Screen Manager so that it can be shown and transitioned to. This is done as so:
+```
+sm.add_widget(MainScreen(name='main')) 
+```
+where ```sm``` is the screen manager variable you created earlier, ```MainScreen``` is the class type we just declared and ```'main'``` is the ```name:``` property you set in the .kv file.
 
 ### Widgets
