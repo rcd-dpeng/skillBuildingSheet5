@@ -148,3 +148,8 @@ In this case the text of the label is being set to the variable ```tpos``` from 
 This code also shows how you can create your own widgets and add them to other widgets (Not shown: the rule for ```<ExampleWidget>```)
 
 Another important thing to notice is the ```self.``` infront of calls to parent. This is telling the code to reference the current widget. This is not needed with ```root``` because ```root``` always refers to the base widget of any rule. Rule reffering to anything included under ```<NAME>``` in the kv language.
+
+
+### Examples
+
+See the README.md in the example folder of this repository for further examples.
