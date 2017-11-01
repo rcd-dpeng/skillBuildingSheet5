@@ -1,6 +1,6 @@
 # Creating a UI With Kivy on the Raspberry Pi
 
-This document assumes that you have a Raspberry Pi running the KivyPi OS as installed here: https://github.com/dpengineering/InfinityMirrorPie/blob/master/README.md
+This document assumes that you have a Raspberry Pi running the KivyPi OS as installed here: https://github.com/dpengineering/RaspberryPiCommon/OSInstallation.md
 
 Note that all of the previous arcade Python programming was done in Python 2.7.x. All python code referenced below will be in Python 3.5 or above.
 
