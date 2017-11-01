@@ -127,11 +127,11 @@ class MainScreen(Screen):
 For the most part you will just be getting size or position from the parent  widget, or call function with root. But you can also use this to access data from your .py file like in this example.
 
 ```
-<TouchScreen>:
+<ExampleScreen>:
     name: 'touch' 
     FloatLayout:
         size_hint: None,None
-        TouchWidget:
+        ExampleWidget:
             size_hint: None,None
             center_x: root.center_x - 30
             center_y: root.center_y
@@ -143,6 +143,8 @@ For the most part you will just be getting size or position from the parent  wid
                 x: self.parent.width + self.parent.x + 300
                 y: 600
 ```          
-In this case the text of the label is being set to the variable ```tpos``` from the ```TouchWidget``` Class.
+In this case the text of the label is being set to the variable ```tpos``` from the ```ExampleWidget``` Class.
+
+This code also shows how you can create your own widgets and add them to other widgets (Not shown: the rule for ```<ExampleWidget>```)
 
 Another important thing to notice is the ```self.``` infront of calls to parent. This is telling the code to reference the current widget. This is not needed with ```root``` because ```root``` always refers to the base widget of any rule. Rule reffering to anything included under ```<NAME>``` in the kv language.
