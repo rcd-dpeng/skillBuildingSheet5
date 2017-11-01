@@ -89,3 +89,21 @@ Button:
 All of the properties you can asign to widgets can be found on this page https://kivy.org/docs/api-kivy.uix.widget.html
 
 ### Parent/Child Formatting
+
+A very important part of Kivy is parent child relationships. These define what information widgets have acces to and what widgets can communicate with eachother. 
+
+```
+<MainScreen>:
+    name: 'main'
+    FloatLayout:
+        size_hint: None, None 
+        Button:
+            size_hint: None,None
+            text: 'Begin'
+            font_size: 20
+            size: self.parent.size
+            background_color: .1,.1,1,1
+            center: root.center
+            on_release: root.manager.current = 'touch'
+```            
+
