@@ -23,7 +23,7 @@ There are also four ports where you can attach limit switches (SW0-SW3) to home 
 ![](https://i.imgur.com/g51PaSy.png?1)
 
 ### GPIO
-The sixteen GPIO pins can be found here, along with ground and 3.3v pins. They are in two rows labeled PA0-PA7, PB0-PB7, and a third row for the 3.3v and ground pins.
+The sixteen GPIO pins can be found here, along with ground and 3.3v pins. They are in two rows labeled PA0-PA7, PB0-PB7, and a third row for the 3.3v and ground pins. The pins are all digital.
 
 ![](https://i.imgur.com/TVrEYj9.png?1)
 
