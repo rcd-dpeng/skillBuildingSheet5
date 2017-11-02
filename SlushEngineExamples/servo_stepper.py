@@ -1,3 +1,5 @@
+#This code has not been tested. It is a mystery as to what thee GPIO and pwm is and what the values are. TO be tested in the futue
+
 import Slush
 import RPi.GPIO as GPIO
 import time
