@@ -43,7 +43,7 @@ Now on to controlling things!
 
 Before starting make sure you have installed the Slush python library on the Raspberry pi.
 
-The following sections will be about software not found in the examples, or not made clear in the examples.
+The following sections will be about software not found in the examples. More information can be found in the example files.
 
 ### Getting a motor running
 
