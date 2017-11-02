@@ -43,6 +43,40 @@ Now on to controlling things!
 
 Before starting make sure you have installed the Slush python library on the Raspberry pi.
 
+The following sections will be about software not found in the examples, or not made clear in the examples.
+
 ### Getting a motor running
 
-Start by opening the python shell and eentering ```import Slush```. This gives you access to the Slush library. Next enter ```b = Slush.sBoard()``` this initializes the board and names it b. Next enter ```m = Slush.Motor(0)``` this initialises the motor in port zero with the name m. Finally enter ```m.move(1000)``` this will make the motor move 1000 steps. If that worked Congrats! otherwise go to the troubleshooting section.
+Start by opening the python shell and entering ```import Slush```. This gives you access to the Slush library. Next enter ```b = Slush.sBoard()``` this initializes the board and names it b. Next enter ```m = Slush.Motor(0)``` this initialises the motor in port zero with the name m. Finally enter ```m.move(1000)``` this will make the motor move 1000 steps. If that worked Congrats! otherwise go to the troubleshooting section.
+
+### Basic Motor Functions
+
+
+```m.setCurrent(hold,run,acc,decc)```: sets the amount of current going to the stepper. It takes 4 unitless inputs between 0-200. It controls Current when its holding, running, accelerrating, and deccelerating. For our purposes just use m.setCurrent(20,20,20,20).
+
+```m.setMicroSteps()```: Sets the microstepping for the stepper. can be between 1 and 128. NOTE this does not affect the the size of a step in any other function. SO moving 100 steps and full microstepping is the same at moving 200 at half microstepping.
+
+```m.isBusy()```: returns true is the motor is performing a move and false when it is not performing a move.
+
+```m.run(direction, speed)```: moves the motor indefinently in direction (0 or 1) at speed (in steps).
+
+```m.free()```: disables the stepper motor.
+
+```m.softStop()```: stops the motor with decceleration.
+
+```m.hardStop()```: immediatly stops the motor.
+
+```m.setAsHome()```: sets the current position as 0.
+
+```m.goHome()```: moves to the home position.'
+
+```m.goUntilPress(act, dir, speed)```: homes in dir at speed in steps until the switch on port act is pressed.
+
+The rest of the commands can be found here: https://github.com/Roboteurs/slushengine/blob/master/Slush/Motor.py#L55
+
+### Homing Steppers using Proximity Sensors
+
+You can not use the default homing function if you need to home to a proximity sensor. You also need to do some different wiring.
+
+
+
