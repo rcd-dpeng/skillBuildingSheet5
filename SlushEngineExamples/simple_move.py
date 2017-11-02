@@ -14,7 +14,7 @@ stepmove = 300000
 b = Slush.sBoard()
 axis1 = Slush.Motor(0)
 axis1.resetDev()
-axis1.setCurrent(50, 50, 50, 50)
+axis1.setCurrent(20, 20, 20, 20)
 
 #move the motor in one direction and wait for it to finish
 while(axis1.isBusy()):	
