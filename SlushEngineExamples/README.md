@@ -37,9 +37,12 @@ And finally here is where you attach the Raspberry Pi:
 
 ![](https://i.imgur.com/xuiFksD.png?1)
 
-## Sofftware Overview
+## Software Overview
 
 Now on to controlling things!
 
-Before starting make sure you have installed the Slush python library to the raspi.
+Before starting make sure you have installed the Slush python library on the Raspberry pi.
 
+### Getting a motor running
+
+Start by opening the python shell and eentering ```import Slush```. This gives you access to the Slush library. Next enter ```b = Slush.sBoard()``` this initializes the board and names it b. Next enter ```m = Slush.Motor(0)``` this initialises the motor in port zero with the name m. Finally enter ```m.move(1000)``` this will make the motor move 1000 steps. If that worked Congrats! otherwise go to the troubleshooting section.
