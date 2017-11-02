@@ -1,4 +1,4 @@
-#This code has not been tested. It is a mystery as to what thee GPIO and pwm is and what the values are. TO be tested in the futue
+#This code has not been tested. It is a mystery as to what thee GPIO and pwm is and what the values are. There is also no pin numbered 8 that we have access to. TO be tested in the futue
 
 import Slush
 import RPi.GPIO as GPIO
