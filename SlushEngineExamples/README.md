@@ -72,11 +72,45 @@ Start by opening the python shell and entering ```import Slush```. This gives yo
 
 ```m.goUntilPress(act, dir, speed)```: homes in dir at speed in steps until the switch on port act is pressed.
 
+```b.getIOState(row, pin)```: gets the state of pin in row A or B (0 or 1) of number 0-7. 1 for high, 0 for low.
+
 The rest of the commands can be found here: https://github.com/Roboteurs/slushengine/blob/master/Slush/Motor.py#L55
 
 ### Homing Steppers using Proximity Sensors
 
 You can not use the default homing function if you need to home to a proximity sensor. You also need to do some different wiring.
 
+The signal and ground pins can be plugged into the GPIO pins on the board. The sensors we use are rated for 5v to 30v so it will need to be attached to an appropriate power source.
+When reading the data from the GPIO pin remember that the sensors are pullup so they will show low when sensed. So 1 = not sensed and 0 = sensed.
 
+```
+m.run(0,50)
+while(b.getIOState(0,0) == 1):
+    continue
+m.hardStop()
+m.setAsHome()
+```
 
+This code moves the motor slowly towards the sensor until it gets sensed. Once it is sensed it stops and sets the current position as home.
+
+If you need to home multiple steppers at the same time (tied to the same axis or not). you will need to add a few more lines.
+
+```
+m0.run(0,50)
+m1.run(0,50)
+m2.run(0,50)
+while(b.getIOState(0,0) == 1 or  b.getIOState(0,1) == 1 or b.getIOState(0,2) == 1 ):
+    if(b.getIOState(0,0) == 0):
+        m0.hardStop()
+    if(b.getIOState(0,1) == 0):
+        m1.hardStop()
+    if(b.getIOState(0,2) == 0):
+        m2.hardStop()
+m0.hardStop()
+m1.hardStop()
+m2.hardStop()
+m0.setAsHome()
+m1.setAsHome()
+m2.setAsHome()
+```
+This will start homing all of the motors and then stop each motor as it when it is sensed. When they are all sensed it sets their current position as home and continues with the rest of your program.
