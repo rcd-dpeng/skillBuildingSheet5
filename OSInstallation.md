@@ -16,3 +16,10 @@
 14. Install Slush - `sudo wget https://raw.githubusercontent.com/Roboteurs/slushengine/master/install.pl -O - | perl`
 15. Install smbus - `sudo apt-get update` then `sudo apt-get install python3-smbus`
 
+Optional - Install Ninja IDE text editor
+
+16. Run `sudo apt-get install software-properties-common`
+17. Run `sudo apt-get install python3-software-properties`
+18. Run `sudo apt-add-repository ppa:ninja-ide-developers/ninja-ide-stable` - Will probably crash but its ok
+19. Run `sudo apt-get update` then `sudo apt-get install ninja-ide`
+20. Launch IDE by running `ninja-ide` from any bash session
