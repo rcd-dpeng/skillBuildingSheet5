@@ -6,6 +6,6 @@ These steps assume that you are running the newest Raspberry Pi firmware. This c
 2. Edit the interface configuration file - `sudo vim /etc/network/interfaces`
 3. Under the wlan0 configuration, set the `wpa-ssid` and `wpa-psk` to your network name and password surrounded by quotes.
 4. Save the configuration file and launch `sudo raspi-config`
-5. Set `Wait for network at boot` to yes.
+5. Set `Wait for network at boot` to slow boot.
 6. Run `sudo reboot` if the configuration program doenst prompt you to do so.
 7. Test the connection using `ping www.google.com`
