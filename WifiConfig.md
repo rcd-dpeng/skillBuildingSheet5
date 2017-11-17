@@ -2,7 +2,7 @@
 
 These steps assume that you are running the newest Raspberry Pi firmware. This can be updated using `sudo rpi-update`. **NOTE THAT THIS COMMAND HAS BEEN KNOWN TO BRICK THE PI. MAKE SURE YOUR CODE IS BACKED UP!!**
 
-1. Make sure the pi is in range of a wifi network. Note that your pi must be a model 3.
+1. Make sure the pi is in range of a wifi network. Unplug the ethernet cable if it is plugged in. Note that your pi must be a model 3.
 2. Edit the interface configuration file - `sudo vim /etc/network/interfaces`
 3. Under the wlan0 configuration, set the `wpa-ssid` and `wpa-psk` to your network name and password surrounded by quotes.
 4. Save the configuration file and launch `sudo raspi-config`
