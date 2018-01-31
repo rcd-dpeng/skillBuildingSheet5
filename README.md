@@ -1,12 +1,8 @@
-# SlushEngine
+# Begin Here - Overview
 
-## Hardware Overview
+## Slush Engine, RaspberryPi, Python, Kivy
 
-This is the SlushEngine: Model X LT. 
-
-![](https://i.imgur.com/2v12RMR.png?1)
-
-It is a stepper Motor controller with the ability to control 4 steppers, and has an additional 16 General Purpose input/output (GPIO) pins (3.3v)
+These four components comprise what the DPEA calls a "RaspberryPi project." This colloquialism refers to both the hardware (Slush Engine and RaspberryPi) and software (Python and Kivy) involved.
 ### Power
 Here is where power is attached to the SlushEngine. It can be between 8v-35v.
 
