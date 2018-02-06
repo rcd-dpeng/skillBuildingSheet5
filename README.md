@@ -22,6 +22,6 @@ Python is the language you will use to program your Raspberry Pi project. There 
 It is a good idea to familiarize yourself with Python syntax, etc. before embarking upon your programming endeavors. Here is a good source: https://www.learnpython.org/
 
 ### Kivy
-Kivy is the Python library we use to create your Raspberry Pi project's user interface (UI). Although all Kivy UI code is found in the .kv file, all Kivy-related import statements are included in the .py Python file. 
+Kivy is the Python library we use to create your Raspberry Pi project's user interface (UI). All Kivy code is found in the .kv file, and is used exclusively for programming UI.
 
 Kivy syntax is different from python syntax; be sure to reference both the Kivy documentation here: https://kivy.org/docs/ and some examples here: https://github.com/dpengineering/RaspberryPiCommon/tree/master/PiWithKivy/HelloWorldExample
