@@ -1,5 +1,5 @@
 # ////////////////////////////////////////////////////////////////
-# /////////////////////////////////////////// IMPORT STATEMENTS //
+# //                     IMPORT STATEMENTS                      //
 # ////////////////////////////////////////////////////////////////
 
 
@@ -12,10 +12,9 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import *
 
 
-
 # ////////////////////////////////////////////////////////////////
-# ///////////////////////// DECLARE APP CLASS AND SCREENMANAGER //
-# ////////////////////////////////////////////// LOAD KIVY FILE //
+# //            DECLARE APP CLASS AND SCREENMANAGER             //
+# //                     LOAD KIVY FILE                         //
 # ////////////////////////////////////////////////////////////////
 
 
@@ -23,75 +22,58 @@ class MyApp(App):
     def build(self):
         return sm
 
-Builder.load_file('filename.kv')
-sm = ScreenManager()
-sm.add_widget(MainScreen(name = 'template'))
+Builder.load_file('template.kv')
 Window.clearcolor = (0.1, 0.1, 0.1, 1) # (WHITE)
 
 
 # ////////////////////////////////////////////////////////////////
-# //////////////////////////////////////// SLUSH/HARDWARE SETUP //
+# //                    SLUSH/HARDWARE SETUP                    //
 # ////////////////////////////////////////////////////////////////
 
 
-import Slush
-b = Slush.sBoard()
-# example
-stepperOne = Slush.Motor(0)
-stepperTwo = Slush.Motor(1)
-stepperOne.resetDev()
-stepperTwo.resetDev()
-stepperOne.setCurrent(20, 20, 20, 20)
-stepperTwo.setCurrent(20, 20, 20, 20)
-# ---
 
 
 # ////////////////////////////////////////////////////////////////
-# //////////////////////////////////////////// GLOBAL VARIABLES //
-# /////////////////////////////////////////////////// CONSTANTS //
+# //                      GLOBAL VARIABLES                      //
+# //                         CONSTANTS                          //
 # ////////////////////////////////////////////////////////////////
 
 
-# example
-stepperSpeed = 400
-# ---
 
 
 # ////////////////////////////////////////////////////////////////
-# ////////////////////////////////////////////// MAIN FUNCTIONS //
-# ////////////////////// SHOULD INTERACT DIRECTLY WITH HARDWARE //
+# //                       MAIN FUNCTIONS                       //
+# //             SHOULD INTERACT DIRECTLY WITH HARDWARE         //
 # ////////////////////////////////////////////////////////////////
 
 
-# example
-def runStepper(stepper):
-    if stepper == 1:
-	stepperOne.run(0, stepperSpeed)
-    if stepper == 2:
-	stepperTwo.run(0, stepperSpeed)
-# ---
+def quitAll():
+	quit()
+#  more functions here
 
 
 # ////////////////////////////////////////////////////////////////
-# //////////////// DEFINE MAINSCREEN CLASS THAT KIVY RECOGNIZES //
-# ////////////////////////////////////////////////////////////////
-# ////// KIVY UI CAN INTERACT DIRECTLY W/ THE FUNCTIONS DEFINED //
-# ////// SHOULD REFERENCE MAIN FUNCTIONS WITHIN THESE FUNCTIONS //
-# ////////////// SHOULD NOT INTERACT DIRECTLY WITH THE HARDWARE //
+# //        DEFINE MAINSCREEN CLASS THAT KIVY RECOGNIZES        //
+# //                                                            //
+# //   KIVY UI CAN INTERACT DIRECTLY W/ THE FUNCTIONS DEFINED   //
+# //   SHOULD REFERENCE MAIN FUNCTIONS WITHIN THESE FUNCTIONS   //
+# //      SHOULD NOT INTERACT DIRECTLY WITH THE HARDWARE        //
 # ////////////////////////////////////////////////////////////////
 
 
 class MainScreen(Screen):
 
-    # example
-    def buttonAction(self, stepper):
-        runStepper(stepper)
-    # ---
+    def quitAction(self):
+        quitAll()
+	# more functions here
+	
+sm.add_widget(MainScreen(name = 'template'))
 
 
 # ////////////////////////////////////////////////////////////////
-# ///////////////////////////////////////////////////// RUN APP //
+# //                          RUN APP                           //
 # ////////////////////////////////////////////////////////////////
 
 
+sm = ScreenManager()
 MyApp().run()

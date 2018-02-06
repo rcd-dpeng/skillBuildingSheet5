@@ -1,0 +1,26 @@
+<MainScreen>:
+    name: 'template'
+    FloatLayout:
+        size_hint: None, None
+
+		# QUIT BUTTON
+        Button:
+            text: 'X'
+            font_size: 23
+            size_hint: None,None
+            size: root.width * 0.015,root.width * 0.015
+            x: root.width * 0.965
+            y: root.height * 0.945
+            background_color: 0.7, 0.7, 0.7, 1
+            on_release: root.quitAction()
+
+		# IMAGE
+        Screen:
+            Image:
+                source: 'DPEA Logo Transparent.png'
+                keep_ratio: False
+                allow_stretch: True
+                opacity: 1
+                size_hint: 2.7, 2.7
+                x: root.width * 0.753
+                y: root.height*0.283
