@@ -13,6 +13,7 @@ Take time to review a more in-depth overview of the SlushEngine hardware here: h
 The Raspberry Pi is a (physical) computer small enough to fit on the SlushEngine. Because the Raspbery Pi is a computer, it can run IDEs, browsers, apps, etc. on your project's monitor. You will be interacting with the Raspberry Pi via your monitor to work on your project.
 
 Again, see https://github.com/dpengineering/RaspberryPiCommon/blob/master/HardwareInfo.md to visualize where the Raspberry Pi is positioned in respect to the SlushEngine.
+
 To INSTALL Raspberry Pi, see https://github.com/dpengineering/RaspberryPiCommon/blob/master/OSInstallation.md
 
 ### Python
