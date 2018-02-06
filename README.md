@@ -23,3 +23,4 @@ It is a good idea to familiarize yourself with Python syntax, etc. before embark
 
 
 ### Kivy
+Kivy is a python library that we use for the user interfaces of Raspberry Pi projects.
