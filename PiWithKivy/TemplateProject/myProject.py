@@ -22,7 +22,7 @@ class MyApp(App):
     def build(self):
         return sm
 
-Builder.load_file('template.kv')
+Builder.load_file('myProject.kv')
 Window.clearcolor = (0.1, 0.1, 0.1, 1) # (WHITE)
 
 
@@ -48,7 +48,8 @@ Window.clearcolor = (0.1, 0.1, 0.1, 1) # (WHITE)
 
 
 def quitAll():
-	quit()
+    # free stepper motors, etc. before quit()
+    quit() # quits program
 #  more functions here
 
 
@@ -56,6 +57,8 @@ def quitAll():
 # //        DEFINE MAINSCREEN CLASS THAT KIVY RECOGNIZES        //
 # //                                                            //
 # //   KIVY UI CAN INTERACT DIRECTLY W/ THE FUNCTIONS DEFINED   //
+# //     CORRESPONDS TO BUTTON/SLIDER/WIDGET "on_release"       //
+# //                                                            //
 # //   SHOULD REFERENCE MAIN FUNCTIONS WITHIN THESE FUNCTIONS   //
 # //      SHOULD NOT INTERACT DIRECTLY WITH THE HARDWARE        //
 # ////////////////////////////////////////////////////////////////
@@ -63,11 +66,11 @@ def quitAll():
 
 class MainScreen(Screen):
 
-    def quitAction(self):
+    def exitProgram(self):
         quitAll()
-	# more functions here
+    # more functions here
 	
-sm.add_widget(MainScreen(name = 'template'))
+sm.add_widget(MainScreen(name = 'myProject'))
 
 
 # ////////////////////////////////////////////////////////////////
