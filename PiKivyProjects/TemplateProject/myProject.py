@@ -18,6 +18,8 @@ from kivy.graphics import *
 # ////////////////////////////////////////////////////////////////
 
 
+sm = ScreenManager()
+
 class MyApp(App):
     def build(self):
         return sm
@@ -78,5 +80,4 @@ sm.add_widget(MainScreen(name = 'myProject'))
 # ////////////////////////////////////////////////////////////////
 
 
-sm = ScreenManager()
 MyApp().run()
