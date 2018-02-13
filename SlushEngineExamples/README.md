@@ -1,3 +1,2 @@
 # Hardware Examples
-
-## SlushEngine tips
+Reference these Python files to see how SlushEngine functions are implemented.
