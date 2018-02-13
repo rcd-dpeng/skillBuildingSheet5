@@ -154,4 +154,4 @@ Another important thing to notice is the ```self.``` infront of calls to parent.
 
 See the README.md in the HelloWorldExample folder.
 
-https://github.com/dpengineering//RaspberryPiCommon/tree/master/PiKivyProjects/HelloWorldExample
+https://github.com/dpengineering/RaspberryPiCommon/tree/master/PiKivyProjects/HelloWorldExample
