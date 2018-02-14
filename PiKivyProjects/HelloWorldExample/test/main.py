@@ -1,3 +1,4 @@
+
 # ////////////////////////////////////////////////////////////////
 # //                     IMPORT STATEMENTS                      //
 # ////////////////////////////////////////////////////////////////
@@ -24,7 +25,7 @@ class MyApp(App):
     def build(self):
         return sm
 
-Builder.load_file('myProject.kv')
+Builder.load_file('kivy.kv')
 Window.clearcolor = (0.1, 0.1, 0.1, 1) # (WHITE)
 
 
@@ -72,7 +73,7 @@ class MainScreen(Screen):
         quitAll()
     # more functions here
 	
-sm.add_widget(MainScreen(name = 'myProject'))
+sm.add_widget(MainScreen(name = 'main'))
 
 
 # ////////////////////////////////////////////////////////////////
@@ -81,3 +82,4 @@ sm.add_widget(MainScreen(name = 'myProject'))
 
 
 MyApp().run()
+
