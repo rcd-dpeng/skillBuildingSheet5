@@ -1,6 +1,4 @@
-import os, shutil
 
-MAIN_FILE_TEMPLATE = """
 # ////////////////////////////////////////////////////////////////
 # //                     IMPORT STATEMENTS                      //
 # ////////////////////////////////////////////////////////////////
@@ -85,48 +83,3 @@ sm.add_widget(MainScreen(name = 'main'))
 
 MyApp().run()
 
-"""
-
-KV_FILE_TEMPLATE = """
-<MainScreen>:
-    name: 'main'
-    FloatLayout:
-        size_hint: None, None
-
-		# QUIT BUTTON
-        Button:
-            text: 'X'
-            font_size: 23
-            size_hint: None,None
-            size: root.width * 0.015,root.width * 0.015
-            x: root.width * 0.965
-            y: root.height * 0.945
-            background_color: 0.7, 0.7, 0.7, 1
-            on_release: root.exitProgram()
-
-		# IMAGE
-        Screen:
-            Image:
-                source: 'DPEA Logo Transparent.png'
-                keep_ratio: False
-                allow_stretch: True
-                opacity: 1
-                size_hint: 2.7, 2.7
-                x: root.width * 0.753
-                y: root.height*0.283
-"""
-
-
-dirName = raw_input("Project Name: ")
-os.makedirs(dirName)
-os.chdir(dirName)
-
-# Create html file
-py = open('main.py', "w+")
-py.write(MAIN_FILE_TEMPLATE)
-py.close()
-
-# Create sketch file
-kv = open('main.kv', "w+")
-kv.write(KV_FILE_TEMPLATE)
-kv.close()
