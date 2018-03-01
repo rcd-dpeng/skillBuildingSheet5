@@ -1,7 +1,5 @@
-"""
-Written by Francis Pan as part of the standard kivy libraries for the DPEA
-28 February 2018
-"""
+#  Written by Francis Pan as part of the standard kivy libraries for the DPEA
+#  28 February 2018
 
 from kivy.app import App
 from kivy.lang import Builder
@@ -27,12 +25,16 @@ Builder.load_file('examples.kv')
 Builder.load_file('DPEAButton.kv')
 Window.clearcolor = (0.95, 0.95, 0.95, 1)
 
-def quitAll():
-    quit()
-
 class MainScreen(Screen):
-    def exitProgram(self):
-        quitAll()
+    def DPEAButtonDown(self):
+        self.ids.DPEAButton.color = 0.01, 0.168, .5, 1
+
+    def XButtonDown(self):
+        self.ids.X.color = 0.5, 0, 0, 1
+
+    def resetColors(self):
+        self.ids.DPEAButton.color = 0.019, 0.337, 1, 1
+        self.ids.X.color = 1, 0, 0, 1
 
 sm.add_widget(MainScreen(name = 'examples'))
 

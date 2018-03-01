@@ -1,17 +1,13 @@
-"""
-Written by Francis Pan as part of the standard kivy libraries for the DPEA
-28 February 2018
-"""
+#   Written by Francis Pan as part of the standard kivy libraries for the DPEA
+#   28 February 2018
 
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
-from kivy.graphics import
+from kivy.graphics import *
 
-"""
-An Image that has button capabilities.
-When using, specify:
-    source, size, position, and action
-"""
+#   An Image that has button capabilities.
+#   When using, specify:
+#       id, source, size, position, on_press, and on_release
 
 class ImageButton(ButtonBehavior, Image):
     def __init__(self, **kwargs):
