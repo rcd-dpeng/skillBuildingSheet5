@@ -25,8 +25,8 @@ class MyApp(App):
     def build(self):
         return sm
 
-Builder.load_file('kivy.kv')
-Window.clearcolor = (0.1, 0.1, 0.1, 1) # (WHITE)
+Builder.load_file('main.kv')
+Window.clearcolor = (0.1, 0.1, 0.1, 1) # (DRAKGREY)
 
 
 # ////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ class MainScreen(Screen):
     def exitProgram(self):
         quitAll()
     # more functions here
-	
+
 sm.add_widget(MainScreen(name = 'main'))
 
 
@@ -82,4 +82,3 @@ sm.add_widget(MainScreen(name = 'main'))
 
 
 MyApp().run()
-
