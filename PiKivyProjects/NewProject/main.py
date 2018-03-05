@@ -1,3 +1,6 @@
+#   By Hannah Kleidermacher; to be used internally as a template for a new Pi/Kivy project.
+#   February 2018
+
 
 # ////////////////////////////////////////////////////////////////
 # //                     IMPORT STATEMENTS                      //
