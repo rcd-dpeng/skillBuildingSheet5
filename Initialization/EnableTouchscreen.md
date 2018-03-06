@@ -1,8 +1,9 @@
 ## Instructions to enable Kivy touchscreen:
 
-1. Navigate to ~/kivy:
+1. Navigate to `~/kivy` and open `.kivy`'s `config.ini` with nano:
 ```
-cd ~/kivy
+$ cd ~/kivy
+$ nano ~/.kivy/config.ini
 ````
 2. Enter `nano ~/.kivy/config.ini`
 3. In the `[input]` section, remove the existing lines and put in:
