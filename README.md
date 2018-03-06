@@ -24,4 +24,4 @@ It is a good idea to familiarize yourself with Python syntax, etc. before embark
 ### Kivy
 Kivy is the Python library we use to create your Raspberry Pi project's user interface (UI). All Kivy code is found in the .kv file, and is used exclusively for programming UI.
 
-Kivy syntax is different from python syntax; be sure to reference both the Kivy documentation here: https://kivy.org/docs/ and some examples here: https://github.com/dpengineering/RaspberryPiCommon/tree/master/PiWithKivy/HelloWorldExample
+Kivy syntax is different from python syntax; be sure to reference both the Kivy documentation here: https://kivy.org/docs/ and some Pi/Kivy resources here: https://github.com/dpengineering/RaspberryPiCommon/tree/master/PiKivyProjects
