@@ -1,6 +1,6 @@
 ## Instructions to enable Kivy touchscreen:
 
-1. Run sample Kivy code. Use Control+C to exit the program (since touchscreen will not be functioning).
+1. Run any Kivy code. Use Control+C to exit the program (since touchscreen will not be functioning).
 
 2. Navigate to `~/kivy` and open `.kivy`'s `config.ini` with nano:
 ```
