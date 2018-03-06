@@ -12,7 +12,4 @@ mtdev_%(name)s = probesys,provider=mtdev`
 hid_%(name)s = probesys,priver=kidinput`
 ```
 
-# You MAY need to install nano
-```
-$ pip install nano
-```
+*From https://github.com/mrichardson23/rpi-kivy-screen/blob/master/README.md*
