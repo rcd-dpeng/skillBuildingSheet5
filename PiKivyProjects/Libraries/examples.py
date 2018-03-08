@@ -4,7 +4,7 @@
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window
-from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
+from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.image import Image
@@ -34,7 +34,7 @@ def pause(text, sec):
     sm.current = 'pauseScene'
     sm.current_screen.ids.pauseText.text = text
     Clock.schedule_once(transitionBack, sec)
-    load = Animation(size = (150, 15), duration = sec) + Animation(size = (15, 15), duration = 0)
+    load = Animation(size = (150, 10), duration = sec) + Animation(size = (10, 10), duration = 0)
     load.start(sm.current_screen.ids.progressBar)
 
 def transitionBack(dt):
