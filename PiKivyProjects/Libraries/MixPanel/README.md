@@ -20,13 +20,15 @@ colorEvent.addProperty("color", "blue");
 colorEvent.sendEvent()
 
 #
-# Sends a "Demo Mode" event with a 'duration' property of 232 seconds
+# Sends a "Idle" event with a 'duration' property of 232 seconds
 #
 demoEvent = MixPanel("Infinity Mirror", INFINITY_MIRROR_TOKEN)
 
-demoEvent.setEventName("Demo Mode");
+demoEvent.setEventName("Idle");
 
-demoEvent.addProperty("duration", 232);
+# You can have up to 256 properties
+demoEvent.addProperty("Duration", 232);
+demoEvent.addProperty("Range (in minutes)", "1-5");
 
 demoEvent.sendEvent()
 
