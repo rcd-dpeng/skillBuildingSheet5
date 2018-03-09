@@ -65,7 +65,7 @@ DPEAButton:
     on_release: root.exampleAction()
 ```
 
-The ```on_press``` method is used to change the button to a darker color and should look something like this:
+The ```on_press``` method is used to change the button to a darker color It should be in your main python file and look something like this:
 ```
 def ExampleButtonDown(self):
     self.ids.ExampleButton.color = 0.5, 0, 0, 1
@@ -73,7 +73,7 @@ def ExampleButtonDown(self):
 
 Notice how the ```id``` that we set earlier is used now to access our button and change the ```color``` characteristic to a darker red.
 
-The ```on_touch_up``` method is used to reset all buttons to their original colors. The reason the color resets are bound to ```on_touch_up``` and not ```on_release``` is so that the colors will reset even if the user's finger lifts after leaving the button. This also separates the color reset from the actual action that the button performs, increasing code readability. It should look something like this:
+The ```on_touch_up``` method is used to reset all buttons to their original colors. The reason the color resets are bound to ```on_touch_up``` and not ```on_release``` is so that the colors will reset even if the user's finger lifts after leaving the button. This also separates the color reset from the actual action that the button performs, increasing code readability. It should also be in the main python file and look something like this:
 ```
 def resetColors(self):
     self.ids.ExampleButton.color = 1, 0, 0, 1
@@ -119,7 +119,7 @@ A pause scene to disable the UI whilst hardware processes are in progress.
 
 Build the ```PauseScene.kv``` into your main python file (the one you run to launch the UI) by using ```Builder.load_file('PauseScene.kv')```
 
-Create the ```PasueScene``` class like so:
+Create the ```PasueScene``` class in the main python file like so:
 ```
 class PauseScene(Screen):
     pass
@@ -131,7 +131,7 @@ sm.add_widget(MainScreen(name = 'examples'))
 sm.add_widget(PauseScene(name = 'pauseScene'))
 ```
 
-Copy and paste these two required methods into your code:
+Copy and paste these two required methods into your main python file:
 ```
 def pause(text, sec, originalScene):
     sm.transition.direction = 'left'
