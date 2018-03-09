@@ -153,4 +153,4 @@ To use the pause scene, simply call the pause method like so:
 pause('Scene Paused', 5, 'examples')
 ```
 
-The parameters in order are: ```text``` which is the text you wish the pause scene to display, ```sec``` which is the time u want the pause to be in seconds, and ```originalScene``` which is the string name you assigned to the scene you wish to switch back to.
+The parameters in order are: ```text``` which is the text you wish the pause scene to display, ```sec``` which is the time you want the pause to be in seconds, and ```originalScene``` which is the string name you assigned to the scene you wish to switch back to.
