@@ -14,8 +14,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import *
 from kivy.clock import Clock
 from kivy.animation import Animation
+from functools import partial
 
-import time
 import ImageButton
 
 sm = ScreenManager()
@@ -30,15 +30,17 @@ Builder.load_file('PauseScene.kv')
 
 Window.clearcolor = (0.95, 0.95, 0.95, 1)
 
-def pause(text, sec):
+def pause(text, sec, originalScene):
+    sm.transition.direction = 'left'
     sm.current = 'pauseScene'
     sm.current_screen.ids.pauseText.text = text
-    Clock.schedule_once(transitionBack, sec)
+    Clock.schedule_once(partial(transitionBack, originalScene), sec)
     load = Animation(size = (150, 10), duration = sec) + Animation(size = (10, 10), duration = 0)
     load.start(sm.current_screen.ids.progressBar)
 
-def transitionBack(dt):
-    sm.current = 'examples'
+def transitionBack(originalScene, *largs):
+    sm.transition.direction = 'right'
+    sm.current = originalScene
 
 class MainScreen(Screen):
     def DPEAButtonDown(self):
@@ -52,7 +54,7 @@ class MainScreen(Screen):
         self.ids.X.color = 1, 0, 0, 1
 
     def DPEAButtonUp(self):
-        pause('Scene Paused', 5)
+        pause('Scene Paused', 5, 'examples')
 
 class PauseScene(Screen):
     pass
