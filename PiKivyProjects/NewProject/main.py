@@ -29,7 +29,7 @@ class MyApp(App):
         return sm
 
 Builder.load_file('main.kv')
-Window.clearcolor = (0.1, 0.1, 0.1, 1) # (DRAKGREY)
+Window.clearcolor = (0.1, 0.1, 0.1, 1) # (DARKGREY)
 
 
 # ////////////////////////////////////////////////////////////////
