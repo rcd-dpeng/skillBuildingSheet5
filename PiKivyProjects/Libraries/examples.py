@@ -61,9 +61,8 @@ class MainScreen(Screen):
 class PauseScene(Screen):
     pass
 
-admin = AdminScreen.AdminScreen(name = 'admin')
 sm.add_widget(MainScreen(name = 'examples'))
 sm.add_widget(PauseScene(name = 'pauseScene'))
-sm.add_widget(admin)
+sm.add_widget(AdminScreen.AdminScreen(name = 'admin'))
 
 MyApp().run()

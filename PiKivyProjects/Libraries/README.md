@@ -125,9 +125,10 @@ class PauseScene(Screen):
     pass
 ```
 
-Add the pause scene screen to the screen manager after you add your main scene:
+Add the pause scene screen to the screen manager after you add your main scenes:
 ```
 sm.add_widget(MainScreen(name = 'examples'))
+# your other screens here
 sm.add_widget(PauseScene(name = 'pauseScene'))
 ```
 
@@ -154,3 +155,40 @@ pause('Scene Paused', 5, 'examples')
 ```
 
 The parameters in order are: ```text``` which is the text you wish the pause scene to display, ```sec``` which is the time you want the pause to be in seconds, and ```originalScene``` which is the string name you assigned to the scene you wish to switch back to.
+
+## Admin Screen
+
+An admin screen that requires a password to be entered to continue
+
+### Required Setup
+
+At the top of your file with your import statements, add ```import AdminScreen```.
+
+Build the ```AdminScreen.kv``` into your main python file (the one you run to launch the UI) by using ```Builder.load_file('AdminScreen.kv')```
+
+Add the admin screen to the screen manager after you add your main scenes:
+```
+sm.add_widget(MainScreen(name = 'examples'))
+# your other screens here
+sm.add_widget(AdminScreen.AdminScreen(name = 'admin'))
+```
+
+Set the screen that the admin screen will transition to if the password is entered correctly by editing the ```AdminScreen.py``` file. Find the ```checkPass``` method that should look like the following:
+```
+def checkPass(self):
+      global password
+      global userPW
+      if (password == userPW):
+          print('correct')
+          self.ids.pw.text = ' '
+          userPW = ''
+          self.parent.current = 'examples'
+```
+
+On the line that says ```self.parent.current = 'examples'```, change ```'examples'``` to the name of the scene you wish the admin screen to go to.
+
+### Password
+
+The default password is ```2018```. To change this password, open the ```AdminScreen.py``` file and edit the line that says ```password = '2018'``` near the top of the file.
+
+Passwords can be any length but must only contain numbers.
