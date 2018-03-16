@@ -17,6 +17,7 @@ from kivy.animation import Animation
 from functools import partial
 
 import ImageButton
+import AdminScreen
 
 sm = ScreenManager()
 
@@ -27,6 +28,7 @@ class MyApp(App):
 Builder.load_file('examples.kv')
 Builder.load_file('DPEAButton.kv')
 Builder.load_file('PauseScene.kv')
+Builder.load_file('AdminScreen.kv')
 
 Window.clearcolor = (0.95, 0.95, 0.95, 1)
 
@@ -59,7 +61,9 @@ class MainScreen(Screen):
 class PauseScene(Screen):
     pass
 
+admin = AdminScreen.AdminScreen(name = 'admin')
 sm.add_widget(MainScreen(name = 'examples'))
 sm.add_widget(PauseScene(name = 'pauseScene'))
+sm.add_widget(admin)
 
 MyApp().run()
