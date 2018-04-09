@@ -173,7 +173,7 @@ sm.add_widget(MainScreen(name = 'examples'))
 sm.add_widget(AdminScreen.AdminScreen(name = 'admin'))
 ```
 
-Set the screen that the admin screen will transition to if the password is entered correctly by editing the ```AdminScreen.py``` file. Find the ```checkPass``` method that should look like the following:
+Set the action that the admin screen will execute if the password is entered correctly by editing the ```AdminScreen.py``` file. Find the ```checkPass``` method that should look like the following:
 ```
 def checkPass(self):
       global password
@@ -185,7 +185,26 @@ def checkPass(self):
           self.parent.current = 'examples'
 ```
 
-On the line that says ```self.parent.current = 'examples'```, change ```'examples'``` to the name of the scene you wish the admin screen to go to.
+On the line that says ```self.parent.current = 'examples'```, modify it to run the action that you want it to
+
+You also need to set the scene that the "Back to Game" button will transition to by editing the ```AdminScreen.kv``` file. Below is the code for the very first button in the file that you will be editing:
+```
+DPEAButton:
+      background_color: 0, 0, 0, 0
+      background_normal: ''
+      size_hint: None, None
+      text: 'Back to Game'
+      id: back
+      center_x: root.center_x
+      center_y: root.center_y + 260
+      color: 0.019, 0.337, 1, 1
+      size: 280, 80
+      on_press: root.backButtonDown()
+      on_release: root.manager.current = 'examples'
+      on_touch_up: root.resetColors()
+```
+
+On the line that says ```on_release: root.manager.current = 'examples'``` change ```'examples'``` to the name of the scene that you want the back button to go back to
 
 ### Password
 
