@@ -9,9 +9,9 @@ $ nano ~/.kivy/config.ini
 ````
 3. In the `[input]` section, remove the existing lines and put in:
 ```
-mouse = mouse`
-mtdev_%(name)s = probesysfs,provider=mtdev`
-hid_%(name)s = probesysfs,provider=hidinput`
+mouse = mouse
+mtdev_%(name)s = probesysfs,provider=mtdev
+hid_%(name)s = probesysfs,provider=hidinput
 ```
 
 *From https://github.com/mrichardson23/rpi-kivy-screen/blob/master/README.md*
