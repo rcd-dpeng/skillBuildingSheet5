@@ -15,13 +15,26 @@ The launcher assumes that your project is installed in the **/home/pi/Documents*
 If you want to override the default values, you can set the following environment variables:
 
 export DPEA_REPO_ROOT="/home/pi/git"
+
 export DPEA_PROCESS="main.py -- --fan --begin"
 
-NOTE: Use full paths, do not user ~/git
+**NOTE: Use full paths, do not user ~/git**
+
+### Executing the script
 
 To execute the launcher.sh in a command shell:
 
 . launch.sh <Project Directory Name>
+
+for example:
+
+. launcher.sh InfinityMirrorPi
+
+### Add the script to a Cron Job
+
+crontab -e
+
+* * * * * sudo su - pi launcher.sh <Project Directory Name>
 
 
 ## updater.sh
