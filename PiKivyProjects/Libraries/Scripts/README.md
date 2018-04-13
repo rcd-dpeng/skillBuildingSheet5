@@ -16,15 +16,15 @@ If you want to override the default values, you can set the following environmen
 
 export DPEA_REPO_ROOT="/home/pi/git"
 
-export DPEA_PROCESS="main.py -- --fan --begin"
+export DPEA_PROCESS="main.py \-\- \-\-fan \-\-begin"
 
-**NOTE: Use full paths, do not user ~/git**
+--NOTE: Use full paths, do not user ~/git--
 
 ### Executing the script
 
 To execute the launcher.sh in a command shell:
 
-. launch.sh <Project Directory Name>
+. launch.sh \<Project Directory Name\>
 
 for example:
 
