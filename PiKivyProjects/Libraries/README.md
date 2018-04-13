@@ -164,8 +164,6 @@ An admin screen that requires a password to be entered to continue
 
 At the top of your file with your import statements, add ```import AdminScreen```.
 
-Build the ```AdminScreen.kv``` into your main python file (the one you run to launch the UI) by using ```Builder.load_file('AdminScreen.kv')```
-
 Add the admin screen to the screen manager after you add your main scenes:
 ```
 sm.add_widget(MainScreen(name = 'examples'))
