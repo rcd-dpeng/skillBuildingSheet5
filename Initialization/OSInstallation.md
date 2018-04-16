@@ -1,8 +1,8 @@
 ## RaspberryPi OS Installation w/ Kivy Instructions:
 
-1. Download KivyPi 0.9B from http://kivypie.mitako.eu/kivy-download.html (NOT version 1.0)
-2. Flash .zip image to SD card using Etcher: https://etcher.io/ or another SD Card flash software. Make sure your SD card is at least 8gb.
-3. Login with default username and password (username: sysop password: posys)
+1. Obtain a Raspbian Kivy image from Ken or download it from INSERT_LINK_HERE. 
+2. Flash .img image to SD card using Etcher: https://etcher.io/ or another SD Card flash software. Make sure your SD card is at least 8gb.
+3. Login with username and password (username: pi password: dpea7266!)
 4. Make sure an ethernet cable is plugged in or follow steps to connect to wifi.  
 Wifi Instructions  
 4a. Set wifi credentials - `sudo pipaos-setwifi DPEA greatacademy`  
@@ -27,3 +27,4 @@ Optional - Install Ninja IDE text editor
 19. Run `sudo apt-add-repository ppa:ninja-ide-developers/ninja-ide-stable` - Will probably crash but its ok
 20. Run `sudo apt-get update` then `sudo apt-get install ninja-ide`
 21. Launch IDE by running `ninja-ide` from any bash session
+
