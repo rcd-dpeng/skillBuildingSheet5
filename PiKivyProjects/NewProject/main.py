@@ -29,6 +29,7 @@ class MyApp(App):
         return sm
 
 Builder.load_file('main.kv')
+Builder.load_file('DPEAButton.kv')
 Window.clearcolor = (0.1, 0.1, 0.1, 1) # (DARKGREY)
 
 
