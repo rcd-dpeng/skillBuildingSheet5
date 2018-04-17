@@ -24,7 +24,7 @@ export DPEA_PROCESS="main.py \-\- \-\-fan \-\-begin"
 
 To execute the launcher.sh in a command shell:
 
-     . launch.sh \<Project Directory Name\>
+     . launch.sh <Project Directory Name>
 
 for example:
 
@@ -32,11 +32,19 @@ for example:
 
 ### Add the script to a Cron Job
 
-A cron job always are script to be run at a certain time interval: every minute, hour, day, etc. 
+A cron job allows a script to be run at a certain time interval: every minute, hour, day, etc. This is useful if you want to use the launcher script to periodically check if you process is not running (e.g. it crashed) and automatically restart the process. To run you the launcher script in a cron job do the following:
 
-crontab -e
+To edit the cron file, execute the following command in the terminal:
 
-\* \* \* \* \* sudo su - pi launcher.sh \<Project Directory Name\>
+    crontab -e
+
+Add the following line to the bottom of the cron file:
+
+    \*/5 \* \* \* \* sudo su - pi launcher.sh <Project Directory Name>
+
+This will execute the launcher script every 5 minutes.  For more information on how to configure the time you cron job is executed refer to the following link:
+
+    https://corenominal.org/2016/05/12/howto-setup-a-crontab-file/
 
 
 ## updater.sh
