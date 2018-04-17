@@ -40,7 +40,7 @@ To edit the cron file, execute the following command in the terminal:
 
 Add the following line to the bottom of the cron file:
 
-    \*/5 \* \* \* \* sudo su - pi launcher.sh <Project Directory Name>
+    */5 * * * * sudo su - pi launcher.sh <Project Directory Name>
 
 This will execute the launcher script every 5 minutes.  For more information on how to configure the time you cron job is executed refer to the following link:
 
