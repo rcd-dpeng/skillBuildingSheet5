@@ -14,7 +14,7 @@ Wifi Instructions
 9. Launch raspi-config - `sudo raspi-config`
 10. Disable overscan (Advanced Options)
 11. Set boot option to Boot to desktop and autologin (usually option 4 in Boot Options)
-12. Enable SPI, I2C & Serial in Advanced options
+12. Enable SPI, I2C & Serial in Interface options
 13. Select finish and reboot
 14. Open bash session (Click > Applications > Shells > Bash)
 15. Install Slush - `sudo wget https://raw.githubusercontent.com/Roboteurs/slushengine/master/install.pl -O - | perl`
