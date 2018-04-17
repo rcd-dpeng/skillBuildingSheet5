@@ -1,6 +1,6 @@
 # Raspberry Pi Scripts
 
-The scripts in the directory support the continuous running and maintainence of a project which has been deployed to the field.  This document describes how to install and run each script.  NOTE: These scripts are designed to help keep applications running and maintained without human interaction. You should fully understand what they do before installing.
+The scripts in this directory support the continuous running and maintainence of a project which has been deployed to the field.  This document describes how to install and run each script.  NOTE: These scripts are designed to help keep applications running and maintained without human interaction. You should fully understand what they do before installing.
 
 launcher.sh : This script will launch the main UI of your project. This script first checks to see if the application is already running, if so, it does nothing.  Otherwise, it will launch the application.  If the application is running in the field.  This script should be executed in a cron job (see instructions below) to periodically check to see if the application is still running.  If the application has crashed, it will auto restart it.
 
@@ -44,7 +44,7 @@ Add the following line to the bottom of the cron file:
 
 This will execute the launcher script every 5 minutes.  For more information on how to configure the time you cron job is executed refer to the following link:
 
-    https://corenominal.org/2016/05/12/howto-setup-a-crontab-file/
+https://corenominal.org/2016/05/12/howto-setup-a-crontab-file/
 
 
 ## updater.sh
