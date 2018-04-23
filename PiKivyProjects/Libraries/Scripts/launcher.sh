@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DPEA_REPO_ROOT=~/git/
+DPEA_REPO_ROOT=/home/pi/Documents/
 PROCESS="main.py"
 
 if test "$#" -ne 1; then
@@ -15,12 +15,12 @@ if [ -z "$DPEA_REPO_ROOT" ]; then
     echo ""
     echo "You must set the 'DPEA_REPO_ROOT' env variable to the root of the project"
     echo ""
-    echo "example: export DPEA_REPO_ROOT=~/git/"
+    echo "example: export DPEA_REPO_ROOT=/home/pi/Documents/"
     return
 fi
 
 
-RESULT=`ps -ef | grep -v sed | grep -v grep | sed -n /$\${PROCESS}/p` 
+RESULT=`ps -ef | grep -v sed | grep -v grep | sed -n /\${PROCESS}/p` 
 
 pushd `pwd`
 cd $DPEA_REPO_ROOT/$1
@@ -28,7 +28,6 @@ cd $DPEA_REPO_ROOT/$1
 if [ "${RESULT:-null}" = null ]; then
     echo "Launching"
     python ${PROCESS}
-#    python main.py -- --fan --begin
 else
     echo "running"
 fi
