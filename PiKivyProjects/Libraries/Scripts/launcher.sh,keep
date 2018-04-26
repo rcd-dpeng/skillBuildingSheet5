@@ -1,0 +1,40 @@
+#!/bin/sh
+
+[[ -z "${DPEA_REPO_ROOT}" ]] && DPEA_REPO_ROOT='/home/pi/Documents' || DPEA_REPO_ROOT="${DPEA_REPO_ROOT}"
+[[ -z "${DPEA_PROCESS}" ]] && DPEA_PROCESS='main.py' || DPEA_PROCESS="${DPEA_PROCESS}"
+
+if test "$#" -ne 1; then
+    echo "Usage: launcher.sh 'Project Name'"
+    echo ""
+    echo "example: . launch.sh InfinityMirrorPie"
+    echo ""
+    return
+fi
+
+if [ ! -d "$DPEA_REPO_ROOT/$1" ]; then
+    echo ""
+    echo "The $DPEA_REPO_ROOT/$1 project directory does not exists"
+    echo ""
+    return
+fi
+
+if [ ! -d "$DPEA_REPO_ROOT/$1/${DPEA_PROCESS}" ]; then
+    echo ""
+    echo "The $DPEA_REPO_ROOT/$1/${DPEA_PROCESS} file does not exists"
+    echo ""
+    return
+fi
+
+RESULT=`ps -ef | grep -v sed | grep -v grep | sed -n /$\${DPEA_PROCESS}/p` 
+
+pushd `pwd`
+cd $DPEA_REPO_ROOT/$1
+
+if [ "${RESULT:-null}" = null ]; then
+    echo "Launching"
+    python ${DPEA_PROCESS}
+else
+    echo "running"
+fi
+
+popd

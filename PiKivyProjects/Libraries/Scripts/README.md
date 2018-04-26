@@ -24,7 +24,7 @@ export DPEA_PROCESS="main.py \-\- \-\-fan \-\-begin"
 
 To execute the launcher script in a command shell:
 
-     . launch.sh <Project Directory Name>
+     . launcher.sh <Project Directory Name>
 
 for example:
 
