@@ -22,6 +22,7 @@ pushd `pwd`
 echo  "Checking updates for $1"
 cd $DPEA_REPO_ROOT/$1
 
+git remote set-url origin https://<USERNAME>:<PASSWORD>@github.com/dpengineering/$1
 git fetch
 git diff --quiet origin/HEAD --
 result=$?
