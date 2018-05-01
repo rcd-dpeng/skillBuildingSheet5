@@ -18,6 +18,7 @@ A button that's a colored, rounded rectangle with a drop shadow. Text has a bold
 ### Required Setup
 
 Build the ```DPEAButton.kv``` into your main python file (the one you run to launch the UI) by using ```Builder.load_file('DPEAButton.kv')```
+(This line is already included in the RaspberryPiCommon/PiKivyProjects/NewProject template)
 
 In your kivy file, add these four required lines of code to declare a ```DPEAButton```:
 ```
