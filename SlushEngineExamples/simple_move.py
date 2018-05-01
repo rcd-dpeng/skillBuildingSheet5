@@ -12,7 +12,7 @@ stepmove = 300000
 
 #setup the Slushengine
 b = Slush.sBoard()
-axis1 = Slush.Motor(0)
+axis1 = Slush.Motor(3)
 axis1.resetDev()
 axis1.setCurrent(20, 20, 20, 20)
 
