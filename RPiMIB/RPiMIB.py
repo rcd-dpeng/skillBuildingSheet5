@@ -9,13 +9,15 @@ from time import sleep
 ##GPIO.setup(15, GPIO.IN)
 
 # set up SPI between the Raspberry Pi and the PiMIB board
-spi = spidev.SpiDev()
-spiFrequency = 1000000
+global spi = spidev.SpiDev()
+global spiFrequency = 1000000
 
 
 
 #takes 0, 1, or 2
 def readEncoder(encoder):
+    global spi
+    global spiFrequency
     spi.open(0,0)
     spi.xfer([0x00, 0x10], spiFrequency, 1)                      # sending this command tells PiMIB to send back encoder data
     enc0_list_of_bytes = spi.xfer([0x00, 0x00], spiFrequency, 1)  # getting data for encoder A
@@ -44,12 +46,16 @@ def readEncoder(encoder):
     spi.close()
 
 def sendSPI(address, data1, data2):
+    global spi
+    global spiFrequency
     spi.open(0,0)
     spi.xfer([0x00, address], spiFrequency, 1)  # command to write the next data to Function Generator 1
     spi.xfer([data1, data2], spiFrequency, 1)  #  data 0x1234 sent to function generator 1 using the SPI connector 1
     spi.close()
-
+        
 def sendI2C(address, data):
+    global spi
+    global spiFrequency
     spi.open(0,0)
     spi.xfer([0x00, 0x80], spiFrequency, 1)  #command to write following data over I2C on connector 1
     spi.xfer([address, data], spiFrequency, 1)  # I2C write to IC address 0x41 with data 0x17  0x41 = Amp1
