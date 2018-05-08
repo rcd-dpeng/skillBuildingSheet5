@@ -12,7 +12,7 @@ class Amp():
         # LEFT SOLDERED = 2
         # RIGHT SOLDERED = 1
         # pls DON'T solder both pls
-        def __init__(ad):
+        def __init__(self, ad):
                 self.address = ad | 0x48
                 
         def setVolume(vol):
@@ -24,7 +24,7 @@ class FG():
         # CHIP SELECT 1
         # CHIP SELECT 2
         # CHIP SELECT 3
-        def __init__(chip):
+        def __init__(self, chip):
                 self.chipSelect = 0x10 << chip
                 self.MSB = 0
                 self.LSB = 0
