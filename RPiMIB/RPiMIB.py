@@ -1,3 +1,8 @@
+# To be used for the RPiMIB designed for the DPEA by Joe Kleeberg
+# Compiled by Hannah Kleidermacher, Francis Pan, and Doug Whetter
+# May 2018
+
+
 #! usr/bin/env python3
 import spidev
 import os
@@ -21,7 +26,7 @@ spiFrequency = 1000000
 def readEncoder(encoder):
     global spi
     global spiFrequency
-    spi.open(0,0)
+    
     spi.xfer([0x00, 0x10], spiFrequency, 1)                      # sending this command tells PiMIB to send back encoder data
     enc0_list_of_bytes = spi.xfer([0x00, 0x00], spiFrequency, 1)  # getting data for encoder A
     enc1_list_of_bytes = spi.xfer([0x00, 0x00], spiFrequency, 1)
@@ -33,37 +38,35 @@ def readEncoder(encoder):
     if encoder == 0:
         if (enc0 & 0xf000) :         # encoder has 12-bit value  PiMIB sends back xF000 if encoder not pulgged in
             print("Encoder A not plugged in")
-        else :
-            return enca
+        return enca
+    
     if encoder == 1:
         if (enc1 & 0xf000) :
             print("Encoder B not plugged in")
-        else :
-            return encb
+        return encb
+    
     if encoder == 2:
         if (enc2 & 0xf000) :
             print("Encoder C not plugged in")
-        else :
-            return encc
+        return encc
 
+def openSpi():
+    spi.open(0,0)
+
+def closeSpi():
     spi.close()
-
+    
 def sendSPI(address, data1, data2):
     global spi
     global spiFrequency
-    spi.open(0,0)
     spi.xfer([0x00, address], spiFrequency, 1)  # command to write the next data to Function Generator 1
     spi.xfer([data1, data2], spiFrequency, 1)  #  data 0x1234 sent to function generator 1 using the SPI connector 1
-    spi.close()
         
 def sendI2C(address, data):
     global spi
     global spiFrequency
-    spi.open(0,0)
     spi.xfer([0x00, 0x80], spiFrequency, 1)  #command to write following data over I2C on connector 1
     spi.xfer([address, data], spiFrequency, 1)  # I2C write to IC address 0x41 with data 0x17  0x41 = Amp1
-    spi.close()
-
 
 def cleanup():
     global spi
