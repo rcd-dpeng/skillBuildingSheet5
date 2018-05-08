@@ -2,15 +2,18 @@
 import spidev
 import os
 from time import sleep
-##import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
+from threading import Thread
 
-##GPIO.setmode(GPIO.BOARD)
-##GPIO.setup(40, GPIO.IN)    
-##GPIO.setup(15, GPIO.IN)
+SHUTDOWN_PORT = 21
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(SHUTDOWN_PORT, GPIO.IN)    
+GPIO.setup(22, GPIO.IN)
 
 # set up SPI between the Raspberry Pi and the PiMIB board
-global spi = spidev.SpiDev()
-global spiFrequency = 1000000
+spi = spidev.SpiDev()
+spiFrequency = 1000000
 
 
 
@@ -60,3 +63,26 @@ def sendI2C(address, data):
     spi.xfer([0x00, 0x80], spiFrequency, 1)  #command to write following data over I2C on connector 1
     spi.xfer([address, data], spiFrequency, 1)  # I2C write to IC address 0x41 with data 0x17  0x41 = Amp1
     spi.close()
+
+
+def cleanup():
+    global spi
+    spi.close()
+    GPIO.remove_event_detect(SHUTDOWN_PORT)
+    GPIO.cleanup()
+
+def shutdown():
+    cleanup();
+    print("Shutting down in 2 seconds")
+    sleep(2)
+#    os.system("sudo shutdown now -h")
+
+def shutdownHandler():
+    print("Shutdown Handler Started");
+    GPIO.wait_for_edge(SHUTDOWN_PORT, GPIO.FALLING)
+    shutdown()
+
+def startShutdownHandlerThread():
+    t = Thread(target=shutdownHandler)
+    t.start()
+
