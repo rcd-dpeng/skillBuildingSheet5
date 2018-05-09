@@ -68,6 +68,19 @@ def sendI2C(address, data):
     spi.xfer([0x00, 0x80], spiFrequency, 1)  #command to write following data over I2C on connector 1
     spi.xfer([address, data], spiFrequency, 1)  # I2C write to IC address 0x41 with data 0x17  0x41 = Amp1
 
+def sendPWM(pin, data):
+    if (data > 2000) : 
+        data = 2000
+    elif (data <1000):
+        data = 1000
+        
+    MsByte = data >> 8
+    LsByte = data & 0x00ff
+        
+    address = pin - 3
+    spi.xfer([address, 0x00], spiFrequency, 1)  #command to write following data to pwm_a   
+    spi.xfer([MsByte, LsByte], spiFrequency, 1)
+
 def cleanup():
     global spi
     spi.close()
