@@ -3,7 +3,7 @@
 # May 2018
 
 from time import sleep
-from RPiMIB import *
+import RPiMIB
 
 freq_clock = 16000000 #Hz
         
@@ -15,7 +15,7 @@ class Amp():
         def __init__(self, ad):
                 self.address = ad | 0x48
                 
-        def setVolume(vol):
+        def setVolume(self, vol):
                 # VOLUME 0-36
                 self.volume = vol
                 RPiMIB.sendI2C(self.address, vol)
@@ -30,13 +30,13 @@ class FG():
                 self.LSB = 0
                 self.phase = 0
 
-        def openData(port):
+        def openData(self, port):
                 sendFreq(0x2100, port)
 
-        def closeData(port):
+        def closeData(self, port):
                 sendFreq(0x2000, port)
         
-        def sendData(input):
+        def sendData(self, input):
                 data1 = input >> 8
                 data2 = input & 0xFF
         
@@ -44,7 +44,7 @@ class FG():
 	
                 print(input)
                 
-        def sendFreq(freq):
+        def sendFreq(self, freq):
                 global freq_clock
                 #0x10000000 = 2^28
                 #calculation for the frequency: converts wanted frequency to a 28-bit number, then scales by clock frequency
