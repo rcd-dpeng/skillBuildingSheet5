@@ -50,10 +50,10 @@ def readEncoder(encoder):
             print("Encoder C not plugged in")
         return encc
 
-def openSpi():
+def openSPI():
     spi.open(0,0)
 
-def closeSpi():
+def closeSPI():
     spi.close()
     
 def sendSPI(address, data1, data2):
