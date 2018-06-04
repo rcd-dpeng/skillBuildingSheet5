@@ -1,6 +1,6 @@
 # Creating a Startup Script on a Raspberry Pi
 
-When creating a UI using a Raspberry Pi and a Slush Engine, it is desirable for your UI script to run as soon as the Raspberry Pi loads the display. Note that there are **very many** ways of accomplishing this, so the steps listed below may differ from some online guides. These steps were tested on Raspbian Stretch Lite with the RPD desktop environment installed.
+When creating a UI using a Raspberry Pi and a Slush Engine, it is desirable for your UI script to run as soon as the Raspberry Pi loads the display. Note that there are **very many** ways of accomplishing this, so the steps listed below may differ from some online guides.
 
 # Steps:
 
