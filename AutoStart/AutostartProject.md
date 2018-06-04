@@ -19,3 +19,9 @@ When creating a UI using a Raspberry Pi and a Slush Engine, it is desirable for 
 8. If it doesn't work check to see if your paths to your launcher script, and that your auncher script works.
 
 Ensure that the password on the Raspberry Pi is disabled upon startup.
+
+You may need to add a system path for your imports example:
+
+`import sys`
+
+`sys.path.insert(0, '/usr/local/lib/python2.7/dist-packages')`
