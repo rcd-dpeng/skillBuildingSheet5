@@ -17,3 +17,5 @@ When creating a UI using a Raspberry Pi and a Slush Engine, it is desirable for 
 6. Enter the line at the bottom `@reboot sh /path/to/your/launcher/script`
 7. Reboot the pi and test if it works.
 8. If it doesn't work check to see if your paths to your launcher script, and that your auncher script works.
+
+Ensure that the password on the Raspberry Pi is disabeled upon startup.
