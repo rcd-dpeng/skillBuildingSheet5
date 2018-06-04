@@ -8,6 +8,7 @@ When creating a UI using a Raspberry Pi and a Slush Engine, it is desirable for 
 2. Edit the shell script so it navigates into your directory and runs your main python script, examle:
 
 `cd /Documents/NewtonsCradle`
+
 `python3 main.py`
 
 3. Make the launcher script and your python main script executable by running `chmod u+x filename` in your projects source code directory ex. `chmod u+x main.py`. Don't forget to do this for your main python file and the launcher script.
