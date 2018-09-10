@@ -1,0 +1,588 @@
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Timer_Interrupt_Handler,"ax",%progbits
+  20              		.align	2
+  21              		.global	Timer_Interrupt_Handler
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	Timer_Interrupt_Handler, %function
+  25              	Timer_Interrupt_Handler:
+  26              	.LFB63:
+  27              		.file 1 "main.c"
+   1:main.c        **** /******************************************************************************
+   2:main.c        **** * File Name: main.c
+   3:main.c        **** *
+   4:main.c        **** * Version: 1.10
+   5:main.c        **** *
+   6:main.c        **** * Description: This is the source code for the Blinking LED code example.
+   7:main.c        **** *
+   8:main.c        **** * Related Document: CE195352_PSoC_5LP_Blinking_LED.pdf
+   9:main.c        **** *
+  10:main.c        **** * Hardware Dependency: See CE195352_PSoC_5LP_Blinking_LED.pdf
+  11:main.c        **** *
+  12:main.c        **** *******************************************************************************
+  13:main.c        **** * Copyright (2018), Cypress Semiconductor Corporation. All rights reserved.
+  14:main.c        **** *******************************************************************************
+  15:main.c        **** * This software, including source code, documentation and related materials
+  16:main.c        **** * (“Software”), is owned by Cypress Semiconductor Corporation or one of its
+  17:main.c        **** * subsidiaries (“Cypress”) and is protected by and subject to worldwide patent
+  18:main.c        **** * protection (United States and foreign), United States copyright laws and
+  19:main.c        **** * international treaty provisions. Therefore, you may use this Software only
+  20:main.c        **** * as provided in the license agreement accompanying the software package from
+  21:main.c        **** * which you obtained this Software (“EULA”).
+  22:main.c        **** *
+  23:main.c        **** * If no EULA applies, Cypress hereby grants you a personal, nonexclusive,
+  24:main.c        **** * non-transferable license to copy, modify, and compile the Software source
+  25:main.c        **** * code solely for use in connection with Cypress’s integrated circuit products.
+  26:main.c        **** * Any reproduction, modification, translation, compilation, or representation
+  27:main.c        **** * of this Software except as specified above is prohibited without the express
+  28:main.c        **** * written permission of Cypress.
+  29:main.c        **** *
+  30:main.c        **** * Disclaimer: THIS SOFTWARE IS PROVIDED AS-IS, WITH NO WARRANTY OF ANY KIND, 
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 2
+
+
+  31:main.c        **** * EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT, IMPLIED 
+  32:main.c        **** * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. Cypress 
+  33:main.c        **** * reserves the right to make changes to the Software without notice. Cypress 
+  34:main.c        **** * does not assume any liability arising out of the application or use of the 
+  35:main.c        **** * Software or any product or circuit described in the Software. Cypress does 
+  36:main.c        **** * not authorize its products for use in any products where a malfunction or 
+  37:main.c        **** * failure of the Cypress product may reasonably be expected to result in 
+  38:main.c        **** * significant property damage, injury or death (“High Risk Product”). By 
+  39:main.c        **** * including Cypress’s product in a High Risk Product, the manufacturer of such 
+  40:main.c        **** * system or application assumes all risk of such use and in doing so agrees to 
+  41:main.c        **** * indemnify Cypress against all liability.
+  42:main.c        **** *******************************************************************************/
+  43:main.c        **** 
+  44:main.c        **** #include <project.h>
+  45:main.c        **** 
+  46:main.c        **** 
+  47:main.c        **** CY_ISR(Timer_Interrupt_Handler){
+  28              		.loc 1 47 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 1, uses_anonymous_args = 0
+  32 0000 80B5     		push	{r7, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 7, -8
+  35              		.cfi_offset 14, -4
+  36 0002 00AF     		add	r7, sp, #0
+  37              		.cfi_def_cfa_register 7
+  48:main.c        ****     Timer_ReadStatusRegister();
+  38              		.loc 1 48 0
+  39 0004 FFF7FEFF 		bl	Timer_ReadStatusRegister
+  49:main.c        ****     
+  50:main.c        ****     
+  51:main.c        ****     PWM_Out_Write( ~PWM_Out_Read());
+  40              		.loc 1 51 0
+  41 0008 FFF7FEFF 		bl	PWM_Out_Read
+  42 000c 0346     		mov	r3, r0
+  43 000e DB43     		mvns	r3, r3
+  44 0010 DBB2     		uxtb	r3, r3
+  45 0012 1846     		mov	r0, r3
+  46 0014 FFF7FEFF 		bl	PWM_Out_Write
+  52:main.c        ****     
+  53:main.c        ****     isr_1_ClearPending();
+  47              		.loc 1 53 0
+  48 0018 FFF7FEFF 		bl	isr_1_ClearPending
+  54:main.c        **** }
+  49              		.loc 1 54 0
+  50 001c 00BF     		nop
+  51 001e 80BD     		pop	{r7, pc}
+  52              		.cfi_endproc
+  53              	.LFE63:
+  54              		.size	Timer_Interrupt_Handler, .-Timer_Interrupt_Handler
+  55              		.section	.text.main,"ax",%progbits
+  56              		.align	2
+  57              		.global	main
+  58              		.thumb
+  59              		.thumb_func
+  60              		.type	main, %function
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 3
+
+
+  61              	main:
+  62              	.LFB64:
+  55:main.c        **** 
+  56:main.c        **** 
+  57:main.c        **** /*******************************************************************************
+  58:main.c        **** * Function Name: main
+  59:main.c        **** ********************************************************************************
+  60:main.c        **** *
+  61:main.c        **** * Summary:
+  62:main.c        **** *  The PWM is configured and started in the PWM_1_Start() function.
+  63:main.c        **** *  The firmware then enters an idle loop, leaving control of the project
+  64:main.c        **** *  to the fixed function PWM peripheral.
+  65:main.c        **** *
+  66:main.c        **** * Parameters:
+  67:main.c        **** *  None.
+  68:main.c        **** *
+  69:main.c        **** * Return:
+  70:main.c        **** *  None.
+  71:main.c        **** *
+  72:main.c        **** *******************************************************************************/
+  73:main.c        **** int main()
+  74:main.c        **** {
+  63              		.loc 1 74 0
+  64              		.cfi_startproc
+  65              		@ args = 0, pretend = 0, frame = 0
+  66              		@ frame_needed = 1, uses_anonymous_args = 0
+  67 0000 80B5     		push	{r7, lr}
+  68              		.cfi_def_cfa_offset 8
+  69              		.cfi_offset 7, -8
+  70              		.cfi_offset 14, -4
+  71 0002 00AF     		add	r7, sp, #0
+  72              		.cfi_def_cfa_register 7
+  75:main.c        ****     
+  76:main.c        ****     isr_1_StartEx( Timer_Interrupt_Handler );
+  73              		.loc 1 76 0
+  74 0004 0248     		ldr	r0, .L4
+  75 0006 FFF7FEFF 		bl	isr_1_StartEx
+  77:main.c        ****    
+  78:main.c        ****     /* Prepare components */
+  79:main.c        ****     Timer_Start();
+  76              		.loc 1 79 0
+  77 000a FFF7FEFF 		bl	Timer_Start
+  78              	.L3:
+  80:main.c        ****     
+  81:main.c        ****     for (;;)
+  82:main.c        ****     {}
+  79              		.loc 1 82 0 discriminator 1
+  80 000e FEE7     		b	.L3
+  81              	.L5:
+  82              		.align	2
+  83              	.L4:
+  84 0010 00000000 		.word	Timer_Interrupt_Handler
+  85              		.cfi_endproc
+  86              	.LFE64:
+  87              		.size	main, .-main
+  88              		.text
+  89              	.Letext0:
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 4
+
+
+  90              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+  91              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+  92              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+  93              		.section	.debug_info,"",%progbits
+  94              	.Ldebug_info0:
+  95 0000 D8000000 		.4byte	0xd8
+  96 0004 0400     		.2byte	0x4
+  97 0006 00000000 		.4byte	.Ldebug_abbrev0
+  98 000a 04       		.byte	0x4
+  99 000b 01       		.uleb128 0x1
+ 100 000c EF000000 		.4byte	.LASF18
+ 101 0010 0C       		.byte	0xc
+ 102 0011 2E000000 		.4byte	.LASF19
+ 103 0015 3A000000 		.4byte	.LASF20
+ 104 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 105 001d 00000000 		.4byte	0
+ 106 0021 00000000 		.4byte	.Ldebug_line0
+ 107 0025 02       		.uleb128 0x2
+ 108 0026 01       		.byte	0x1
+ 109 0027 06       		.byte	0x6
+ 110 0028 AD010000 		.4byte	.LASF0
+ 111 002c 02       		.uleb128 0x2
+ 112 002d 01       		.byte	0x1
+ 113 002e 08       		.byte	0x8
+ 114 002f 7D010000 		.4byte	.LASF1
+ 115 0033 02       		.uleb128 0x2
+ 116 0034 02       		.byte	0x2
+ 117 0035 05       		.byte	0x5
+ 118 0036 D5010000 		.4byte	.LASF2
+ 119 003a 02       		.uleb128 0x2
+ 120 003b 02       		.byte	0x2
+ 121 003c 07       		.byte	0x7
+ 122 003d 0E000000 		.4byte	.LASF3
+ 123 0041 03       		.uleb128 0x3
+ 124 0042 C5010000 		.4byte	.LASF9
+ 125 0046 02       		.byte	0x2
+ 126 0047 3F       		.byte	0x3f
+ 127 0048 4C000000 		.4byte	0x4c
+ 128 004c 02       		.uleb128 0x2
+ 129 004d 04       		.byte	0x4
+ 130 004e 05       		.byte	0x5
+ 131 004f 90010000 		.4byte	.LASF4
+ 132 0053 02       		.uleb128 0x2
+ 133 0054 04       		.byte	0x4
+ 134 0055 07       		.byte	0x7
+ 135 0056 AE000000 		.4byte	.LASF5
+ 136 005a 02       		.uleb128 0x2
+ 137 005b 08       		.byte	0x8
+ 138 005c 05       		.byte	0x5
+ 139 005d 00000000 		.4byte	.LASF6
+ 140 0061 02       		.uleb128 0x2
+ 141 0062 08       		.byte	0x8
+ 142 0063 07       		.byte	0x7
+ 143 0064 C0000000 		.4byte	.LASF7
+ 144 0068 04       		.uleb128 0x4
+ 145 0069 04       		.byte	0x4
+ 146 006a 05       		.byte	0x5
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 5
+
+
+ 147 006b 696E7400 		.ascii	"int\000"
+ 148 006f 02       		.uleb128 0x2
+ 149 0070 04       		.byte	0x4
+ 150 0071 07       		.byte	0x7
+ 151 0072 21000000 		.4byte	.LASF8
+ 152 0076 03       		.uleb128 0x3
+ 153 0077 DF010000 		.4byte	.LASF10
+ 154 007b 03       		.byte	0x3
+ 155 007c 2C       		.byte	0x2c
+ 156 007d 41000000 		.4byte	0x41
+ 157 0081 02       		.uleb128 0x2
+ 158 0082 04       		.byte	0x4
+ 159 0083 04       		.byte	0x4
+ 160 0084 CF010000 		.4byte	.LASF11
+ 161 0088 02       		.uleb128 0x2
+ 162 0089 08       		.byte	0x8
+ 163 008a 04       		.byte	0x4
+ 164 008b 99010000 		.4byte	.LASF12
+ 165 008f 02       		.uleb128 0x2
+ 166 0090 01       		.byte	0x1
+ 167 0091 08       		.byte	0x8
+ 168 0092 8B010000 		.4byte	.LASF13
+ 169 0096 02       		.uleb128 0x2
+ 170 0097 08       		.byte	0x8
+ 171 0098 04       		.byte	0x4
+ 172 0099 B9010000 		.4byte	.LASF14
+ 173 009d 02       		.uleb128 0x2
+ 174 009e 04       		.byte	0x4
+ 175 009f 07       		.byte	0x7
+ 176 00a0 E7010000 		.4byte	.LASF15
+ 177 00a4 05       		.uleb128 0x5
+ 178 00a5 D7000000 		.4byte	.LASF16
+ 179 00a9 01       		.byte	0x1
+ 180 00aa 2F       		.byte	0x2f
+ 181 00ab 00000000 		.4byte	.LFB63
+ 182 00af 20000000 		.4byte	.LFE63-.LFB63
+ 183 00b3 01       		.uleb128 0x1
+ 184 00b4 9C       		.byte	0x9c
+ 185 00b5 06       		.uleb128 0x6
+ 186 00b6 35000000 		.4byte	.LASF17
+ 187 00ba 01       		.byte	0x1
+ 188 00bb 49       		.byte	0x49
+ 189 00bc 68000000 		.4byte	0x68
+ 190 00c0 00000000 		.4byte	.LFB64
+ 191 00c4 14000000 		.4byte	.LFE64-.LFB64
+ 192 00c8 01       		.uleb128 0x1
+ 193 00c9 9C       		.byte	0x9c
+ 194 00ca 07       		.uleb128 0x7
+ 195 00cb A0010000 		.4byte	.LASF21
+ 196 00cf 04       		.byte	0x4
+ 197 00d0 1207     		.2byte	0x712
+ 198 00d2 D6000000 		.4byte	0xd6
+ 199 00d6 08       		.uleb128 0x8
+ 200 00d7 76000000 		.4byte	0x76
+ 201 00db 00       		.byte	0
+ 202              		.section	.debug_abbrev,"",%progbits
+ 203              	.Ldebug_abbrev0:
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 6
+
+
+ 204 0000 01       		.uleb128 0x1
+ 205 0001 11       		.uleb128 0x11
+ 206 0002 01       		.byte	0x1
+ 207 0003 25       		.uleb128 0x25
+ 208 0004 0E       		.uleb128 0xe
+ 209 0005 13       		.uleb128 0x13
+ 210 0006 0B       		.uleb128 0xb
+ 211 0007 03       		.uleb128 0x3
+ 212 0008 0E       		.uleb128 0xe
+ 213 0009 1B       		.uleb128 0x1b
+ 214 000a 0E       		.uleb128 0xe
+ 215 000b 55       		.uleb128 0x55
+ 216 000c 17       		.uleb128 0x17
+ 217 000d 11       		.uleb128 0x11
+ 218 000e 01       		.uleb128 0x1
+ 219 000f 10       		.uleb128 0x10
+ 220 0010 17       		.uleb128 0x17
+ 221 0011 00       		.byte	0
+ 222 0012 00       		.byte	0
+ 223 0013 02       		.uleb128 0x2
+ 224 0014 24       		.uleb128 0x24
+ 225 0015 00       		.byte	0
+ 226 0016 0B       		.uleb128 0xb
+ 227 0017 0B       		.uleb128 0xb
+ 228 0018 3E       		.uleb128 0x3e
+ 229 0019 0B       		.uleb128 0xb
+ 230 001a 03       		.uleb128 0x3
+ 231 001b 0E       		.uleb128 0xe
+ 232 001c 00       		.byte	0
+ 233 001d 00       		.byte	0
+ 234 001e 03       		.uleb128 0x3
+ 235 001f 16       		.uleb128 0x16
+ 236 0020 00       		.byte	0
+ 237 0021 03       		.uleb128 0x3
+ 238 0022 0E       		.uleb128 0xe
+ 239 0023 3A       		.uleb128 0x3a
+ 240 0024 0B       		.uleb128 0xb
+ 241 0025 3B       		.uleb128 0x3b
+ 242 0026 0B       		.uleb128 0xb
+ 243 0027 49       		.uleb128 0x49
+ 244 0028 13       		.uleb128 0x13
+ 245 0029 00       		.byte	0
+ 246 002a 00       		.byte	0
+ 247 002b 04       		.uleb128 0x4
+ 248 002c 24       		.uleb128 0x24
+ 249 002d 00       		.byte	0
+ 250 002e 0B       		.uleb128 0xb
+ 251 002f 0B       		.uleb128 0xb
+ 252 0030 3E       		.uleb128 0x3e
+ 253 0031 0B       		.uleb128 0xb
+ 254 0032 03       		.uleb128 0x3
+ 255 0033 08       		.uleb128 0x8
+ 256 0034 00       		.byte	0
+ 257 0035 00       		.byte	0
+ 258 0036 05       		.uleb128 0x5
+ 259 0037 2E       		.uleb128 0x2e
+ 260 0038 00       		.byte	0
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 7
+
+
+ 261 0039 3F       		.uleb128 0x3f
+ 262 003a 19       		.uleb128 0x19
+ 263 003b 03       		.uleb128 0x3
+ 264 003c 0E       		.uleb128 0xe
+ 265 003d 3A       		.uleb128 0x3a
+ 266 003e 0B       		.uleb128 0xb
+ 267 003f 3B       		.uleb128 0x3b
+ 268 0040 0B       		.uleb128 0xb
+ 269 0041 27       		.uleb128 0x27
+ 270 0042 19       		.uleb128 0x19
+ 271 0043 11       		.uleb128 0x11
+ 272 0044 01       		.uleb128 0x1
+ 273 0045 12       		.uleb128 0x12
+ 274 0046 06       		.uleb128 0x6
+ 275 0047 40       		.uleb128 0x40
+ 276 0048 18       		.uleb128 0x18
+ 277 0049 9642     		.uleb128 0x2116
+ 278 004b 19       		.uleb128 0x19
+ 279 004c 00       		.byte	0
+ 280 004d 00       		.byte	0
+ 281 004e 06       		.uleb128 0x6
+ 282 004f 2E       		.uleb128 0x2e
+ 283 0050 00       		.byte	0
+ 284 0051 3F       		.uleb128 0x3f
+ 285 0052 19       		.uleb128 0x19
+ 286 0053 03       		.uleb128 0x3
+ 287 0054 0E       		.uleb128 0xe
+ 288 0055 3A       		.uleb128 0x3a
+ 289 0056 0B       		.uleb128 0xb
+ 290 0057 3B       		.uleb128 0x3b
+ 291 0058 0B       		.uleb128 0xb
+ 292 0059 49       		.uleb128 0x49
+ 293 005a 13       		.uleb128 0x13
+ 294 005b 11       		.uleb128 0x11
+ 295 005c 01       		.uleb128 0x1
+ 296 005d 12       		.uleb128 0x12
+ 297 005e 06       		.uleb128 0x6
+ 298 005f 40       		.uleb128 0x40
+ 299 0060 18       		.uleb128 0x18
+ 300 0061 9642     		.uleb128 0x2116
+ 301 0063 19       		.uleb128 0x19
+ 302 0064 00       		.byte	0
+ 303 0065 00       		.byte	0
+ 304 0066 07       		.uleb128 0x7
+ 305 0067 34       		.uleb128 0x34
+ 306 0068 00       		.byte	0
+ 307 0069 03       		.uleb128 0x3
+ 308 006a 0E       		.uleb128 0xe
+ 309 006b 3A       		.uleb128 0x3a
+ 310 006c 0B       		.uleb128 0xb
+ 311 006d 3B       		.uleb128 0x3b
+ 312 006e 05       		.uleb128 0x5
+ 313 006f 49       		.uleb128 0x49
+ 314 0070 13       		.uleb128 0x13
+ 315 0071 3F       		.uleb128 0x3f
+ 316 0072 19       		.uleb128 0x19
+ 317 0073 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 8
+
+
+ 318 0074 19       		.uleb128 0x19
+ 319 0075 00       		.byte	0
+ 320 0076 00       		.byte	0
+ 321 0077 08       		.uleb128 0x8
+ 322 0078 35       		.uleb128 0x35
+ 323 0079 00       		.byte	0
+ 324 007a 49       		.uleb128 0x49
+ 325 007b 13       		.uleb128 0x13
+ 326 007c 00       		.byte	0
+ 327 007d 00       		.byte	0
+ 328 007e 00       		.byte	0
+ 329              		.section	.debug_aranges,"",%progbits
+ 330 0000 24000000 		.4byte	0x24
+ 331 0004 0200     		.2byte	0x2
+ 332 0006 00000000 		.4byte	.Ldebug_info0
+ 333 000a 04       		.byte	0x4
+ 334 000b 00       		.byte	0
+ 335 000c 0000     		.2byte	0
+ 336 000e 0000     		.2byte	0
+ 337 0010 00000000 		.4byte	.LFB63
+ 338 0014 20000000 		.4byte	.LFE63-.LFB63
+ 339 0018 00000000 		.4byte	.LFB64
+ 340 001c 14000000 		.4byte	.LFE64-.LFB64
+ 341 0020 00000000 		.4byte	0
+ 342 0024 00000000 		.4byte	0
+ 343              		.section	.debug_ranges,"",%progbits
+ 344              	.Ldebug_ranges0:
+ 345 0000 00000000 		.4byte	.LFB63
+ 346 0004 20000000 		.4byte	.LFE63
+ 347 0008 00000000 		.4byte	.LFB64
+ 348 000c 14000000 		.4byte	.LFE64
+ 349 0010 00000000 		.4byte	0
+ 350 0014 00000000 		.4byte	0
+ 351              		.section	.debug_line,"",%progbits
+ 352              	.Ldebug_line0:
+ 353 0000 6F010000 		.section	.debug_str,"MS",%progbits,1
+ 353      02003F01 
+ 353      00000201 
+ 353      FB0E0D00 
+ 353      01010101 
+ 354              	.LASF6:
+ 355 0000 6C6F6E67 		.ascii	"long long int\000"
+ 355      206C6F6E 
+ 355      6720696E 
+ 355      7400
+ 356              	.LASF3:
+ 357 000e 73686F72 		.ascii	"short unsigned int\000"
+ 357      7420756E 
+ 357      7369676E 
+ 357      65642069 
+ 357      6E7400
+ 358              	.LASF8:
+ 359 0021 756E7369 		.ascii	"unsigned int\000"
+ 359      676E6564 
+ 359      20696E74 
+ 359      00
+ 360              	.LASF19:
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 9
+
+
+ 361 002e 6D61696E 		.ascii	"main.c\000"
+ 361      2E6300
+ 362              	.LASF17:
+ 363 0035 6D61696E 		.ascii	"main\000"
+ 363      00
+ 364              	.LASF20:
+ 365 003a 443A5C44 		.ascii	"D:\\Documents\\DPEA_Projects\\RpiMIB\\InteruptTimer"
+ 365      6F63756D 
+ 365      656E7473 
+ 365      5C445045 
+ 365      415F5072 
+ 366 0069 5C434531 		.ascii	"\\CE195352_PSoC_5LP_Blinking_LED\\CE195352_PSoC_5LP"
+ 366      39353335 
+ 366      325F5053 
+ 366      6F435F35 
+ 366      4C505F42 
+ 367 009a 5F426C69 		.ascii	"_Blinking_LED.cydsn\000"
+ 367      6E6B696E 
+ 367      675F4C45 
+ 367      442E6379 
+ 367      64736E00 
+ 368              	.LASF5:
+ 369 00ae 6C6F6E67 		.ascii	"long unsigned int\000"
+ 369      20756E73 
+ 369      69676E65 
+ 369      6420696E 
+ 369      7400
+ 370              	.LASF7:
+ 371 00c0 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 371      206C6F6E 
+ 371      6720756E 
+ 371      7369676E 
+ 371      65642069 
+ 372              	.LASF16:
+ 373 00d7 54696D65 		.ascii	"Timer_Interrupt_Handler\000"
+ 373      725F496E 
+ 373      74657272 
+ 373      7570745F 
+ 373      48616E64 
+ 374              	.LASF18:
+ 375 00ef 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 375      43313120 
+ 375      352E342E 
+ 375      31203230 
+ 375      31363036 
+ 376 0122 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 376      20726576 
+ 376      6973696F 
+ 376      6E203233 
+ 376      37373135 
+ 377 0155 30202D66 		.ascii	"0 -ffunction-sections -ffat-lto-objects\000"
+ 377      66756E63 
+ 377      74696F6E 
+ 377      2D736563 
+ 377      74696F6E 
+ 378              	.LASF1:
+ 379 017d 756E7369 		.ascii	"unsigned char\000"
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccb73LtY.s 			page 10
+
+
+ 379      676E6564 
+ 379      20636861 
+ 379      7200
+ 380              	.LASF13:
+ 381 018b 63686172 		.ascii	"char\000"
+ 381      00
+ 382              	.LASF4:
+ 383 0190 6C6F6E67 		.ascii	"long int\000"
+ 383      20696E74 
+ 383      00
+ 384              	.LASF12:
+ 385 0199 646F7562 		.ascii	"double\000"
+ 385      6C6500
+ 386              	.LASF21:
+ 387 01a0 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 387      52784275 
+ 387      66666572 
+ 387      00
+ 388              	.LASF0:
+ 389 01ad 7369676E 		.ascii	"signed char\000"
+ 389      65642063 
+ 389      68617200 
+ 390              	.LASF14:
+ 391 01b9 6C6F6E67 		.ascii	"long double\000"
+ 391      20646F75 
+ 391      626C6500 
+ 392              	.LASF9:
+ 393 01c5 5F5F696E 		.ascii	"__int32_t\000"
+ 393      7433325F 
+ 393      7400
+ 394              	.LASF11:
+ 395 01cf 666C6F61 		.ascii	"float\000"
+ 395      7400
+ 396              	.LASF2:
+ 397 01d5 73686F72 		.ascii	"short int\000"
+ 397      7420696E 
+ 397      7400
+ 398              	.LASF10:
+ 399 01df 696E7433 		.ascii	"int32_t\000"
+ 399      325F7400 
+ 400              	.LASF15:
+ 401 01e7 73697A65 		.ascii	"sizetype\000"
+ 401      74797065 
+ 401      00
+ 402              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

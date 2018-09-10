@@ -1,0 +1,1067 @@
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.comm	txChannel,1,1
+  20              		.comm	txTD,1,1
+  21              		.comm	rxChannel,1,1
+  22              		.comm	rxTD,1,1
+  23              		.global	txBuffer
+  24              		.data
+  25              		.align	2
+  26              		.type	txBuffer, %object
+  27              		.size	txBuffer, 8
+  28              	txBuffer:
+  29 0000 00       		.byte	0
+  30 0001 01       		.byte	1
+  31 0002 02       		.byte	2
+  32 0003 03       		.byte	3
+  33 0004 04       		.byte	4
+  34 0005 05       		.byte	5
+  35 0006 06       		.byte	6
+  36 0007 07       		.byte	7
+  37              		.comm	rxBuffer,8,4
+  38              		.section	.text.main,"ax",%progbits
+  39              		.align	2
+  40              		.global	main
+  41              		.thumb
+  42              		.thumb_func
+  43              		.type	main, %function
+  44              	main:
+  45              	.LFB63:
+  46              		.file 1 "main.c"
+   1:main.c        **** /*******************************************************************************
+   2:main.c        **** * File Name: main.c
+   3:main.c        **** *
+   4:main.c        **** * Version: 1.10
+   5:main.c        **** *
+   6:main.c        **** * Description:
+   7:main.c        **** *  This is source code for example project of the SPI Master component.
+   8:main.c        **** *  Parameters used:
+   9:main.c        **** *   Mode                CPHA == 0, CPOL == 0                
+  10:main.c        **** *   Data lines          MOSI+MISO
+  11:main.c        **** *   Shift direction     MSB First
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 2
+
+
+  12:main.c        **** *   DataBits:           8 
+  13:main.c        **** *   Bit Rate            1 Mbps
+  14:main.c        **** *   Clock source        External 
+  15:main.c        **** *
+  16:main.c        **** *  SPI communication test using DMA. 8 bytes are transmitted
+  17:main.c        **** *  between SPI Master and SPI Slave.
+  18:main.c        **** *  Received data are displayed on LCD. 
+  19:main.c        **** *
+  20:main.c        **** ********************************************************************************
+  21:main.c        **** * Copyright 2012-2015, Cypress Semiconductor Corporation. All rights reserved.
+  22:main.c        **** * This software is owned by Cypress Semiconductor Corporation and is protected
+  23:main.c        **** * by and subject to worldwide patent and copyright laws and treaties.
+  24:main.c        **** * Therefore, you may use this software only as provided in the license agreement
+  25:main.c        **** * accompanying the software package from which you obtained this software.
+  26:main.c        **** * CYPRESS AND ITS SUPPLIERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+  27:main.c        **** * WITH REGARD TO THIS SOFTWARE, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT,
+  28:main.c        **** * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+  29:main.c        **** *******************************************************************************/
+  30:main.c        **** 
+  31:main.c        **** #include <project.h>
+  32:main.c        **** 
+  33:main.c        **** void DmaTxConfiguration(void);
+  34:main.c        **** void DmaRxConfiguration(void);
+  35:main.c        **** 
+  36:main.c        **** /* DMA Configuration for DMA_TX */
+  37:main.c        **** #define DMA_TX_BYTES_PER_BURST      (1u)
+  38:main.c        **** #define DMA_TX_REQUEST_PER_BURST    (1u)
+  39:main.c        **** #define DMA_TX_SRC_BASE             (CYDEV_SRAM_BASE)
+  40:main.c        **** #define DMA_TX_DST_BASE             (CYDEV_PERIPH_BASE)
+  41:main.c        **** 
+  42:main.c        **** /* DMA Configuration for DMA_RX */
+  43:main.c        **** #define DMA_RX_BYTES_PER_BURST      (1u)
+  44:main.c        **** #define DMA_RX_REQUEST_PER_BURST    (1u)
+  45:main.c        **** #define DMA_RX_SRC_BASE             (CYDEV_PERIPH_BASE)
+  46:main.c        **** #define DMA_RX_DST_BASE             (CYDEV_SRAM_BASE)
+  47:main.c        **** 
+  48:main.c        **** #define BUFFER_SIZE                 (8u)
+  49:main.c        **** #define STORE_TD_CFG_ONCMPLT        (1u)
+  50:main.c        **** 
+  51:main.c        **** /* Variable declarations for DMA_TX*/
+  52:main.c        **** uint8 txChannel;
+  53:main.c        **** uint8 txTD;
+  54:main.c        **** 
+  55:main.c        **** /* Variable declarations for DMA_RX */
+  56:main.c        **** uint8 rxChannel;
+  57:main.c        **** uint8 rxTD;
+  58:main.c        **** 
+  59:main.c        **** /* Data buffers */
+  60:main.c        **** uint8 txBuffer [BUFFER_SIZE] = {0x0u, 0x01u, 0x02u, 0x03u, 0x04u, 0x05u, 0x06u, 0x07u};
+  61:main.c        **** uint8 rxBuffer[BUFFER_SIZE];
+  62:main.c        **** 
+  63:main.c        **** /*******************************************************************************
+  64:main.c        **** * Function Name: main
+  65:main.c        **** ********************************************************************************
+  66:main.c        **** * Summary:
+  67:main.c        **** *  Main function performs following functions:
+  68:main.c        **** *   1. Starts Character LCD and print project info
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 3
+
+
+  69:main.c        **** *   2. Starts SPI Master component
+  70:main.c        **** *   3. Configures the DMA transfer for RX and TX directions
+  71:main.c        **** *   4. Displays the results on Character LCD
+  72:main.c        **** *   
+  73:main.c        **** * Parameters:
+  74:main.c        **** *  None.
+  75:main.c        **** *
+  76:main.c        **** * Return:
+  77:main.c        **** *  None.
+  78:main.c        **** *
+  79:main.c        **** *******************************************************************************/
+  80:main.c        **** int main()
+  81:main.c        **** {
+  47              		.loc 1 81 0
+  48              		.cfi_startproc
+  49              		@ args = 0, pretend = 0, frame = 8
+  50              		@ frame_needed = 1, uses_anonymous_args = 0
+  51 0000 80B5     		push	{r7, lr}
+  52              		.cfi_def_cfa_offset 8
+  53              		.cfi_offset 7, -8
+  54              		.cfi_offset 14, -4
+  55 0002 82B0     		sub	sp, sp, #8
+  56              		.cfi_def_cfa_offset 16
+  57 0004 00AF     		add	r7, sp, #0
+  58              		.cfi_def_cfa_register 7
+  82:main.c        ****     uint8 i;
+  83:main.c        ****     
+  84:main.c        **** 
+  85:main.c        ****     CyDelay(2000u);
+  59              		.loc 1 85 0
+  60 0006 4FF4FA60 		mov	r0, #2000
+  61 000a FFF7FEFF 		bl	CyDelay
+  86:main.c        ****     
+  87:main.c        ****     DmaTxConfiguration();
+  62              		.loc 1 87 0
+  63 000e FFF7FEFF 		bl	DmaTxConfiguration
+  88:main.c        ****     DmaRxConfiguration();
+  64              		.loc 1 88 0
+  65 0012 FFF7FEFF 		bl	DmaRxConfiguration
+  89:main.c        ****     
+  90:main.c        ****     SPIM_Start();
+  66              		.loc 1 90 0
+  67 0016 FFF7FEFF 		bl	SPIM_Start
+  91:main.c        ****     
+  92:main.c        ****     CyDmaChEnable(rxChannel, STORE_TD_CFG_ONCMPLT);
+  68              		.loc 1 92 0
+  69 001a 0F4B     		ldr	r3, .L6
+  70 001c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  71 001e 0121     		movs	r1, #1
+  72 0020 1846     		mov	r0, r3
+  73 0022 FFF7FEFF 		bl	CyDmaChEnable
+  93:main.c        ****     CyDmaChEnable(txChannel, STORE_TD_CFG_ONCMPLT);
+  74              		.loc 1 93 0
+  75 0026 0D4B     		ldr	r3, .L6+4
+  76 0028 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  77 002a 0121     		movs	r1, #1
+  78 002c 1846     		mov	r0, r3
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 4
+
+
+  79 002e FFF7FEFF 		bl	CyDmaChEnable
+  94:main.c        **** 
+  95:main.c        ****     while (0u == (SPIM_ReadTxStatus() & SPIM_STS_SPI_DONE))
+  80              		.loc 1 95 0
+  81 0032 00BF     		nop
+  82              	.L2:
+  83              		.loc 1 95 0 is_stmt 0 discriminator 1
+  84 0034 FFF7FEFF 		bl	SPIM_ReadTxStatus
+  85 0038 0346     		mov	r3, r0
+  86 003a 03F00103 		and	r3, r3, #1
+  87 003e 002B     		cmp	r3, #0
+  88 0040 F8D0     		beq	.L2
+  96:main.c        ****     {
+  97:main.c        ****     }
+  98:main.c        ****     
+  99:main.c        **** 
+ 100:main.c        ****     
+ 101:main.c        ****     for(i=0u; i<BUFFER_SIZE; i++)
+  89              		.loc 1 101 0 is_stmt 1
+  90 0042 0023     		movs	r3, #0
+  91 0044 FB71     		strb	r3, [r7, #7]
+  92 0046 02E0     		b	.L3
+  93              	.L4:
+  94              		.loc 1 101 0 is_stmt 0 discriminator 3
+  95 0048 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+  96 004a 0133     		adds	r3, r3, #1
+  97 004c FB71     		strb	r3, [r7, #7]
+  98              	.L3:
+  99              		.loc 1 101 0 discriminator 1
+ 100 004e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 101 0050 072B     		cmp	r3, #7
+ 102 0052 F9D9     		bls	.L4
+ 103              	.L5:
+ 102:main.c        ****     {
+ 103:main.c        ****        
+ 104:main.c        ****     }
+ 105:main.c        **** 
+ 106:main.c        ****     for(;;)
+ 107:main.c        ****     {
+ 108:main.c        ****     }
+ 104              		.loc 1 108 0 is_stmt 1 discriminator 1
+ 105 0054 FEE7     		b	.L5
+ 106              	.L7:
+ 107 0056 00BF     		.align	2
+ 108              	.L6:
+ 109 0058 00000000 		.word	rxChannel
+ 110 005c 00000000 		.word	txChannel
+ 111              		.cfi_endproc
+ 112              	.LFE63:
+ 113              		.size	main, .-main
+ 114              		.section	.text.DmaTxConfiguration,"ax",%progbits
+ 115              		.align	2
+ 116              		.global	DmaTxConfiguration
+ 117              		.thumb
+ 118              		.thumb_func
+ 119              		.type	DmaTxConfiguration, %function
+ 120              	DmaTxConfiguration:
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 5
+
+
+ 121              	.LFB64:
+ 109:main.c        **** }
+ 110:main.c        **** 
+ 111:main.c        ****     
+ 112:main.c        **** /*******************************************************************************
+ 113:main.c        **** * Function Name: DmaTxConfiguration
+ 114:main.c        **** ********************************************************************************
+ 115:main.c        **** * Summary:
+ 116:main.c        **** *  Configures the DMA transfer for TX direction
+ 117:main.c        **** *   
+ 118:main.c        **** * Parameters:
+ 119:main.c        **** *  None.
+ 120:main.c        **** *
+ 121:main.c        **** * Return:
+ 122:main.c        **** *  None.
+ 123:main.c        **** *
+ 124:main.c        **** *******************************************************************************/
+ 125:main.c        **** void DmaTxConfiguration()
+ 126:main.c        **** {
+ 122              		.loc 1 126 0
+ 123              		.cfi_startproc
+ 124              		@ args = 0, pretend = 0, frame = 0
+ 125              		@ frame_needed = 1, uses_anonymous_args = 0
+ 126 0000 80B5     		push	{r7, lr}
+ 127              		.cfi_def_cfa_offset 8
+ 128              		.cfi_offset 7, -8
+ 129              		.cfi_offset 14, -4
+ 130 0002 00AF     		add	r7, sp, #0
+ 131              		.cfi_def_cfa_register 7
+ 127:main.c        ****     /* Init DMA, 1 byte bursts, each burst requires a request */ 
+ 128:main.c        ****     txChannel = DMA_TX_DmaInitialize(DMA_TX_BYTES_PER_BURST, DMA_TX_REQUEST_PER_BURST, 
+ 132              		.loc 1 128 0
+ 133 0004 4FF48043 		mov	r3, #16384
+ 134 0008 41F6FF72 		movw	r2, #8191
+ 135 000c 0121     		movs	r1, #1
+ 136 000e 0120     		movs	r0, #1
+ 137 0010 FFF7FEFF 		bl	DMA_TX_DmaInitialize
+ 138 0014 0346     		mov	r3, r0
+ 139 0016 1A46     		mov	r2, r3
+ 140 0018 104B     		ldr	r3, .L9
+ 141 001a 1A70     		strb	r2, [r3]
+ 129:main.c        ****                                         HI16(DMA_TX_SRC_BASE), HI16(DMA_TX_DST_BASE));
+ 130:main.c        **** 
+ 131:main.c        ****     txTD = CyDmaTdAllocate();
+ 142              		.loc 1 131 0
+ 143 001c FFF7FEFF 		bl	CyDmaTdAllocate
+ 144 0020 0346     		mov	r3, r0
+ 145 0022 1A46     		mov	r2, r3
+ 146 0024 0E4B     		ldr	r3, .L9+4
+ 147 0026 1A70     		strb	r2, [r3]
+ 132:main.c        **** 
+ 133:main.c        ****     /* Configure this Td as follows:
+ 134:main.c        ****     *  - Increment the source address, but not the destination address   
+ 135:main.c        ****     */
+ 136:main.c        ****     CyDmaTdSetConfiguration(txTD, BUFFER_SIZE, CY_DMA_DISABLE_TD, TD_INC_SRC_ADR);
+ 148              		.loc 1 136 0
+ 149 0028 0D4B     		ldr	r3, .L9+4
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 6
+
+
+ 150 002a 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 151 002c 0123     		movs	r3, #1
+ 152 002e FE22     		movs	r2, #254
+ 153 0030 0821     		movs	r1, #8
+ 154 0032 FFF7FEFF 		bl	CyDmaTdSetConfiguration
+ 137:main.c        **** 
+ 138:main.c        ****     /* From the memory to the SPIM */
+ 139:main.c        ****     CyDmaTdSetAddress(txTD, LO16((uint32)txBuffer), LO16((uint32) SPIM_TXDATA_PTR));
+ 155              		.loc 1 139 0
+ 156 0036 0A4B     		ldr	r3, .L9+4
+ 157 0038 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 158 003a 0A4A     		ldr	r2, .L9+8
+ 159 003c 91B2     		uxth	r1, r2
+ 160 003e 46F24242 		movw	r2, #25666
+ 161 0042 1846     		mov	r0, r3
+ 162 0044 FFF7FEFF 		bl	CyDmaTdSetAddress
+ 140:main.c        ****     
+ 141:main.c        ****     /* Associate the TD with the channel */
+ 142:main.c        ****     CyDmaChSetInitialTd(txChannel, txTD); 
+ 163              		.loc 1 142 0
+ 164 0048 044B     		ldr	r3, .L9
+ 165 004a 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 166 004c 044B     		ldr	r3, .L9+4
+ 167 004e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 168 0050 1946     		mov	r1, r3
+ 169 0052 1046     		mov	r0, r2
+ 170 0054 FFF7FEFF 		bl	CyDmaChSetInitialTd
+ 143:main.c        **** }    
+ 171              		.loc 1 143 0
+ 172 0058 00BF     		nop
+ 173 005a 80BD     		pop	{r7, pc}
+ 174              	.L10:
+ 175              		.align	2
+ 176              	.L9:
+ 177 005c 00000000 		.word	txChannel
+ 178 0060 00000000 		.word	txTD
+ 179 0064 00000000 		.word	txBuffer
+ 180              		.cfi_endproc
+ 181              	.LFE64:
+ 182              		.size	DmaTxConfiguration, .-DmaTxConfiguration
+ 183              		.section	.text.DmaRxConfiguration,"ax",%progbits
+ 184              		.align	2
+ 185              		.global	DmaRxConfiguration
+ 186              		.thumb
+ 187              		.thumb_func
+ 188              		.type	DmaRxConfiguration, %function
+ 189              	DmaRxConfiguration:
+ 190              	.LFB65:
+ 144:main.c        **** 
+ 145:main.c        **** 
+ 146:main.c        **** /*******************************************************************************
+ 147:main.c        **** * Function Name: DmaRxConfiguration
+ 148:main.c        **** ********************************************************************************
+ 149:main.c        **** * Summary:
+ 150:main.c        **** *  Configures the DMA transfer for RX direction
+ 151:main.c        **** *   
+ 152:main.c        **** * Parameters:
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 7
+
+
+ 153:main.c        **** *  None.
+ 154:main.c        **** *
+ 155:main.c        **** * Return:
+ 156:main.c        **** *  None.
+ 157:main.c        **** *
+ 158:main.c        **** *******************************************************************************/
+ 159:main.c        **** void DmaRxConfiguration()
+ 160:main.c        **** { 
+ 191              		.loc 1 160 0
+ 192              		.cfi_startproc
+ 193              		@ args = 0, pretend = 0, frame = 0
+ 194              		@ frame_needed = 1, uses_anonymous_args = 0
+ 195 0000 80B5     		push	{r7, lr}
+ 196              		.cfi_def_cfa_offset 8
+ 197              		.cfi_offset 7, -8
+ 198              		.cfi_offset 14, -4
+ 199 0002 00AF     		add	r7, sp, #0
+ 200              		.cfi_def_cfa_register 7
+ 161:main.c        ****     /* Init DMA, 1 byte bursts, each burst requires a request */ 
+ 162:main.c        ****     rxChannel = DMA_RX_DmaInitialize(DMA_RX_BYTES_PER_BURST, DMA_RX_REQUEST_PER_BURST,
+ 201              		.loc 1 162 0
+ 202 0004 41F6FF73 		movw	r3, #8191
+ 203 0008 4FF48042 		mov	r2, #16384
+ 204 000c 0121     		movs	r1, #1
+ 205 000e 0120     		movs	r0, #1
+ 206 0010 FFF7FEFF 		bl	DMA_RX_DmaInitialize
+ 207 0014 0346     		mov	r3, r0
+ 208 0016 1A46     		mov	r2, r3
+ 209 0018 104B     		ldr	r3, .L12
+ 210 001a 1A70     		strb	r2, [r3]
+ 163:main.c        ****                                      HI16(DMA_RX_SRC_BASE), HI16(DMA_RX_DST_BASE));
+ 164:main.c        **** 
+ 165:main.c        ****     rxTD = CyDmaTdAllocate();
+ 211              		.loc 1 165 0
+ 212 001c FFF7FEFF 		bl	CyDmaTdAllocate
+ 213 0020 0346     		mov	r3, r0
+ 214 0022 1A46     		mov	r2, r3
+ 215 0024 0E4B     		ldr	r3, .L12+4
+ 216 0026 1A70     		strb	r2, [r3]
+ 166:main.c        ****     
+ 167:main.c        ****     /* Configure this Td as follows:
+ 168:main.c        ****     *  - Increment the destination address, but not the source address
+ 169:main.c        ****     */
+ 170:main.c        ****     CyDmaTdSetConfiguration(rxTD, BUFFER_SIZE, CY_DMA_DISABLE_TD, TD_INC_DST_ADR);
+ 217              		.loc 1 170 0
+ 218 0028 0D4B     		ldr	r3, .L12+4
+ 219 002a 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 220 002c 0223     		movs	r3, #2
+ 221 002e FE22     		movs	r2, #254
+ 222 0030 0821     		movs	r1, #8
+ 223 0032 FFF7FEFF 		bl	CyDmaTdSetConfiguration
+ 171:main.c        **** 
+ 172:main.c        ****     /* From the SPIM to the memory */
+ 173:main.c        ****     CyDmaTdSetAddress(rxTD, LO16((uint32)SPIM_RXDATA_PTR), LO16((uint32)rxBuffer));
+ 224              		.loc 1 173 0
+ 225 0036 0A4B     		ldr	r3, .L12+4
+ 226 0038 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 8
+
+
+ 227 003a 0A4A     		ldr	r2, .L12+8
+ 228 003c 92B2     		uxth	r2, r2
+ 229 003e 46F25241 		movw	r1, #25682
+ 230 0042 1846     		mov	r0, r3
+ 231 0044 FFF7FEFF 		bl	CyDmaTdSetAddress
+ 174:main.c        **** 
+ 175:main.c        ****     /* Associate the TD with the channel */
+ 176:main.c        ****     CyDmaChSetInitialTd(rxChannel, rxTD);
+ 232              		.loc 1 176 0
+ 233 0048 044B     		ldr	r3, .L12
+ 234 004a 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 235 004c 044B     		ldr	r3, .L12+4
+ 236 004e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 237 0050 1946     		mov	r1, r3
+ 238 0052 1046     		mov	r0, r2
+ 239 0054 FFF7FEFF 		bl	CyDmaChSetInitialTd
+ 177:main.c        **** }
+ 240              		.loc 1 177 0
+ 241 0058 00BF     		nop
+ 242 005a 80BD     		pop	{r7, pc}
+ 243              	.L13:
+ 244              		.align	2
+ 245              	.L12:
+ 246 005c 00000000 		.word	rxChannel
+ 247 0060 00000000 		.word	rxTD
+ 248 0064 00000000 		.word	rxBuffer
+ 249              		.cfi_endproc
+ 250              	.LFE65:
+ 251              		.size	DmaRxConfiguration, .-DmaRxConfiguration
+ 252              		.text
+ 253              	.Letext0:
+ 254              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 255              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 256              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 257              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 258              		.section	.debug_info,"",%progbits
+ 259              	.Ldebug_info0:
+ 260 0000 A5010000 		.4byte	0x1a5
+ 261 0004 0400     		.2byte	0x4
+ 262 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 263 000a 04       		.byte	0x4
+ 264 000b 01       		.uleb128 0x1
+ 265 000c 00000000 		.4byte	.LASF29
+ 266 0010 0C       		.byte	0xc
+ 267 0011 62010000 		.4byte	.LASF30
+ 268 0015 81010000 		.4byte	.LASF31
+ 269 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 270 001d 00000000 		.4byte	0
+ 271 0021 00000000 		.4byte	.Ldebug_line0
+ 272 0025 02       		.uleb128 0x2
+ 273 0026 01       		.byte	0x1
+ 274 0027 06       		.byte	0x6
+ 275 0028 F2010000 		.4byte	.LASF0
+ 276 002c 02       		.uleb128 0x2
+ 277 002d 01       		.byte	0x1
+ 278 002e 08       		.byte	0x8
+ 279 002f B1000000 		.4byte	.LASF1
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 9
+
+
+ 280 0033 02       		.uleb128 0x2
+ 281 0034 02       		.byte	0x2
+ 282 0035 05       		.byte	0x5
+ 283 0036 77010000 		.4byte	.LASF2
+ 284 003a 02       		.uleb128 0x2
+ 285 003b 02       		.byte	0x2
+ 286 003c 07       		.byte	0x7
+ 287 003d E0000000 		.4byte	.LASF3
+ 288 0041 03       		.uleb128 0x3
+ 289 0042 98000000 		.4byte	.LASF9
+ 290 0046 02       		.byte	0x2
+ 291 0047 3F       		.byte	0x3f
+ 292 0048 4C000000 		.4byte	0x4c
+ 293 004c 02       		.uleb128 0x2
+ 294 004d 04       		.byte	0x4
+ 295 004e 05       		.byte	0x5
+ 296 004f DD010000 		.4byte	.LASF4
+ 297 0053 02       		.uleb128 0x2
+ 298 0054 04       		.byte	0x4
+ 299 0055 07       		.byte	0x7
+ 300 0056 CE000000 		.4byte	.LASF5
+ 301 005a 02       		.uleb128 0x2
+ 302 005b 08       		.byte	0x8
+ 303 005c 05       		.byte	0x5
+ 304 005d 54010000 		.4byte	.LASF6
+ 305 0061 02       		.uleb128 0x2
+ 306 0062 08       		.byte	0x8
+ 307 0063 07       		.byte	0x7
+ 308 0064 1F010000 		.4byte	.LASF7
+ 309 0068 04       		.uleb128 0x4
+ 310 0069 04       		.byte	0x4
+ 311 006a 05       		.byte	0x5
+ 312 006b 696E7400 		.ascii	"int\000"
+ 313 006f 02       		.uleb128 0x2
+ 314 0070 04       		.byte	0x4
+ 315 0071 07       		.byte	0x7
+ 316 0072 12010000 		.4byte	.LASF8
+ 317 0076 03       		.uleb128 0x3
+ 318 0077 43010000 		.4byte	.LASF10
+ 319 007b 03       		.byte	0x3
+ 320 007c 2C       		.byte	0x2c
+ 321 007d 41000000 		.4byte	0x41
+ 322 0081 05       		.uleb128 0x5
+ 323 0082 B1010000 		.4byte	.LASF11
+ 324 0086 04       		.byte	0x4
+ 325 0087 9201     		.2byte	0x192
+ 326 0089 2C000000 		.4byte	0x2c
+ 327 008d 05       		.uleb128 0x5
+ 328 008e 04010000 		.4byte	.LASF12
+ 329 0092 04       		.byte	0x4
+ 330 0093 9301     		.2byte	0x193
+ 331 0095 3A000000 		.4byte	0x3a
+ 332 0099 05       		.uleb128 0x5
+ 333 009a 0B010000 		.4byte	.LASF13
+ 334 009e 04       		.byte	0x4
+ 335 009f 9401     		.2byte	0x194
+ 336 00a1 53000000 		.4byte	0x53
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 10
+
+
+ 337 00a5 02       		.uleb128 0x2
+ 338 00a6 04       		.byte	0x4
+ 339 00a7 04       		.byte	0x4
+ 340 00a8 AB000000 		.4byte	.LASF14
+ 341 00ac 02       		.uleb128 0x2
+ 342 00ad 08       		.byte	0x8
+ 343 00ae 04       		.byte	0x4
+ 344 00af F8000000 		.4byte	.LASF15
+ 345 00b3 02       		.uleb128 0x2
+ 346 00b4 01       		.byte	0x1
+ 347 00b5 08       		.byte	0x8
+ 348 00b6 69010000 		.4byte	.LASF16
+ 349 00ba 05       		.uleb128 0x5
+ 350 00bb C9000000 		.4byte	.LASF17
+ 351 00bf 04       		.byte	0x4
+ 352 00c0 3C02     		.2byte	0x23c
+ 353 00c2 C6000000 		.4byte	0xc6
+ 354 00c6 06       		.uleb128 0x6
+ 355 00c7 81000000 		.4byte	0x81
+ 356 00cb 02       		.uleb128 0x2
+ 357 00cc 08       		.byte	0x8
+ 358 00cd 04       		.byte	0x4
+ 359 00ce E6010000 		.4byte	.LASF18
+ 360 00d2 02       		.uleb128 0x2
+ 361 00d3 04       		.byte	0x4
+ 362 00d4 07       		.byte	0x7
+ 363 00d5 4B010000 		.4byte	.LASF19
+ 364 00d9 07       		.uleb128 0x7
+ 365 00da FF000000 		.4byte	.LASF32
+ 366 00de 01       		.byte	0x1
+ 367 00df 50       		.byte	0x50
+ 368 00e0 68000000 		.4byte	0x68
+ 369 00e4 00000000 		.4byte	.LFB63
+ 370 00e8 60000000 		.4byte	.LFE63-.LFB63
+ 371 00ec 01       		.uleb128 0x1
+ 372 00ed 9C       		.byte	0x9c
+ 373 00ee FF000000 		.4byte	0xff
+ 374 00f2 08       		.uleb128 0x8
+ 375 00f3 6900     		.ascii	"i\000"
+ 376 00f5 01       		.byte	0x1
+ 377 00f6 52       		.byte	0x52
+ 378 00f7 81000000 		.4byte	0x81
+ 379 00fb 02       		.uleb128 0x2
+ 380 00fc 91       		.byte	0x91
+ 381 00fd 77       		.sleb128 -9
+ 382 00fe 00       		.byte	0
+ 383 00ff 09       		.uleb128 0x9
+ 384 0100 B7010000 		.4byte	.LASF20
+ 385 0104 01       		.byte	0x1
+ 386 0105 7D       		.byte	0x7d
+ 387 0106 00000000 		.4byte	.LFB64
+ 388 010a 68000000 		.4byte	.LFE64-.LFB64
+ 389 010e 01       		.uleb128 0x1
+ 390 010f 9C       		.byte	0x9c
+ 391 0110 09       		.uleb128 0x9
+ 392 0111 CA010000 		.4byte	.LASF21
+ 393 0115 01       		.byte	0x1
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 11
+
+
+ 394 0116 9F       		.byte	0x9f
+ 395 0117 00000000 		.4byte	.LFB65
+ 396 011b 68000000 		.4byte	.LFE65-.LFB65
+ 397 011f 01       		.uleb128 0x1
+ 398 0120 9C       		.byte	0x9c
+ 399 0121 0A       		.uleb128 0xa
+ 400 0122 36010000 		.4byte	.LASF22
+ 401 0126 05       		.byte	0x5
+ 402 0127 1207     		.2byte	0x712
+ 403 0129 2D010000 		.4byte	0x12d
+ 404 012d 06       		.uleb128 0x6
+ 405 012e 76000000 		.4byte	0x76
+ 406 0132 0B       		.uleb128 0xb
+ 407 0133 8E000000 		.4byte	.LASF23
+ 408 0137 01       		.byte	0x1
+ 409 0138 34       		.byte	0x34
+ 410 0139 81000000 		.4byte	0x81
+ 411 013d 05       		.uleb128 0x5
+ 412 013e 03       		.byte	0x3
+ 413 013f 00000000 		.4byte	txChannel
+ 414 0143 0B       		.uleb128 0xb
+ 415 0144 F3000000 		.4byte	.LASF24
+ 416 0148 01       		.byte	0x1
+ 417 0149 35       		.byte	0x35
+ 418 014a 81000000 		.4byte	0x81
+ 419 014e 05       		.uleb128 0x5
+ 420 014f 03       		.byte	0x3
+ 421 0150 00000000 		.4byte	txTD
+ 422 0154 0B       		.uleb128 0xb
+ 423 0155 BF000000 		.4byte	.LASF25
+ 424 0159 01       		.byte	0x1
+ 425 015a 38       		.byte	0x38
+ 426 015b 81000000 		.4byte	0x81
+ 427 015f 05       		.uleb128 0x5
+ 428 0160 03       		.byte	0x3
+ 429 0161 00000000 		.4byte	rxChannel
+ 430 0165 0B       		.uleb128 0xb
+ 431 0166 FE010000 		.4byte	.LASF26
+ 432 016a 01       		.byte	0x1
+ 433 016b 39       		.byte	0x39
+ 434 016c 81000000 		.4byte	0x81
+ 435 0170 05       		.uleb128 0x5
+ 436 0171 03       		.byte	0x3
+ 437 0172 00000000 		.4byte	rxTD
+ 438 0176 0C       		.uleb128 0xc
+ 439 0177 81000000 		.4byte	0x81
+ 440 017b 86010000 		.4byte	0x186
+ 441 017f 0D       		.uleb128 0xd
+ 442 0180 D2000000 		.4byte	0xd2
+ 443 0184 07       		.byte	0x7
+ 444 0185 00       		.byte	0
+ 445 0186 0B       		.uleb128 0xb
+ 446 0187 6E010000 		.4byte	.LASF27
+ 447 018b 01       		.byte	0x1
+ 448 018c 3C       		.byte	0x3c
+ 449 018d 76010000 		.4byte	0x176
+ 450 0191 05       		.uleb128 0x5
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 12
+
+
+ 451 0192 03       		.byte	0x3
+ 452 0193 00000000 		.4byte	txBuffer
+ 453 0197 0B       		.uleb128 0xb
+ 454 0198 A2000000 		.4byte	.LASF28
+ 455 019c 01       		.byte	0x1
+ 456 019d 3D       		.byte	0x3d
+ 457 019e 76010000 		.4byte	0x176
+ 458 01a2 05       		.uleb128 0x5
+ 459 01a3 03       		.byte	0x3
+ 460 01a4 00000000 		.4byte	rxBuffer
+ 461 01a8 00       		.byte	0
+ 462              		.section	.debug_abbrev,"",%progbits
+ 463              	.Ldebug_abbrev0:
+ 464 0000 01       		.uleb128 0x1
+ 465 0001 11       		.uleb128 0x11
+ 466 0002 01       		.byte	0x1
+ 467 0003 25       		.uleb128 0x25
+ 468 0004 0E       		.uleb128 0xe
+ 469 0005 13       		.uleb128 0x13
+ 470 0006 0B       		.uleb128 0xb
+ 471 0007 03       		.uleb128 0x3
+ 472 0008 0E       		.uleb128 0xe
+ 473 0009 1B       		.uleb128 0x1b
+ 474 000a 0E       		.uleb128 0xe
+ 475 000b 55       		.uleb128 0x55
+ 476 000c 17       		.uleb128 0x17
+ 477 000d 11       		.uleb128 0x11
+ 478 000e 01       		.uleb128 0x1
+ 479 000f 10       		.uleb128 0x10
+ 480 0010 17       		.uleb128 0x17
+ 481 0011 00       		.byte	0
+ 482 0012 00       		.byte	0
+ 483 0013 02       		.uleb128 0x2
+ 484 0014 24       		.uleb128 0x24
+ 485 0015 00       		.byte	0
+ 486 0016 0B       		.uleb128 0xb
+ 487 0017 0B       		.uleb128 0xb
+ 488 0018 3E       		.uleb128 0x3e
+ 489 0019 0B       		.uleb128 0xb
+ 490 001a 03       		.uleb128 0x3
+ 491 001b 0E       		.uleb128 0xe
+ 492 001c 00       		.byte	0
+ 493 001d 00       		.byte	0
+ 494 001e 03       		.uleb128 0x3
+ 495 001f 16       		.uleb128 0x16
+ 496 0020 00       		.byte	0
+ 497 0021 03       		.uleb128 0x3
+ 498 0022 0E       		.uleb128 0xe
+ 499 0023 3A       		.uleb128 0x3a
+ 500 0024 0B       		.uleb128 0xb
+ 501 0025 3B       		.uleb128 0x3b
+ 502 0026 0B       		.uleb128 0xb
+ 503 0027 49       		.uleb128 0x49
+ 504 0028 13       		.uleb128 0x13
+ 505 0029 00       		.byte	0
+ 506 002a 00       		.byte	0
+ 507 002b 04       		.uleb128 0x4
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 13
+
+
+ 508 002c 24       		.uleb128 0x24
+ 509 002d 00       		.byte	0
+ 510 002e 0B       		.uleb128 0xb
+ 511 002f 0B       		.uleb128 0xb
+ 512 0030 3E       		.uleb128 0x3e
+ 513 0031 0B       		.uleb128 0xb
+ 514 0032 03       		.uleb128 0x3
+ 515 0033 08       		.uleb128 0x8
+ 516 0034 00       		.byte	0
+ 517 0035 00       		.byte	0
+ 518 0036 05       		.uleb128 0x5
+ 519 0037 16       		.uleb128 0x16
+ 520 0038 00       		.byte	0
+ 521 0039 03       		.uleb128 0x3
+ 522 003a 0E       		.uleb128 0xe
+ 523 003b 3A       		.uleb128 0x3a
+ 524 003c 0B       		.uleb128 0xb
+ 525 003d 3B       		.uleb128 0x3b
+ 526 003e 05       		.uleb128 0x5
+ 527 003f 49       		.uleb128 0x49
+ 528 0040 13       		.uleb128 0x13
+ 529 0041 00       		.byte	0
+ 530 0042 00       		.byte	0
+ 531 0043 06       		.uleb128 0x6
+ 532 0044 35       		.uleb128 0x35
+ 533 0045 00       		.byte	0
+ 534 0046 49       		.uleb128 0x49
+ 535 0047 13       		.uleb128 0x13
+ 536 0048 00       		.byte	0
+ 537 0049 00       		.byte	0
+ 538 004a 07       		.uleb128 0x7
+ 539 004b 2E       		.uleb128 0x2e
+ 540 004c 01       		.byte	0x1
+ 541 004d 3F       		.uleb128 0x3f
+ 542 004e 19       		.uleb128 0x19
+ 543 004f 03       		.uleb128 0x3
+ 544 0050 0E       		.uleb128 0xe
+ 545 0051 3A       		.uleb128 0x3a
+ 546 0052 0B       		.uleb128 0xb
+ 547 0053 3B       		.uleb128 0x3b
+ 548 0054 0B       		.uleb128 0xb
+ 549 0055 49       		.uleb128 0x49
+ 550 0056 13       		.uleb128 0x13
+ 551 0057 11       		.uleb128 0x11
+ 552 0058 01       		.uleb128 0x1
+ 553 0059 12       		.uleb128 0x12
+ 554 005a 06       		.uleb128 0x6
+ 555 005b 40       		.uleb128 0x40
+ 556 005c 18       		.uleb128 0x18
+ 557 005d 9642     		.uleb128 0x2116
+ 558 005f 19       		.uleb128 0x19
+ 559 0060 01       		.uleb128 0x1
+ 560 0061 13       		.uleb128 0x13
+ 561 0062 00       		.byte	0
+ 562 0063 00       		.byte	0
+ 563 0064 08       		.uleb128 0x8
+ 564 0065 34       		.uleb128 0x34
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 14
+
+
+ 565 0066 00       		.byte	0
+ 566 0067 03       		.uleb128 0x3
+ 567 0068 08       		.uleb128 0x8
+ 568 0069 3A       		.uleb128 0x3a
+ 569 006a 0B       		.uleb128 0xb
+ 570 006b 3B       		.uleb128 0x3b
+ 571 006c 0B       		.uleb128 0xb
+ 572 006d 49       		.uleb128 0x49
+ 573 006e 13       		.uleb128 0x13
+ 574 006f 02       		.uleb128 0x2
+ 575 0070 18       		.uleb128 0x18
+ 576 0071 00       		.byte	0
+ 577 0072 00       		.byte	0
+ 578 0073 09       		.uleb128 0x9
+ 579 0074 2E       		.uleb128 0x2e
+ 580 0075 00       		.byte	0
+ 581 0076 3F       		.uleb128 0x3f
+ 582 0077 19       		.uleb128 0x19
+ 583 0078 03       		.uleb128 0x3
+ 584 0079 0E       		.uleb128 0xe
+ 585 007a 3A       		.uleb128 0x3a
+ 586 007b 0B       		.uleb128 0xb
+ 587 007c 3B       		.uleb128 0x3b
+ 588 007d 0B       		.uleb128 0xb
+ 589 007e 27       		.uleb128 0x27
+ 590 007f 19       		.uleb128 0x19
+ 591 0080 11       		.uleb128 0x11
+ 592 0081 01       		.uleb128 0x1
+ 593 0082 12       		.uleb128 0x12
+ 594 0083 06       		.uleb128 0x6
+ 595 0084 40       		.uleb128 0x40
+ 596 0085 18       		.uleb128 0x18
+ 597 0086 9642     		.uleb128 0x2116
+ 598 0088 19       		.uleb128 0x19
+ 599 0089 00       		.byte	0
+ 600 008a 00       		.byte	0
+ 601 008b 0A       		.uleb128 0xa
+ 602 008c 34       		.uleb128 0x34
+ 603 008d 00       		.byte	0
+ 604 008e 03       		.uleb128 0x3
+ 605 008f 0E       		.uleb128 0xe
+ 606 0090 3A       		.uleb128 0x3a
+ 607 0091 0B       		.uleb128 0xb
+ 608 0092 3B       		.uleb128 0x3b
+ 609 0093 05       		.uleb128 0x5
+ 610 0094 49       		.uleb128 0x49
+ 611 0095 13       		.uleb128 0x13
+ 612 0096 3F       		.uleb128 0x3f
+ 613 0097 19       		.uleb128 0x19
+ 614 0098 3C       		.uleb128 0x3c
+ 615 0099 19       		.uleb128 0x19
+ 616 009a 00       		.byte	0
+ 617 009b 00       		.byte	0
+ 618 009c 0B       		.uleb128 0xb
+ 619 009d 34       		.uleb128 0x34
+ 620 009e 00       		.byte	0
+ 621 009f 03       		.uleb128 0x3
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 15
+
+
+ 622 00a0 0E       		.uleb128 0xe
+ 623 00a1 3A       		.uleb128 0x3a
+ 624 00a2 0B       		.uleb128 0xb
+ 625 00a3 3B       		.uleb128 0x3b
+ 626 00a4 0B       		.uleb128 0xb
+ 627 00a5 49       		.uleb128 0x49
+ 628 00a6 13       		.uleb128 0x13
+ 629 00a7 3F       		.uleb128 0x3f
+ 630 00a8 19       		.uleb128 0x19
+ 631 00a9 02       		.uleb128 0x2
+ 632 00aa 18       		.uleb128 0x18
+ 633 00ab 00       		.byte	0
+ 634 00ac 00       		.byte	0
+ 635 00ad 0C       		.uleb128 0xc
+ 636 00ae 01       		.uleb128 0x1
+ 637 00af 01       		.byte	0x1
+ 638 00b0 49       		.uleb128 0x49
+ 639 00b1 13       		.uleb128 0x13
+ 640 00b2 01       		.uleb128 0x1
+ 641 00b3 13       		.uleb128 0x13
+ 642 00b4 00       		.byte	0
+ 643 00b5 00       		.byte	0
+ 644 00b6 0D       		.uleb128 0xd
+ 645 00b7 21       		.uleb128 0x21
+ 646 00b8 00       		.byte	0
+ 647 00b9 49       		.uleb128 0x49
+ 648 00ba 13       		.uleb128 0x13
+ 649 00bb 2F       		.uleb128 0x2f
+ 650 00bc 0B       		.uleb128 0xb
+ 651 00bd 00       		.byte	0
+ 652 00be 00       		.byte	0
+ 653 00bf 00       		.byte	0
+ 654              		.section	.debug_aranges,"",%progbits
+ 655 0000 2C000000 		.4byte	0x2c
+ 656 0004 0200     		.2byte	0x2
+ 657 0006 00000000 		.4byte	.Ldebug_info0
+ 658 000a 04       		.byte	0x4
+ 659 000b 00       		.byte	0
+ 660 000c 0000     		.2byte	0
+ 661 000e 0000     		.2byte	0
+ 662 0010 00000000 		.4byte	.LFB63
+ 663 0014 60000000 		.4byte	.LFE63-.LFB63
+ 664 0018 00000000 		.4byte	.LFB64
+ 665 001c 68000000 		.4byte	.LFE64-.LFB64
+ 666 0020 00000000 		.4byte	.LFB65
+ 667 0024 68000000 		.4byte	.LFE65-.LFB65
+ 668 0028 00000000 		.4byte	0
+ 669 002c 00000000 		.4byte	0
+ 670              		.section	.debug_ranges,"",%progbits
+ 671              	.Ldebug_ranges0:
+ 672 0000 00000000 		.4byte	.LFB63
+ 673 0004 60000000 		.4byte	.LFE63
+ 674 0008 00000000 		.4byte	.LFB64
+ 675 000c 68000000 		.4byte	.LFE64
+ 676 0010 00000000 		.4byte	.LFB65
+ 677 0014 68000000 		.4byte	.LFE65
+ 678 0018 00000000 		.4byte	0
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 16
+
+
+ 679 001c 00000000 		.4byte	0
+ 680              		.section	.debug_line,"",%progbits
+ 681              	.Ldebug_line0:
+ 682 0000 AE010000 		.section	.debug_str,"MS",%progbits,1
+ 682      02004C01 
+ 682      00000201 
+ 682      FB0E0D00 
+ 682      01010101 
+ 683              	.LASF29:
+ 684 0000 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 684      43313120 
+ 684      352E342E 
+ 684      31203230 
+ 684      31363036 
+ 685 0033 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 685      20726576 
+ 685      6973696F 
+ 685      6E203233 
+ 685      37373135 
+ 686 0066 30202D66 		.ascii	"0 -ffunction-sections -ffat-lto-objects\000"
+ 686      66756E63 
+ 686      74696F6E 
+ 686      2D736563 
+ 686      74696F6E 
+ 687              	.LASF23:
+ 688 008e 74784368 		.ascii	"txChannel\000"
+ 688      616E6E65 
+ 688      6C00
+ 689              	.LASF9:
+ 690 0098 5F5F696E 		.ascii	"__int32_t\000"
+ 690      7433325F 
+ 690      7400
+ 691              	.LASF28:
+ 692 00a2 72784275 		.ascii	"rxBuffer\000"
+ 692      66666572 
+ 692      00
+ 693              	.LASF14:
+ 694 00ab 666C6F61 		.ascii	"float\000"
+ 694      7400
+ 695              	.LASF1:
+ 696 00b1 756E7369 		.ascii	"unsigned char\000"
+ 696      676E6564 
+ 696      20636861 
+ 696      7200
+ 697              	.LASF25:
+ 698 00bf 72784368 		.ascii	"rxChannel\000"
+ 698      616E6E65 
+ 698      6C00
+ 699              	.LASF17:
+ 700 00c9 72656738 		.ascii	"reg8\000"
+ 700      00
+ 701              	.LASF5:
+ 702 00ce 6C6F6E67 		.ascii	"long unsigned int\000"
+ 702      20756E73 
+ 702      69676E65 
+ 702      6420696E 
+ 702      7400
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 17
+
+
+ 703              	.LASF3:
+ 704 00e0 73686F72 		.ascii	"short unsigned int\000"
+ 704      7420756E 
+ 704      7369676E 
+ 704      65642069 
+ 704      6E7400
+ 705              	.LASF24:
+ 706 00f3 74785444 		.ascii	"txTD\000"
+ 706      00
+ 707              	.LASF15:
+ 708 00f8 646F7562 		.ascii	"double\000"
+ 708      6C6500
+ 709              	.LASF32:
+ 710 00ff 6D61696E 		.ascii	"main\000"
+ 710      00
+ 711              	.LASF12:
+ 712 0104 75696E74 		.ascii	"uint16\000"
+ 712      313600
+ 713              	.LASF13:
+ 714 010b 75696E74 		.ascii	"uint32\000"
+ 714      333200
+ 715              	.LASF8:
+ 716 0112 756E7369 		.ascii	"unsigned int\000"
+ 716      676E6564 
+ 716      20696E74 
+ 716      00
+ 717              	.LASF7:
+ 718 011f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 718      206C6F6E 
+ 718      6720756E 
+ 718      7369676E 
+ 718      65642069 
+ 719              	.LASF22:
+ 720 0136 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 720      52784275 
+ 720      66666572 
+ 720      00
+ 721              	.LASF10:
+ 722 0143 696E7433 		.ascii	"int32_t\000"
+ 722      325F7400 
+ 723              	.LASF19:
+ 724 014b 73697A65 		.ascii	"sizetype\000"
+ 724      74797065 
+ 724      00
+ 725              	.LASF6:
+ 726 0154 6C6F6E67 		.ascii	"long long int\000"
+ 726      206C6F6E 
+ 726      6720696E 
+ 726      7400
+ 727              	.LASF30:
+ 728 0162 6D61696E 		.ascii	"main.c\000"
+ 728      2E6300
+ 729              	.LASF16:
+ 730 0169 63686172 		.ascii	"char\000"
+ 730      00
+ 731              	.LASF27:
+ 732 016e 74784275 		.ascii	"txBuffer\000"
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\ccWPGjp5.s 			page 18
+
+
+ 732      66666572 
+ 732      00
+ 733              	.LASF2:
+ 734 0177 73686F72 		.ascii	"short int\000"
+ 734      7420696E 
+ 734      7400
+ 735              	.LASF31:
+ 736 0181 443A5C44 		.ascii	"D:\\Documents\\DPEA_Projects\\RpiMIB\\Number1.cydsn"
+ 736      6F63756D 
+ 736      656E7473 
+ 736      5C445045 
+ 736      415F5072 
+ 737 01b0 00       		.ascii	"\000"
+ 738              	.LASF11:
+ 739 01b1 75696E74 		.ascii	"uint8\000"
+ 739      3800
+ 740              	.LASF20:
+ 741 01b7 446D6154 		.ascii	"DmaTxConfiguration\000"
+ 741      78436F6E 
+ 741      66696775 
+ 741      72617469 
+ 741      6F6E00
+ 742              	.LASF21:
+ 743 01ca 446D6152 		.ascii	"DmaRxConfiguration\000"
+ 743      78436F6E 
+ 743      66696775 
+ 743      72617469 
+ 743      6F6E00
+ 744              	.LASF4:
+ 745 01dd 6C6F6E67 		.ascii	"long int\000"
+ 745      20696E74 
+ 745      00
+ 746              	.LASF18:
+ 747 01e6 6C6F6E67 		.ascii	"long double\000"
+ 747      20646F75 
+ 747      626C6500 
+ 748              	.LASF0:
+ 749 01f2 7369676E 		.ascii	"signed char\000"
+ 749      65642063 
+ 749      68617200 
+ 750              	.LASF26:
+ 751 01fe 72785444 		.ascii	"rxTD\000"
+ 751      00
+ 752              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

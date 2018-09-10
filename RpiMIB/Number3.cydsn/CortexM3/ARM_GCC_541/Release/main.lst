@@ -1,0 +1,3476 @@
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.SS_Fall_Handler,"ax",%progbits
+  20              		.align	1
+  21              		.global	SS_Fall_Handler
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	SS_Fall_Handler, %function
+  25              	SS_Fall_Handler:
+  26              	.LFB63:
+  27              		.file 1 "main.c"
+   1:main.c        **** /*******************************************************************************
+   2:main.c        **** * File Name: main.c
+   3:main.c        **** *
+   4:main.c        **** * Version: 1.10
+   5:main.c        **** *
+   6:main.c        **** * Description:
+   7:main.c        **** *  This is source code for example project of the SPI Master component.
+   8:main.c        **** *  Parameters used:
+   9:main.c        **** *   Mode                CPHA == 0, CPOL == 0                
+  10:main.c        **** *   Data lines          MOSI+MISO
+  11:main.c        **** *   Shift direction     MSB First
+  12:main.c        **** *   DataBits:           8 
+  13:main.c        **** *   Bit Rate            1 Mbps
+  14:main.c        **** *   Clock source        External 
+  15:main.c        **** *
+  16:main.c        **** *  SPI communication test using DMA. 8 bytes are transmitted
+  17:main.c        **** *  between SPI Master and SPI Slave.
+  18:main.c        **** *  Received data are displayed on LCD. 
+  19:main.c        **** *
+  20:main.c        **** ********************************************************************************
+  21:main.c        **** * Copyright 2012-2015, Cypress Semiconductor Corporation. All rights reserved.
+  22:main.c        **** * This software is owned by Cypress Semiconductor Corporation and is protected
+  23:main.c        **** * by and subject to worldwide patent and copyright laws and treaties.
+  24:main.c        **** * Therefore, you may use this software only as provided in the license agreement
+  25:main.c        **** * accompanying the software package from which you obtained this software.
+  26:main.c        **** * CYPRESS AND ITS SUPPLIERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+  27:main.c        **** * WITH REGARD TO THIS SOFTWARE, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT,
+  28:main.c        **** * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+  29:main.c        **** *******************************************************************************/
+  30:main.c        **** #include <project.h>
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 2
+
+
+  31:main.c        **** 
+  32:main.c        **** 
+  33:main.c        **** uint16 WriteSignalGen(uint8, uint16);
+  34:main.c        **** uint16 ReadEncoderValue(uint8);
+  35:main.c        **** uint16  RPi_Command;
+  36:main.c        **** uint16  RPi_Data;
+  37:main.c        **** uint16 enc_a_Position;
+  38:main.c        **** uint16 enc_b_Position;
+  39:main.c        **** uint16 enc_c_Position;
+  40:main.c        **** uint16 pwm_a_command;
+  41:main.c        **** uint16 pwm_b_command;
+  42:main.c        **** uint16 pwm_a_new_command;
+  43:main.c        **** uint16 pwm_b_new_command;
+  44:main.c        **** 
+  45:main.c        **** #define idle_state            ((uint8) (0x00u))
+  46:main.c        **** #define read_encoder_state    ((uint8) (0x01u))
+  47:main.c        **** #define write_funcGen1_state  ((uint8) (0x02u))
+  48:main.c        **** #define write_funcGen2_state  ((uint8) (0x03u))
+  49:main.c        **** #define write_Amp_state       ((uint8) (0x04u))
+  50:main.c        **** #define write_pwm_a_state     ((uint8) (0x05u))
+  51:main.c        **** #define write_pwm_b_state     ((uint8) (0x06u))
+  52:main.c        **** 
+  53:main.c        **** 
+  54:main.c        **** uint8 read_counter;
+  55:main.c        **** uint8  PSOC_state;
+  56:main.c        **** uint8 i2cAddress;
+  57:main.c        **** uint8 i2cData;
+  58:main.c        **** 
+  59:main.c        **** CY_ISR(SS_Fall_Handler)
+  60:main.c        **** {
+  28              		.loc 1 60 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  61:main.c        ****     /*  load the encoder position data into the transmit data registers*/
+  62:main.c        **** 
+  63:main.c        ****     isr_SS_Fall_ClearPending();
+  36              		.loc 1 63 0
+  37 0002 FFF7FEFF 		bl	isr_SS_Fall_ClearPending
+  38              	.LVL0:
+  64:main.c        ****    if (PSOC_state == idle_state) {
+  39              		.loc 1 64 0
+  40 0006 0F4B     		ldr	r3, .L10
+  41 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  42 000a 0BB9     		cbnz	r3, .L2
+  65:main.c        ****        SPIS_WriteTxDataZero(0x0001);
+  43              		.loc 1 65 0
+  44 000c 0120     		movs	r0, #1
+  45 000e 14E0     		b	.L8
+  46              	.L2:
+  66:main.c        ****    } else if (PSOC_state == write_funcGen1_state) {
+  47              		.loc 1 66 0
+  48 0010 022B     		cmp	r3, #2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 3
+
+
+  49 0012 01D1     		bne	.L3
+  67:main.c        ****        SPIS_WriteTxDataZero(0x0020 );
+  50              		.loc 1 67 0
+  51 0014 2020     		movs	r0, #32
+  52 0016 10E0     		b	.L8
+  53              	.L3:
+  68:main.c        ****    } else if (PSOC_state == write_funcGen2_state) {
+  54              		.loc 1 68 0
+  55 0018 032B     		cmp	r3, #3
+  56 001a 01D1     		bne	.L4
+  69:main.c        ****        SPIS_WriteTxDataZero(0x0040 );
+  57              		.loc 1 69 0
+  58 001c 4020     		movs	r0, #64
+  59 001e 0CE0     		b	.L8
+  60              	.L4:
+  70:main.c        ****    }  else if (PSOC_state == write_Amp_state) {
+  61              		.loc 1 70 0
+  62 0020 042B     		cmp	r3, #4
+  63 0022 01D1     		bne	.L5
+  71:main.c        ****        SPIS_WriteTxDataZero(0x0080 );
+  64              		.loc 1 71 0
+  65 0024 8020     		movs	r0, #128
+  66 0026 08E0     		b	.L8
+  67              	.L5:
+  72:main.c        ****    }    else if (PSOC_state == write_pwm_a_state) {
+  68              		.loc 1 72 0
+  69 0028 052B     		cmp	r3, #5
+  70 002a 02D1     		bne	.L6
+  73:main.c        ****        SPIS_WriteTxDataZero(0x0100 );
+  71              		.loc 1 73 0
+  72 002c 4FF48070 		mov	r0, #256
+  73 0030 03E0     		b	.L8
+  74              	.L6:
+  74:main.c        ****    } else if (PSOC_state == write_pwm_b_state) {
+  75              		.loc 1 74 0
+  76 0032 062B     		cmp	r3, #6
+  77 0034 05D1     		bne	.L1
+  75:main.c        ****        SPIS_WriteTxDataZero(0x0200 );
+  78              		.loc 1 75 0
+  79 0036 4FF40070 		mov	r0, #512
+  80              	.L8:
+  76:main.c        ****    }
+  77:main.c        **** }
+  81              		.loc 1 77 0
+  82 003a BDE80840 		pop	{r3, lr}
+  83              		.cfi_remember_state
+  84              		.cfi_restore 14
+  85              		.cfi_restore 3
+  86              		.cfi_def_cfa_offset 0
+  75:main.c        ****        SPIS_WriteTxDataZero(0x0200 );
+  87              		.loc 1 75 0
+  88 003e FFF7FEBF 		b	SPIS_WriteTxDataZero
+  89              	.LVL1:
+  90              	.L1:
+  91              		.cfi_restore_state
+  92 0042 08BD     		pop	{r3, pc}
+  93              	.L11:
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 4
+
+
+  94              		.align	2
+  95              	.L10:
+  96 0044 00000000 		.word	PSOC_state
+  97              		.cfi_endproc
+  98              	.LFE63:
+  99              		.size	SS_Fall_Handler, .-SS_Fall_Handler
+ 100              		.section	.text.WriteSignalGen,"ax",%progbits
+ 101              		.align	1
+ 102              		.global	WriteSignalGen
+ 103              		.thumb
+ 104              		.thumb_func
+ 105              		.type	WriteSignalGen, %function
+ 106              	WriteSignalGen:
+ 107              	.LFB66:
+  78:main.c        **** 
+  79:main.c        **** CY_ISR(SS_Rise_Handler)
+  80:main.c        **** {
+  81:main.c        ****     if (PSOC_state == idle_state)
+  82:main.c        ****     {
+  83:main.c        ****         RPi_Command = SPIS_ReadRxData();
+  84:main.c        ****         read_counter = 0u;
+  85:main.c        ****     } else {
+  86:main.c        ****         RPi_Data = SPIS_ReadRxData();
+  87:main.c        ****     }
+  88:main.c        ****     
+  89:main.c        **** /*    Routine to write to sig gen over SPI or Power Amp Gain over I2C */
+  90:main.c        ****     
+  91:main.c        ****     if (PSOC_state == idle_state)  {
+  92:main.c        ****         if (RPi_Command == 0x0010)  {          
+  93:main.c        ****            PSOC_state = read_encoder_state;
+  94:main.c        ****            SPIS_WriteTxDataZero(enc_a_Position);
+  95:main.c        ****            SPIS_WriteTxData(enc_b_Position);
+  96:main.c        ****            SPIS_WriteTxData(enc_c_Position);
+  97:main.c        ****            read_counter = 0u; 
+  98:main.c        ****         } else if (RPi_Command == 0x0020)  {
+  99:main.c        ****            PSOC_state = write_funcGen1_state;
+ 100:main.c        ****         } else if (RPi_Command == 0x0040)  {
+ 101:main.c        ****            PSOC_state = write_funcGen2_state;
+ 102:main.c        ****         }  else if (RPi_Command == 0x0080)  {
+ 103:main.c        ****            PSOC_state = write_Amp_state;
+ 104:main.c        ****         }  else if (RPi_Command == 0x0100)  {
+ 105:main.c        ****            PSOC_state = write_pwm_a_state;
+ 106:main.c        ****         }  else if (RPi_Command == 0x0200)  {
+ 107:main.c        ****            PSOC_state = write_pwm_b_state;
+ 108:main.c        ****         }
+ 109:main.c        ****     } else  if  ( PSOC_state == read_encoder_state) {      
+ 110:main.c        ****         if (read_counter < 2u) {
+ 111:main.c        ****             read_counter +=1;
+ 112:main.c        ****         } else  {
+ 113:main.c        ****             PSOC_state = idle_state;
+ 114:main.c        ****             read_counter = 0u;
+ 115:main.c        ****         }
+ 116:main.c        ****     } else if ( PSOC_state == write_funcGen1_state) {
+ 117:main.c        ****         WriteSignalGen(0u, RPi_Data); 
+ 118:main.c        ****         PSOC_state = idle_state;
+ 119:main.c        ****     } else if ( PSOC_state == write_funcGen2_state) {
+ 120:main.c        ****         WriteSignalGen(1u, RPi_Data); 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 5
+
+
+ 121:main.c        ****         PSOC_state = idle_state;
+ 122:main.c        ****     } else if ( PSOC_state == write_Amp_state) {
+ 123:main.c        ****         i2cAddress = ((uint8) (RPi_Data >>8));
+ 124:main.c        ****         i2cData = ((uint8) (RPi_Data & 0x00ff));
+ 125:main.c        ****         I2C_1_MasterSendStart(i2cAddress,0);
+ 126:main.c        ****         I2C_1_MasterWriteByte(i2cData);I2C_1_MasterSendStop();
+ 127:main.c        ****         PSOC_state = idle_state;       
+ 128:main.c        ****      } else if ( PSOC_state == write_pwm_a_state) {
+ 129:main.c        ****         pwm_a_new_command = RPi_Data;
+ 130:main.c        ****         if ( pwm_a_new_command < 1000u) {
+ 131:main.c        ****             pwm_a_new_command = 1000u;
+ 132:main.c        ****         } else if (pwm_a_new_command > 2000u)  {
+ 133:main.c        ****             pwm_a_new_command = 2000u;
+ 134:main.c        ****         }
+ 135:main.c        ****        /* PWM_1_WriteCompare(pwm_a_command);  */
+ 136:main.c        ****         PSOC_state = idle_state;  
+ 137:main.c        ****     } else if ( PSOC_state == write_pwm_b_state) {
+ 138:main.c        ****         pwm_b_new_command = RPi_Data;
+ 139:main.c        ****         if ( pwm_b_new_command < 1000u) {
+ 140:main.c        ****             pwm_b_new_command = 1000u;
+ 141:main.c        ****         } else if (pwm_b_new_command > 2000u)  {
+ 142:main.c        ****             pwm_b_new_command = 2000u;
+ 143:main.c        ****         }
+ 144:main.c        ****      /*   PWM_2_WriteCompare(pwm_b_command);   */
+ 145:main.c        ****         PSOC_state = idle_state;         
+ 146:main.c        ****      } else {
+ 147:main.c        ****          PSOC_state = idle_state;
+ 148:main.c        ****     }
+ 149:main.c        **** 
+ 150:main.c        ****     SPIS_ReadRxStatus();
+ 151:main.c        ****     SPIS_ClearRxBuffer();
+ 152:main.c        ****     isr_SS_Rise_ClearPending();
+ 153:main.c        ****    
+ 154:main.c        **** }
+ 155:main.c        **** 
+ 156:main.c        **** 
+ 157:main.c        **** /* The txBuffer size is equal (BUFFER_SIZE-1) because for SPI Mode where CPHA == 0 and
+ 158:main.c        **** * CPOL == 0 one byte writes directly in SPI TX FIFO using SPIS_WriteTxDataZero() API.
+ 159:main.c        **** */
+ 160:main.c        **** 
+ 161:main.c        **** uint16 rxBuffer [4];
+ 162:main.c        **** 
+ 163:main.c        ****  uint8 temp1;
+ 164:main.c        ****  uint8 temp2;
+ 165:main.c        **** 
+ 166:main.c        **** 
+ 167:main.c        **** uint8 i;
+ 168:main.c        **** uint16 shutdown_count;
+ 169:main.c        **** 
+ 170:main.c        **** /*******************************************************************************
+ 171:main.c        **** * Function Name: main
+ 172:main.c        **** ********************************************************************************
+ 173:main.c        **** *******************************************************************************/
+ 174:main.c        **** int main()
+ 175:main.c        **** {
+ 176:main.c        ****     Comp_1_Start();
+ 177:main.c        ****     CyDelay(2000u);
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 6
+
+
+ 178:main.c        ****     /* Enable Battery Backup circuit and interface circuits between RPi and PSOC  */
+ 179:main.c        ****     EnableBattery_Write(1u);
+ 180:main.c        ****     Control_Reg_SS_Write(0u);
+ 181:main.c        ****     Control_Reg_LED_Write(0u);
+ 182:main.c        ****     RpiInterrupts_Write(3u);     
+ 183:main.c        ****     Clock_1_Start();
+ 184:main.c        ****  
+ 185:main.c        ****     SPIM_1_Start();
+ 186:main.c        ****     SPIM_1_ClearFIFO();
+ 187:main.c        ****     SPIM_1_ClearRxBuffer();
+ 188:main.c        ****     SPIM_1_ClearTxBuffer();   
+ 189:main.c        ****     
+ 190:main.c        ****     SPIM_SigGen_Start();
+ 191:main.c        ****     SPIM_SigGen_ClearFIFO();
+ 192:main.c        ****     SPIM_SigGen_ClearRxBuffer();
+ 193:main.c        ****     SPIM_SigGen_ClearTxBuffer();    
+ 194:main.c        **** 
+ 195:main.c        ****     SPIS_Start();
+ 196:main.c        ****     SPIS_WriteTxDataZero(0x00u);
+ 197:main.c        ****  
+ 198:main.c        ****     PWM_1_Start();
+ 199:main.c        ****     PWM_2_Start();
+ 200:main.c        ****     
+ 201:main.c        ****     I2C_1_Start();   
+ 202:main.c        ****     
+ 203:main.c        ****     PSOC_state = idle_state;
+ 204:main.c        ****      read_counter = 0u;
+ 205:main.c        ****       
+ 206:main.c        ****     CyGlobalIntEnable; 
+ 207:main.c        ****     isr_SS_Fall_StartEx(SS_Fall_Handler );
+ 208:main.c        ****     isr_SS_Rise_StartEx( SS_Rise_Handler );
+ 209:main.c        ****  
+ 210:main.c        ****     RPi_Command = 0x000f;
+ 211:main.c        ****   
+ 212:main.c        ****     shutdown_count = 0;
+ 213:main.c        **** 
+ 214:main.c        ****     while (1)  {
+ 215:main.c        ****         
+ 216:main.c        ****      /* read the encoder values  */     
+ 217:main.c        ****       enc_a_Position = ReadEncoderValue(0u);    
+ 218:main.c        ****       enc_b_Position = ReadEncoderValue(1u);        
+ 219:main.c        ****       enc_c_Position = ReadEncoderValue(2u);
+ 220:main.c        ****       
+ 221:main.c        ****     /* This code monitors the main power input.  A local backup batter supply prevents  */
+ 222:main.c        ****     /* power from being removed from the raspberry pi before it has been properly shutdown   */
+ 223:main.c        ****     /* Monitor the presence of the main power input */    
+ 224:main.c        ****     /*  If power has been removed for more than 5000 times through this loop -  -  about 20 seconds
+ 225:main.c        ****     /*  Interrupt the Raspberry Pi telling it to shut itself down  */
+ 226:main.c        ****     /*  allow 20 sec for the Pi to shut down then turn off back up power. */
+ 227:main.c        ****       CyDelayUs(1400u);
+ 228:main.c        **** 
+ 229:main.c        ****     
+ 230:main.c        ****     /* implenemt slew rate for changes in servo position*/
+ 231:main.c        ****     if (pwm_a_new_command > pwm_a_command ) {
+ 232:main.c        ****         if ((pwm_a_new_command - pwm_a_command) > 50) {
+ 233:main.c        ****             pwm_a_command +=50;
+ 234:main.c        ****         } else {
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 7
+
+
+ 235:main.c        ****             pwm_a_command = pwm_a_new_command;
+ 236:main.c        ****         }
+ 237:main.c        ****     } else {
+ 238:main.c        ****         if ((pwm_a_command - pwm_a_new_command) > 50)  {
+ 239:main.c        ****             pwm_a_command -=50;
+ 240:main.c        ****         } else {
+ 241:main.c        ****              pwm_a_command = pwm_a_new_command;
+ 242:main.c        ****         }
+ 243:main.c        ****     }
+ 244:main.c        **** 
+ 245:main.c        ****     
+ 246:main.c        ****      if (pwm_b_new_command > pwm_b_command ) {
+ 247:main.c        ****         if ((pwm_b_new_command - pwm_b_command) > 50) {
+ 248:main.c        ****             pwm_b_command +=50;
+ 249:main.c        ****         } else {
+ 250:main.c        ****             pwm_b_command = pwm_b_new_command;
+ 251:main.c        ****         }
+ 252:main.c        ****     } else {
+ 253:main.c        ****         if ((pwm_b_command - pwm_b_new_command) > 50)  {
+ 254:main.c        ****             pwm_b_command -=50;
+ 255:main.c        ****         } else {
+ 256:main.c        ****              pwm_b_command = pwm_b_new_command;
+ 257:main.c        ****         }
+ 258:main.c        ****     }
+ 259:main.c        ****     
+ 260:main.c        ****     PWM_1_WriteCompare(pwm_a_command);
+ 261:main.c        ****     PWM_2_WriteCompare(pwm_b_command);
+ 262:main.c        ****     
+ 263:main.c        ****     
+ 264:main.c        ****       if (Status_Reg_1_Read() == 1u) {
+ 265:main.c        ****         shutdown_count +=1;
+ 266:main.c        ****         if (shutdown_count == 2000u) {      
+ 267:main.c        ****             CyGlobalIntDisable; 
+ 268:main.c        ****              Control_Reg_LED_Write(1u);
+ 269:main.c        ****             /* tell Pi to shut down */ 
+ 270:main.c        ****            RpiInterrupts_Write(0u);
+ 271:main.c        ****            CyDelay(20000u);
+ 272:main.c        ****         /* Wait 60 seconds then turn off back up power */
+ 273:main.c        ****            EnableBattery_Write(2u);
+ 274:main.c        ****            CyDelay(2000u);
+ 275:main.c        ****         }
+ 276:main.c        ****       } else {
+ 277:main.c        ****          shutdown_count =0u;
+ 278:main.c        ****       }
+ 279:main.c        ****     }
+ 280:main.c        **** }
+ 281:main.c        **** 
+ 282:main.c        **** uint16 WriteSignalGen(uint8 ChannelNumber, uint16 CommandWord)
+ 283:main.c        **** {
+ 108              		.loc 1 283 0
+ 109              		.cfi_startproc
+ 110              		@ args = 0, pretend = 0, frame = 0
+ 111              		@ frame_needed = 0, uses_anonymous_args = 0
+ 112              	.LVL2:
+ 113 0000 10B5     		push	{r4, lr}
+ 114              		.cfi_def_cfa_offset 8
+ 115              		.cfi_offset 4, -8
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 8
+
+
+ 116              		.cfi_offset 14, -4
+ 117              		.loc 1 283 0
+ 118 0002 0C46     		mov	r4, r1
+ 284:main.c        ****     uint16 result;
+ 285:main.c        ****     Control_Reg_SS_SigGen_Write(ChannelNumber);
+ 119              		.loc 1 285 0
+ 120 0004 FFF7FEFF 		bl	Control_Reg_SS_SigGen_Write
+ 121              	.LVL3:
+ 286:main.c        ****     SPIM_SigGen_ClearFIFO();
+ 122              		.loc 1 286 0
+ 123 0008 FFF7FEFF 		bl	SPIM_SigGen_ClearFIFO
+ 124              	.LVL4:
+ 287:main.c        ****     SPIM_SigGen_WriteTxData(CommandWord);
+ 125              		.loc 1 287 0
+ 126 000c 2046     		mov	r0, r4
+ 127 000e FFF7FEFF 		bl	SPIM_SigGen_WriteTxData
+ 128              	.LVL5:
+ 288:main.c        ****     while (!(SPIM_SigGen_STS_SPI_DONE));
+ 289:main.c        ****     result = 0u;
+ 290:main.c        ****     return(result);
+ 291:main.c        ****    
+ 292:main.c        **** }
+ 129              		.loc 1 292 0
+ 130 0012 0020     		movs	r0, #0
+ 131 0014 10BD     		pop	{r4, pc}
+ 132              		.cfi_endproc
+ 133              	.LFE66:
+ 134              		.size	WriteSignalGen, .-WriteSignalGen
+ 135              		.section	.text.SS_Rise_Handler,"ax",%progbits
+ 136              		.align	1
+ 137              		.global	SS_Rise_Handler
+ 138              		.thumb
+ 139              		.thumb_func
+ 140              		.type	SS_Rise_Handler, %function
+ 141              	SS_Rise_Handler:
+ 142              	.LFB64:
+  80:main.c        ****     if (PSOC_state == idle_state)
+ 143              		.loc 1 80 0
+ 144              		.cfi_startproc
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 0, uses_anonymous_args = 0
+ 147 0000 70B5     		push	{r4, r5, r6, lr}
+ 148              		.cfi_def_cfa_offset 16
+ 149              		.cfi_offset 4, -16
+ 150              		.cfi_offset 5, -12
+ 151              		.cfi_offset 6, -8
+ 152              		.cfi_offset 14, -4
+  81:main.c        ****     {
+ 153              		.loc 1 81 0
+ 154 0002 474E     		ldr	r6, .L44
+ 155 0004 3478     		ldrb	r4, [r6]	@ zero_extendqisi2
+ 156 0006 34B9     		cbnz	r4, .L14
+  83:main.c        ****         read_counter = 0u;
+ 157              		.loc 1 83 0
+ 158 0008 FFF7FEFF 		bl	SPIS_ReadRxData
+ 159              	.LVL6:
+ 160 000c 454B     		ldr	r3, .L44+4
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 9
+
+
+ 161 000e 1880     		strh	r0, [r3]	@ movhi
+  84:main.c        ****     } else {
+ 162              		.loc 1 84 0
+ 163 0010 454B     		ldr	r3, .L44+8
+ 164 0012 1C70     		strb	r4, [r3]
+ 165 0014 03E0     		b	.L15
+ 166              	.L14:
+  86:main.c        ****     }
+ 167              		.loc 1 86 0
+ 168 0016 FFF7FEFF 		bl	SPIS_ReadRxData
+ 169              	.LVL7:
+ 170 001a 444B     		ldr	r3, .L44+12
+ 171 001c 1880     		strh	r0, [r3]	@ movhi
+ 172              	.L15:
+  91:main.c        ****         if (RPi_Command == 0x0010)  {          
+ 173              		.loc 1 91 0
+ 174 001e 3578     		ldrb	r5, [r6]	@ zero_extendqisi2
+ 175 0020 3F4C     		ldr	r4, .L44
+ 176 0022 55BB     		cbnz	r5, .L16
+  92:main.c        ****            PSOC_state = read_encoder_state;
+ 177              		.loc 1 92 0
+ 178 0024 3F4B     		ldr	r3, .L44+4
+ 179 0026 1B88     		ldrh	r3, [r3]
+ 180 0028 102B     		cmp	r3, #16
+ 181 002a 10D1     		bne	.L17
+  93:main.c        ****            SPIS_WriteTxDataZero(enc_a_Position);
+ 182              		.loc 1 93 0
+ 183 002c 0123     		movs	r3, #1
+ 184 002e 2370     		strb	r3, [r4]
+  94:main.c        ****            SPIS_WriteTxData(enc_b_Position);
+ 185              		.loc 1 94 0
+ 186 0030 3F4B     		ldr	r3, .L44+16
+ 187 0032 1888     		ldrh	r0, [r3]
+ 188 0034 FFF7FEFF 		bl	SPIS_WriteTxDataZero
+ 189              	.LVL8:
+  95:main.c        ****            SPIS_WriteTxData(enc_c_Position);
+ 190              		.loc 1 95 0
+ 191 0038 3E4B     		ldr	r3, .L44+20
+ 192 003a 1888     		ldrh	r0, [r3]
+ 193 003c FFF7FEFF 		bl	SPIS_WriteTxData
+ 194              	.LVL9:
+  96:main.c        ****            read_counter = 0u; 
+ 195              		.loc 1 96 0
+ 196 0040 3D4B     		ldr	r3, .L44+24
+ 197 0042 1888     		ldrh	r0, [r3]
+ 198 0044 FFF7FEFF 		bl	SPIS_WriteTxData
+ 199              	.LVL10:
+  97:main.c        ****         } else if (RPi_Command == 0x0020)  {
+ 200              		.loc 1 97 0
+ 201 0048 374B     		ldr	r3, .L44+8
+ 202 004a 1D70     		strb	r5, [r3]
+ 203 004c 5FE0     		b	.L18
+ 204              	.L17:
+  98:main.c        ****            PSOC_state = write_funcGen1_state;
+ 205              		.loc 1 98 0
+ 206 004e 202B     		cmp	r3, #32
+ 207 0050 01D1     		bne	.L19
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 10
+
+
+  99:main.c        ****         } else if (RPi_Command == 0x0040)  {
+ 208              		.loc 1 99 0
+ 209 0052 0223     		movs	r3, #2
+ 210 0054 2AE0     		b	.L38
+ 211              	.L19:
+ 100:main.c        ****            PSOC_state = write_funcGen2_state;
+ 212              		.loc 1 100 0
+ 213 0056 402B     		cmp	r3, #64
+ 214 0058 01D1     		bne	.L20
+ 101:main.c        ****         }  else if (RPi_Command == 0x0080)  {
+ 215              		.loc 1 101 0
+ 216 005a 0323     		movs	r3, #3
+ 217 005c 26E0     		b	.L38
+ 218              	.L20:
+ 102:main.c        ****            PSOC_state = write_Amp_state;
+ 219              		.loc 1 102 0
+ 220 005e 802B     		cmp	r3, #128
+ 221 0060 01D1     		bne	.L21
+ 103:main.c        ****         }  else if (RPi_Command == 0x0100)  {
+ 222              		.loc 1 103 0
+ 223 0062 0423     		movs	r3, #4
+ 224 0064 22E0     		b	.L38
+ 225              	.L21:
+ 104:main.c        ****            PSOC_state = write_pwm_a_state;
+ 226              		.loc 1 104 0
+ 227 0066 B3F5807F 		cmp	r3, #256
+ 228 006a 01D1     		bne	.L22
+ 105:main.c        ****         }  else if (RPi_Command == 0x0200)  {
+ 229              		.loc 1 105 0
+ 230 006c 0523     		movs	r3, #5
+ 231 006e 1DE0     		b	.L38
+ 232              	.L22:
+ 106:main.c        ****            PSOC_state = write_pwm_b_state;
+ 233              		.loc 1 106 0
+ 234 0070 B3F5007F 		cmp	r3, #512
+ 235 0074 4BD1     		bne	.L18
+ 107:main.c        ****         }
+ 236              		.loc 1 107 0
+ 237 0076 0623     		movs	r3, #6
+ 238 0078 18E0     		b	.L38
+ 239              	.L16:
+ 109:main.c        ****         if (read_counter < 2u) {
+ 240              		.loc 1 109 0
+ 241 007a 012D     		cmp	r5, #1
+ 242 007c 08D1     		bne	.L23
+ 110:main.c        ****             read_counter +=1;
+ 243              		.loc 1 110 0
+ 244 007e 2A4A     		ldr	r2, .L44+8
+ 245 0080 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 246 0082 012B     		cmp	r3, #1
+ 113:main.c        ****             read_counter = 0u;
+ 247              		.loc 1 113 0
+ 248 0084 8ABF     		itet	hi
+ 249 0086 0023     		movhi	r3, #0
+ 111:main.c        ****         } else  {
+ 250              		.loc 1 111 0
+ 251 0088 0133     		addls	r3, r3, #1
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 11
+
+
+ 113:main.c        ****             read_counter = 0u;
+ 252              		.loc 1 113 0
+ 253 008a 2370     		strbhi	r3, [r4]
+ 114:main.c        ****         }
+ 254              		.loc 1 114 0
+ 255 008c 1370     		strb	r3, [r2]
+ 256 008e 3EE0     		b	.L18
+ 257              	.L23:
+ 116:main.c        ****         WriteSignalGen(0u, RPi_Data); 
+ 258              		.loc 1 116 0
+ 259 0090 022D     		cmp	r5, #2
+ 260 0092 03D1     		bne	.L25
+ 117:main.c        ****         PSOC_state = idle_state;
+ 261              		.loc 1 117 0
+ 262 0094 254B     		ldr	r3, .L44+12
+ 263 0096 0020     		movs	r0, #0
+ 264 0098 1988     		ldrh	r1, [r3]
+ 265 009a 04E0     		b	.L37
+ 266              	.L25:
+ 119:main.c        ****         WriteSignalGen(1u, RPi_Data); 
+ 267              		.loc 1 119 0
+ 268 009c 032D     		cmp	r5, #3
+ 269 009e 07D1     		bne	.L26
+ 120:main.c        ****         PSOC_state = idle_state;
+ 270              		.loc 1 120 0
+ 271 00a0 224B     		ldr	r3, .L44+12
+ 272 00a2 0120     		movs	r0, #1
+ 273 00a4 1988     		ldrh	r1, [r3]
+ 274              	.L37:
+ 275 00a6 FFF7FEFF 		bl	WriteSignalGen
+ 276              	.LVL11:
+ 277              	.L39:
+ 121:main.c        ****     } else if ( PSOC_state == write_Amp_state) {
+ 278              		.loc 1 121 0
+ 279 00aa 0023     		movs	r3, #0
+ 280              	.L38:
+ 281 00ac 2370     		strb	r3, [r4]
+ 282 00ae 2EE0     		b	.L18
+ 283              	.L26:
+ 122:main.c        ****         i2cAddress = ((uint8) (RPi_Data >>8));
+ 284              		.loc 1 122 0
+ 285 00b0 042D     		cmp	r5, #4
+ 286 00b2 0FD1     		bne	.L27
+ 123:main.c        ****         i2cData = ((uint8) (RPi_Data & 0x00ff));
+ 287              		.loc 1 123 0
+ 288 00b4 1D4B     		ldr	r3, .L44+12
+ 289 00b6 214A     		ldr	r2, .L44+28
+ 290 00b8 1B88     		ldrh	r3, [r3]
+ 124:main.c        ****         I2C_1_MasterSendStart(i2cAddress,0);
+ 291              		.loc 1 124 0
+ 292 00ba 214D     		ldr	r5, .L44+32
+ 123:main.c        ****         i2cData = ((uint8) (RPi_Data & 0x00ff));
+ 293              		.loc 1 123 0
+ 294 00bc 180A     		lsrs	r0, r3, #8
+ 125:main.c        ****         I2C_1_MasterWriteByte(i2cData);I2C_1_MasterSendStop();
+ 295              		.loc 1 125 0
+ 296 00be 0021     		movs	r1, #0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 12
+
+
+ 123:main.c        ****         i2cData = ((uint8) (RPi_Data & 0x00ff));
+ 297              		.loc 1 123 0
+ 298 00c0 1070     		strb	r0, [r2]
+ 124:main.c        ****         I2C_1_MasterSendStart(i2cAddress,0);
+ 299              		.loc 1 124 0
+ 300 00c2 2B70     		strb	r3, [r5]
+ 125:main.c        ****         I2C_1_MasterWriteByte(i2cData);I2C_1_MasterSendStop();
+ 301              		.loc 1 125 0
+ 302 00c4 FFF7FEFF 		bl	I2C_1_MasterSendStart
+ 303              	.LVL12:
+ 126:main.c        ****         PSOC_state = idle_state;       
+ 304              		.loc 1 126 0
+ 305 00c8 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 306 00ca FFF7FEFF 		bl	I2C_1_MasterWriteByte
+ 307              	.LVL13:
+ 308 00ce FFF7FEFF 		bl	I2C_1_MasterSendStop
+ 309              	.LVL14:
+ 310 00d2 EAE7     		b	.L39
+ 311              	.L27:
+ 128:main.c        ****         pwm_a_new_command = RPi_Data;
+ 312              		.loc 1 128 0
+ 313 00d4 052D     		cmp	r5, #5
+ 314 00d6 05D1     		bne	.L28
+ 129:main.c        ****         if ( pwm_a_new_command < 1000u) {
+ 315              		.loc 1 129 0
+ 316 00d8 144B     		ldr	r3, .L44+12
+ 317 00da 1A88     		ldrh	r2, [r3]
+ 318 00dc 194B     		ldr	r3, .L44+36
+ 130:main.c        ****             pwm_a_new_command = 1000u;
+ 319              		.loc 1 130 0
+ 320 00de B2F57A7F 		cmp	r2, #1000
+ 321 00e2 09E0     		b	.L42
+ 322              	.L28:
+ 137:main.c        ****         pwm_b_new_command = RPi_Data;
+ 323              		.loc 1 137 0
+ 324 00e4 062D     		cmp	r5, #6
+ 325 00e6 02D0     		beq	.L43
+ 326              	.L30:
+ 136:main.c        ****     } else if ( PSOC_state == write_pwm_b_state) {
+ 327              		.loc 1 136 0
+ 328 00e8 0023     		movs	r3, #0
+ 329 00ea 3370     		strb	r3, [r6]
+ 330 00ec 0FE0     		b	.L18
+ 331              	.L43:
+ 138:main.c        ****         if ( pwm_b_new_command < 1000u) {
+ 332              		.loc 1 138 0
+ 333 00ee 0F4B     		ldr	r3, .L44+12
+ 334 00f0 1A88     		ldrh	r2, [r3]
+ 335 00f2 154B     		ldr	r3, .L44+40
+ 139:main.c        ****             pwm_b_new_command = 1000u;
+ 336              		.loc 1 139 0
+ 337 00f4 B2F57A7F 		cmp	r2, #1000
+ 338              	.L42:
+ 339 00f8 03D2     		bcs	.L32
+ 140:main.c        ****         } else if (pwm_b_new_command > 2000u)  {
+ 340              		.loc 1 140 0
+ 341 00fa 4FF47A72 		mov	r2, #1000
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 13
+
+
+ 342              	.L35:
+ 133:main.c        ****         }
+ 343              		.loc 1 133 0
+ 344 00fe 1A80     		strh	r2, [r3]	@ movhi
+ 345 0100 F2E7     		b	.L30
+ 346              	.L32:
+ 141:main.c        ****             pwm_b_new_command = 2000u;
+ 347              		.loc 1 141 0
+ 348 0102 B2F5FA6F 		cmp	r2, #2000
+ 349 0106 FAD9     		bls	.L35
+ 133:main.c        ****         }
+ 350              		.loc 1 133 0
+ 351 0108 4FF4FA62 		mov	r2, #2000
+ 352 010c F7E7     		b	.L35
+ 353              	.L18:
+ 150:main.c        ****     SPIS_ClearRxBuffer();
+ 354              		.loc 1 150 0
+ 355 010e FFF7FEFF 		bl	SPIS_ReadRxStatus
+ 356              	.LVL15:
+ 151:main.c        ****     isr_SS_Rise_ClearPending();
+ 357              		.loc 1 151 0
+ 358 0112 FFF7FEFF 		bl	SPIS_ClearRxBuffer
+ 359              	.LVL16:
+ 154:main.c        **** 
+ 360              		.loc 1 154 0
+ 361 0116 BDE87040 		pop	{r4, r5, r6, lr}
+ 362              		.cfi_restore 14
+ 363              		.cfi_restore 6
+ 364              		.cfi_restore 5
+ 365              		.cfi_restore 4
+ 366              		.cfi_def_cfa_offset 0
+ 152:main.c        ****    
+ 367              		.loc 1 152 0
+ 368 011a FFF7FEBF 		b	isr_SS_Rise_ClearPending
+ 369              	.LVL17:
+ 370              	.L45:
+ 371 011e 00BF     		.align	2
+ 372              	.L44:
+ 373 0120 00000000 		.word	PSOC_state
+ 374 0124 00000000 		.word	RPi_Command
+ 375 0128 00000000 		.word	read_counter
+ 376 012c 00000000 		.word	RPi_Data
+ 377 0130 00000000 		.word	enc_a_Position
+ 378 0134 00000000 		.word	enc_b_Position
+ 379 0138 00000000 		.word	enc_c_Position
+ 380 013c 00000000 		.word	i2cAddress
+ 381 0140 00000000 		.word	i2cData
+ 382 0144 00000000 		.word	pwm_a_new_command
+ 383 0148 00000000 		.word	pwm_b_new_command
+ 384              		.cfi_endproc
+ 385              	.LFE64:
+ 386              		.size	SS_Rise_Handler, .-SS_Rise_Handler
+ 387              		.section	.text.ReadEncoderValue,"ax",%progbits
+ 388              		.align	1
+ 389              		.global	ReadEncoderValue
+ 390              		.thumb
+ 391              		.thumb_func
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 14
+
+
+ 392              		.type	ReadEncoderValue, %function
+ 393              	ReadEncoderValue:
+ 394              	.LFB67:
+ 293:main.c        **** 
+ 294:main.c        **** 
+ 295:main.c        **** uint16 ReadEncoderValue(uint8 encoderNumber)
+ 296:main.c        **** {
+ 395              		.loc 1 296 0
+ 396              		.cfi_startproc
+ 397              		@ args = 0, pretend = 0, frame = 0
+ 398              		@ frame_needed = 0, uses_anonymous_args = 0
+ 399              	.LVL18:
+ 400 0000 38B5     		push	{r3, r4, r5, lr}
+ 401              		.cfi_def_cfa_offset 16
+ 402              		.cfi_offset 3, -16
+ 403              		.cfi_offset 4, -12
+ 404              		.cfi_offset 5, -8
+ 405              		.cfi_offset 14, -4
+ 297:main.c        ****     uint16 result;
+ 298:main.c        ****     uint8 ii;
+ 299:main.c        ****        
+ 300:main.c        ****       Control_Reg_SS_Write(encoderNumber);
+ 406              		.loc 1 300 0
+ 407 0002 FFF7FEFF 		bl	Control_Reg_SS_Write
+ 408              	.LVL19:
+ 301:main.c        ****       SPIM_1_ClearFIFO();
+ 409              		.loc 1 301 0
+ 410 0006 FFF7FEFF 		bl	SPIM_1_ClearFIFO
+ 411              	.LVL20:
+ 302:main.c        ****       SPIM_1_WriteTxData(0x10);       
+ 412              		.loc 1 302 0
+ 413 000a 1020     		movs	r0, #16
+ 414 000c FFF7FEFF 		bl	SPIM_1_WriteTxData
+ 415              	.LVL21:
+ 416              	.L47:
+ 303:main.c        ****       /*  wait for transmit of first data is finished  */
+ 304:main.c        ****       while(!(SPIM_1_ReadTxStatus() & SPIM_1_STS_SPI_DONE));   
+ 417              		.loc 1 304 0 discriminator 1
+ 418 0010 FFF7FEFF 		bl	SPIM_1_ReadTxStatus
+ 419              	.LVL22:
+ 420 0014 C007     		lsls	r0, r0, #31
+ 421 0016 FBD5     		bpl	.L47
+ 305:main.c        ****       CyDelayUs(20u);
+ 422              		.loc 1 305 0
+ 423 0018 1420     		movs	r0, #20
+ 424 001a FFF7FEFF 		bl	CyDelayUs
+ 425              	.LVL23:
+ 306:main.c        ****       ii=0;
+ 307:main.c        ****       while ((SPIM_1_ReadByte() != 0x10) & (ii<6)) {
+ 426              		.loc 1 307 0
+ 427 001e 0024     		movs	r4, #0
+ 428              	.LVL24:
+ 429              	.L48:
+ 430 0020 FFF7FEFF 		bl	SPIM_1_ReadRxData
+ 431              	.LVL25:
+ 432 0024 1028     		cmp	r0, #16
+ 433 0026 E5B2     		uxtb	r5, r4
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 15
+
+
+ 434              	.LVL26:
+ 435 0028 0DD0     		beq	.L56
+ 436 002a 052D     		cmp	r5, #5
+ 437 002c 0BD8     		bhi	.L56
+ 308:main.c        ****           CyDelayUs(20u);
+ 438              		.loc 1 308 0
+ 439 002e 1420     		movs	r0, #20
+ 440 0030 FFF7FEFF 		bl	CyDelayUs
+ 441              	.LVL27:
+ 309:main.c        ****           SPIM_1_WriteTxData(0x00);  
+ 442              		.loc 1 309 0
+ 443 0034 0020     		movs	r0, #0
+ 444 0036 FFF7FEFF 		bl	SPIM_1_WriteTxData
+ 445              	.LVL28:
+ 446              	.L49:
+ 310:main.c        ****           while(!(SPIM_1_ReadTxStatus() & SPIM_1_STS_SPI_DONE));
+ 447              		.loc 1 310 0 discriminator 1
+ 448 003a FFF7FEFF 		bl	SPIM_1_ReadTxStatus
+ 449              	.LVL29:
+ 450 003e C107     		lsls	r1, r0, #31
+ 451 0040 FBD5     		bpl	.L49
+ 452              	.LVL30:
+ 453 0042 0134     		adds	r4, r4, #1
+ 454              	.LVL31:
+ 455 0044 ECE7     		b	.L48
+ 456              	.LVL32:
+ 457              	.L56:
+ 311:main.c        ****           ii+=1;
+ 312:main.c        ****       }  
+ 313:main.c        ****      /*  if ii > 6  means encoder did not respond -- possibly not hooked up*/
+ 314:main.c        ****       if (ii<6) {
+ 458              		.loc 1 314 0
+ 459 0046 052D     		cmp	r5, #5
+ 460 0048 1FD8     		bhi	.L52
+ 461              	.LVL33:
+ 462              	.LBB4:
+ 463              	.LBB5:
+ 315:main.c        ****          CyDelayUs(20u);
+ 464              		.loc 1 315 0
+ 465 004a 1420     		movs	r0, #20
+ 466 004c FFF7FEFF 		bl	CyDelayUs
+ 467              	.LVL34:
+ 316:main.c        ****          SPIM_1_WriteTxData(0x00);  
+ 468              		.loc 1 316 0
+ 469 0050 0020     		movs	r0, #0
+ 470 0052 FFF7FEFF 		bl	SPIM_1_WriteTxData
+ 471              	.LVL35:
+ 472              	.L53:
+ 317:main.c        ****          while(!(SPIM_1_ReadTxStatus() & SPIM_1_STS_SPI_DONE));
+ 473              		.loc 1 317 0
+ 474 0056 FFF7FEFF 		bl	SPIM_1_ReadTxStatus
+ 475              	.LVL36:
+ 476 005a C207     		lsls	r2, r0, #31
+ 477 005c FBD5     		bpl	.L53
+ 318:main.c        ****          result = SPIM_1_ReadByte()*256;    
+ 478              		.loc 1 318 0
+ 479 005e FFF7FEFF 		bl	SPIM_1_ReadRxData
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 16
+
+
+ 480              	.LVL37:
+ 481 0062 0002     		lsls	r0, r0, #8
+ 482 0064 84B2     		uxth	r4, r0
+ 483              	.LVL38:
+ 319:main.c        ****          CyDelayUs(20u);
+ 484              		.loc 1 319 0
+ 485 0066 1420     		movs	r0, #20
+ 486 0068 FFF7FEFF 		bl	CyDelayUs
+ 487              	.LVL39:
+ 320:main.c        ****          SPIM_1_WriteTxData(0x00);  
+ 488              		.loc 1 320 0
+ 489 006c 0020     		movs	r0, #0
+ 490 006e FFF7FEFF 		bl	SPIM_1_WriteTxData
+ 491              	.LVL40:
+ 492              	.L54:
+ 321:main.c        ****          while(!(SPIM_1_ReadTxStatus() & SPIM_1_STS_SPI_DONE));
+ 493              		.loc 1 321 0
+ 494 0072 FFF7FEFF 		bl	SPIM_1_ReadTxStatus
+ 495              	.LVL41:
+ 496 0076 C307     		lsls	r3, r0, #31
+ 497 0078 FBD5     		bpl	.L54
+ 322:main.c        ****          result += SPIM_1_ReadByte();          
+ 498              		.loc 1 322 0
+ 499 007a FFF7FEFF 		bl	SPIM_1_ReadRxData
+ 500              	.LVL42:
+ 501 007e 2044     		add	r0, r0, r4
+ 502 0080 84B2     		uxth	r4, r0
+ 503              	.LVL43:
+ 323:main.c        ****          CyDelayUs(40u);
+ 504              		.loc 1 323 0
+ 505 0082 2820     		movs	r0, #40
+ 506 0084 FFF7FEFF 		bl	CyDelayUs
+ 507              	.LVL44:
+ 508 0088 04E0     		b	.L55
+ 509              	.L52:
+ 510              	.LVL45:
+ 511              	.LBE5:
+ 512              	.LBE4:
+ 324:main.c        ****       } else {
+ 325:main.c        ****          /*  note encoder word is 12 bits long.  0xF000 represents an invalid code  */
+ 326:main.c        ****          result = 0xF000;
+ 327:main.c        ****         CyDelayUs(40u);
+ 513              		.loc 1 327 0
+ 514 008a 2820     		movs	r0, #40
+ 515 008c FFF7FEFF 		bl	CyDelayUs
+ 516              	.LVL46:
+ 326:main.c        ****         CyDelayUs(40u);
+ 517              		.loc 1 326 0
+ 518 0090 4FF47044 		mov	r4, #61440
+ 519              	.LVL47:
+ 520              	.L55:
+ 328:main.c        ****       }    
+ 329:main.c        ****     return(result);
+ 330:main.c        **** }
+ 521              		.loc 1 330 0
+ 522 0094 2046     		mov	r0, r4
+ 523 0096 38BD     		pop	{r3, r4, r5, pc}
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 17
+
+
+ 524              		.cfi_endproc
+ 525              	.LFE67:
+ 526              		.size	ReadEncoderValue, .-ReadEncoderValue
+ 527              		.section	.text.startup.main,"ax",%progbits
+ 528              		.align	1
+ 529              		.global	main
+ 530              		.thumb
+ 531              		.thumb_func
+ 532              		.type	main, %function
+ 533              	main:
+ 534              	.LFB65:
+ 175:main.c        ****     Comp_1_Start();
+ 535              		.loc 1 175 0
+ 536              		.cfi_startproc
+ 537              		@ Volatile: function does not return.
+ 538              		@ args = 0, pretend = 0, frame = 0
+ 539              		@ frame_needed = 0, uses_anonymous_args = 0
+ 540 0000 80B5     		push	{r7, lr}
+ 541              		.cfi_def_cfa_offset 8
+ 542              		.cfi_offset 7, -8
+ 543              		.cfi_offset 14, -4
+ 176:main.c        ****     CyDelay(2000u);
+ 544              		.loc 1 176 0
+ 545 0002 FFF7FEFF 		bl	Comp_1_Start
+ 546              	.LVL48:
+ 177:main.c        ****     /* Enable Battery Backup circuit and interface circuits between RPi and PSOC  */
+ 547              		.loc 1 177 0
+ 548 0006 4FF4FA60 		mov	r0, #2000
+ 549 000a FFF7FEFF 		bl	CyDelay
+ 550              	.LVL49:
+ 179:main.c        ****     Control_Reg_SS_Write(0u);
+ 551              		.loc 1 179 0
+ 552 000e 0120     		movs	r0, #1
+ 553 0010 FFF7FEFF 		bl	EnableBattery_Write
+ 554              	.LVL50:
+ 180:main.c        ****     Control_Reg_LED_Write(0u);
+ 555              		.loc 1 180 0
+ 556 0014 0020     		movs	r0, #0
+ 557 0016 FFF7FEFF 		bl	Control_Reg_SS_Write
+ 558              	.LVL51:
+ 181:main.c        ****     RpiInterrupts_Write(3u);     
+ 559              		.loc 1 181 0
+ 560 001a 0020     		movs	r0, #0
+ 561 001c FFF7FEFF 		bl	Control_Reg_LED_Write
+ 562              	.LVL52:
+ 182:main.c        ****     Clock_1_Start();
+ 563              		.loc 1 182 0
+ 564 0020 0320     		movs	r0, #3
+ 565 0022 FFF7FEFF 		bl	RpiInterrupts_Write
+ 566              	.LVL53:
+ 183:main.c        ****  
+ 567              		.loc 1 183 0
+ 568 0026 FFF7FEFF 		bl	Clock_1_Start
+ 569              	.LVL54:
+ 185:main.c        ****     SPIM_1_ClearFIFO();
+ 570              		.loc 1 185 0
+ 571 002a FFF7FEFF 		bl	SPIM_1_Start
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 18
+
+
+ 572              	.LVL55:
+ 186:main.c        ****     SPIM_1_ClearRxBuffer();
+ 573              		.loc 1 186 0
+ 574 002e FFF7FEFF 		bl	SPIM_1_ClearFIFO
+ 575              	.LVL56:
+ 187:main.c        ****     SPIM_1_ClearTxBuffer();   
+ 576              		.loc 1 187 0
+ 577 0032 FFF7FEFF 		bl	SPIM_1_ClearRxBuffer
+ 578              	.LVL57:
+ 188:main.c        ****     
+ 579              		.loc 1 188 0
+ 580 0036 FFF7FEFF 		bl	SPIM_1_ClearTxBuffer
+ 581              	.LVL58:
+ 190:main.c        ****     SPIM_SigGen_ClearFIFO();
+ 582              		.loc 1 190 0
+ 583 003a FFF7FEFF 		bl	SPIM_SigGen_Start
+ 584              	.LVL59:
+ 191:main.c        ****     SPIM_SigGen_ClearRxBuffer();
+ 585              		.loc 1 191 0
+ 586 003e FFF7FEFF 		bl	SPIM_SigGen_ClearFIFO
+ 587              	.LVL60:
+ 192:main.c        ****     SPIM_SigGen_ClearTxBuffer();    
+ 588              		.loc 1 192 0
+ 589 0042 FFF7FEFF 		bl	SPIM_SigGen_ClearRxBuffer
+ 590              	.LVL61:
+ 193:main.c        **** 
+ 591              		.loc 1 193 0
+ 592 0046 FFF7FEFF 		bl	SPIM_SigGen_ClearTxBuffer
+ 593              	.LVL62:
+ 195:main.c        ****     SPIS_WriteTxDataZero(0x00u);
+ 594              		.loc 1 195 0
+ 595 004a FFF7FEFF 		bl	SPIS_Start
+ 596              	.LVL63:
+ 196:main.c        ****  
+ 597              		.loc 1 196 0
+ 598 004e 0020     		movs	r0, #0
+ 599 0050 FFF7FEFF 		bl	SPIS_WriteTxDataZero
+ 600              	.LVL64:
+ 198:main.c        ****     PWM_2_Start();
+ 601              		.loc 1 198 0
+ 602 0054 FFF7FEFF 		bl	PWM_1_Start
+ 603              	.LVL65:
+ 199:main.c        ****     
+ 604              		.loc 1 199 0
+ 605 0058 FFF7FEFF 		bl	PWM_2_Start
+ 606              	.LVL66:
+ 201:main.c        ****     
+ 607              		.loc 1 201 0
+ 608 005c FFF7FEFF 		bl	I2C_1_Start
+ 609              	.LVL67:
+ 203:main.c        ****      read_counter = 0u;
+ 610              		.loc 1 203 0
+ 611 0060 384B     		ldr	r3, .L82
+ 612 0062 0025     		movs	r5, #0
+ 613 0064 1D70     		strb	r5, [r3]
+ 204:main.c        ****       
+ 614              		.loc 1 204 0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 19
+
+
+ 615 0066 384B     		ldr	r3, .L82+4
+ 616 0068 1D70     		strb	r5, [r3]
+ 206:main.c        ****     isr_SS_Fall_StartEx(SS_Fall_Handler );
+ 617              		.loc 1 206 0
+ 618              		.syntax unified
+ 619              	@ 206 "main.c" 1
+ 620 006a 62B6     		CPSIE   i
+ 621              	@ 0 "" 2
+ 231:main.c        ****         if ((pwm_a_new_command - pwm_a_command) > 50) {
+ 622              		.loc 1 231 0
+ 623              		.thumb
+ 624              		.syntax unified
+ 625 006c DFF80481 		ldr	r8, .L82+48
+ 207:main.c        ****     isr_SS_Rise_StartEx( SS_Rise_Handler );
+ 626              		.loc 1 207 0
+ 627 0070 3648     		ldr	r0, .L82+8
+ 628 0072 4646     		mov	r6, r8
+ 629 0074 FFF7FEFF 		bl	isr_SS_Fall_StartEx
+ 630              	.LVL68:
+ 212:main.c        **** 
+ 631              		.loc 1 212 0
+ 632 0078 354C     		ldr	r4, .L82+12
+ 208:main.c        ****  
+ 633              		.loc 1 208 0
+ 634 007a 3648     		ldr	r0, .L82+16
+ 635 007c FFF7FEFF 		bl	isr_SS_Rise_StartEx
+ 636              	.LVL69:
+ 210:main.c        ****   
+ 637              		.loc 1 210 0
+ 638 0080 354B     		ldr	r3, .L82+20
+ 639 0082 0F22     		movs	r2, #15
+ 212:main.c        **** 
+ 640              		.loc 1 212 0
+ 641 0084 2580     		strh	r5, [r4]	@ movhi
+ 217:main.c        ****       enc_b_Position = ReadEncoderValue(1u);        
+ 642              		.loc 1 217 0
+ 643 0086 354D     		ldr	r5, .L82+24
+ 210:main.c        ****   
+ 644              		.loc 1 210 0
+ 645 0088 1A80     		strh	r2, [r3]	@ movhi
+ 646              	.L69:
+ 217:main.c        ****       enc_b_Position = ReadEncoderValue(1u);        
+ 647              		.loc 1 217 0
+ 648 008a 0020     		movs	r0, #0
+ 649 008c FFF7FEFF 		bl	ReadEncoderValue
+ 650              	.LVL70:
+ 651 0090 2880     		strh	r0, [r5]	@ movhi
+ 218:main.c        ****       enc_c_Position = ReadEncoderValue(2u);
+ 652              		.loc 1 218 0
+ 653 0092 0120     		movs	r0, #1
+ 654 0094 FFF7FEFF 		bl	ReadEncoderValue
+ 655              	.LVL71:
+ 656 0098 314B     		ldr	r3, .L82+28
+ 657 009a 1880     		strh	r0, [r3]	@ movhi
+ 219:main.c        ****       
+ 658              		.loc 1 219 0
+ 659 009c 0220     		movs	r0, #2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 20
+
+
+ 660 009e FFF7FEFF 		bl	ReadEncoderValue
+ 661              	.LVL72:
+ 662 00a2 304B     		ldr	r3, .L82+32
+ 663 00a4 1880     		strh	r0, [r3]	@ movhi
+ 227:main.c        **** 
+ 664              		.loc 1 227 0
+ 665 00a6 4FF4AF60 		mov	r0, #1400
+ 666 00aa FFF7FEFF 		bl	CyDelayUs
+ 667              	.LVL73:
+ 231:main.c        ****         if ((pwm_a_new_command - pwm_a_command) > 50) {
+ 668              		.loc 1 231 0
+ 669 00ae 2E4B     		ldr	r3, .L82+36
+ 670 00b0 1A88     		ldrh	r2, [r3]
+ 671 00b2 B8F80030 		ldrh	r3, [r8]
+ 672 00b6 9A42     		cmp	r2, r3
+ 673 00b8 04D9     		bls	.L70
+ 232:main.c        ****             pwm_a_command +=50;
+ 674              		.loc 1 232 0
+ 675 00ba D11A     		subs	r1, r2, r3
+ 676 00bc 3229     		cmp	r1, #50
+ 677 00be 08DD     		ble	.L73
+ 233:main.c        ****         } else {
+ 678              		.loc 1 233 0
+ 679 00c0 3233     		adds	r3, r3, #50
+ 680 00c2 03E0     		b	.L80
+ 681              	.L70:
+ 238:main.c        ****             pwm_a_command -=50;
+ 682              		.loc 1 238 0
+ 683 00c4 991A     		subs	r1, r3, r2
+ 684 00c6 3229     		cmp	r1, #50
+ 685 00c8 03DD     		ble	.L73
+ 239:main.c        ****         } else {
+ 686              		.loc 1 239 0
+ 687 00ca 323B     		subs	r3, r3, #50
+ 688              	.L80:
+ 689 00cc A8F80030 		strh	r3, [r8]	@ movhi
+ 690 00d0 01E0     		b	.L72
+ 691              	.L73:
+ 241:main.c        ****         }
+ 692              		.loc 1 241 0
+ 693 00d2 A8F80020 		strh	r2, [r8]	@ movhi
+ 694              	.L72:
+ 246:main.c        ****         if ((pwm_b_new_command - pwm_b_command) > 50) {
+ 695              		.loc 1 246 0
+ 696 00d6 254B     		ldr	r3, .L82+40
+ 697 00d8 254F     		ldr	r7, .L82+44
+ 698 00da 1A88     		ldrh	r2, [r3]
+ 699 00dc 3B88     		ldrh	r3, [r7]
+ 700 00de 9A42     		cmp	r2, r3
+ 701 00e0 04D9     		bls	.L74
+ 247:main.c        ****             pwm_b_command +=50;
+ 702              		.loc 1 247 0
+ 703 00e2 D11A     		subs	r1, r2, r3
+ 704 00e4 3229     		cmp	r1, #50
+ 705 00e6 07DD     		ble	.L77
+ 248:main.c        ****         } else {
+ 706              		.loc 1 248 0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 21
+
+
+ 707 00e8 3233     		adds	r3, r3, #50
+ 708 00ea 03E0     		b	.L81
+ 709              	.L74:
+ 253:main.c        ****             pwm_b_command -=50;
+ 710              		.loc 1 253 0
+ 711 00ec 991A     		subs	r1, r3, r2
+ 712 00ee 3229     		cmp	r1, #50
+ 713 00f0 02DD     		ble	.L77
+ 254:main.c        ****         } else {
+ 714              		.loc 1 254 0
+ 715 00f2 323B     		subs	r3, r3, #50
+ 716              	.L81:
+ 717 00f4 3B80     		strh	r3, [r7]	@ movhi
+ 718 00f6 00E0     		b	.L76
+ 719              	.L77:
+ 256:main.c        ****         }
+ 720              		.loc 1 256 0
+ 721 00f8 3A80     		strh	r2, [r7]	@ movhi
+ 722              	.L76:
+ 260:main.c        ****     PWM_2_WriteCompare(pwm_b_command);
+ 723              		.loc 1 260 0
+ 724 00fa 3088     		ldrh	r0, [r6]
+ 725 00fc FFF7FEFF 		bl	PWM_1_WriteCompare
+ 726              	.LVL74:
+ 261:main.c        ****     
+ 727              		.loc 1 261 0
+ 728 0100 3888     		ldrh	r0, [r7]
+ 729 0102 FFF7FEFF 		bl	PWM_2_WriteCompare
+ 730              	.LVL75:
+ 264:main.c        ****         shutdown_count +=1;
+ 731              		.loc 1 264 0
+ 732 0106 FFF7FEFF 		bl	Status_Reg_1_Read
+ 733              	.LVL76:
+ 734 010a 0128     		cmp	r0, #1
+ 735 010c 17D1     		bne	.L78
+ 265:main.c        ****         if (shutdown_count == 2000u) {      
+ 736              		.loc 1 265 0
+ 737 010e 2788     		ldrh	r7, [r4]
+ 738 0110 0137     		adds	r7, r7, #1
+ 739 0112 BFB2     		uxth	r7, r7
+ 266:main.c        ****             CyGlobalIntDisable; 
+ 740              		.loc 1 266 0
+ 741 0114 B7F5FA6F 		cmp	r7, #2000
+ 265:main.c        ****         if (shutdown_count == 2000u) {      
+ 742              		.loc 1 265 0
+ 743 0118 2780     		strh	r7, [r4]	@ movhi
+ 266:main.c        ****             CyGlobalIntDisable; 
+ 744              		.loc 1 266 0
+ 745 011a B6D1     		bne	.L69
+ 267:main.c        ****              Control_Reg_LED_Write(1u);
+ 746              		.loc 1 267 0
+ 747              		.syntax unified
+ 748              	@ 267 "main.c" 1
+ 749 011c 72B6     		CPSID   i
+ 750              	@ 0 "" 2
+ 268:main.c        ****             /* tell Pi to shut down */ 
+ 751              		.loc 1 268 0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 22
+
+
+ 752              		.thumb
+ 753              		.syntax unified
+ 754 011e FFF7FEFF 		bl	Control_Reg_LED_Write
+ 755              	.LVL77:
+ 270:main.c        ****            CyDelay(20000u);
+ 756              		.loc 1 270 0
+ 757 0122 0020     		movs	r0, #0
+ 758 0124 FFF7FEFF 		bl	RpiInterrupts_Write
+ 759              	.LVL78:
+ 271:main.c        ****         /* Wait 60 seconds then turn off back up power */
+ 760              		.loc 1 271 0
+ 761 0128 44F62060 		movw	r0, #20000
+ 762 012c FFF7FEFF 		bl	CyDelay
+ 763              	.LVL79:
+ 273:main.c        ****            CyDelay(2000u);
+ 764              		.loc 1 273 0
+ 765 0130 0220     		movs	r0, #2
+ 766 0132 FFF7FEFF 		bl	EnableBattery_Write
+ 767              	.LVL80:
+ 274:main.c        ****         }
+ 768              		.loc 1 274 0
+ 769 0136 3846     		mov	r0, r7
+ 770 0138 FFF7FEFF 		bl	CyDelay
+ 771              	.LVL81:
+ 772 013c A5E7     		b	.L69
+ 773              	.L78:
+ 277:main.c        ****       }
+ 774              		.loc 1 277 0
+ 775 013e 0023     		movs	r3, #0
+ 776 0140 2380     		strh	r3, [r4]	@ movhi
+ 777 0142 A2E7     		b	.L69
+ 778              	.L83:
+ 779              		.align	2
+ 780              	.L82:
+ 781 0144 00000000 		.word	PSOC_state
+ 782 0148 00000000 		.word	read_counter
+ 783 014c 00000000 		.word	SS_Fall_Handler
+ 784 0150 00000000 		.word	shutdown_count
+ 785 0154 00000000 		.word	SS_Rise_Handler
+ 786 0158 00000000 		.word	RPi_Command
+ 787 015c 00000000 		.word	enc_a_Position
+ 788 0160 00000000 		.word	enc_b_Position
+ 789 0164 00000000 		.word	enc_c_Position
+ 790 0168 00000000 		.word	pwm_a_new_command
+ 791 016c 00000000 		.word	pwm_b_new_command
+ 792 0170 00000000 		.word	pwm_b_command
+ 793 0174 00000000 		.word	pwm_a_command
+ 794              		.cfi_endproc
+ 795              	.LFE65:
+ 796              		.size	main, .-main
+ 797              		.comm	shutdown_count,2,2
+ 798              		.comm	i,1,1
+ 799              		.comm	temp2,1,1
+ 800              		.comm	temp1,1,1
+ 801              		.comm	rxBuffer,8,2
+ 802              		.comm	i2cData,1,1
+ 803              		.comm	i2cAddress,1,1
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 23
+
+
+ 804              		.comm	PSOC_state,1,1
+ 805              		.comm	read_counter,1,1
+ 806              		.comm	pwm_b_new_command,2,2
+ 807              		.comm	pwm_a_new_command,2,2
+ 808              		.comm	pwm_b_command,2,2
+ 809              		.comm	pwm_a_command,2,2
+ 810              		.comm	enc_c_Position,2,2
+ 811              		.comm	enc_b_Position,2,2
+ 812              		.comm	enc_a_Position,2,2
+ 813              		.comm	RPi_Data,2,2
+ 814              		.comm	RPi_Command,2,2
+ 815              		.text
+ 816              	.Letext0:
+ 817              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 818              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 819              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 820              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 821              		.file 6 "Generated_Source\\PSoC5/isr_SS_Fall.h"
+ 822              		.file 7 "Generated_Source\\PSoC5/SPIS.h"
+ 823              		.file 8 "Generated_Source\\PSoC5/Control_Reg_SS_SigGen.h"
+ 824              		.file 9 "Generated_Source\\PSoC5/SPIM_SigGen.h"
+ 825              		.file 10 "Generated_Source\\PSoC5/I2C_1.h"
+ 826              		.file 11 "Generated_Source\\PSoC5/isr_SS_Rise.h"
+ 827              		.file 12 "Generated_Source\\PSoC5/CyLib.h"
+ 828              		.file 13 "Generated_Source\\PSoC5/SPIM_1.h"
+ 829              		.file 14 "Generated_Source\\PSoC5/Control_Reg_SS.h"
+ 830              		.file 15 "Generated_Source\\PSoC5/Comp_1.h"
+ 831              		.file 16 "Generated_Source\\PSoC5/EnableBattery.h"
+ 832              		.file 17 "Generated_Source\\PSoC5/Control_Reg_LED.h"
+ 833              		.file 18 "Generated_Source\\PSoC5/RpiInterrupts.h"
+ 834              		.file 19 "Generated_Source\\PSoC5/Clock_1.h"
+ 835              		.file 20 "Generated_Source\\PSoC5/PWM_1.h"
+ 836              		.file 21 "Generated_Source\\PSoC5/PWM_2.h"
+ 837              		.file 22 "Generated_Source\\PSoC5/Status_Reg_1.h"
+ 838              		.section	.debug_info,"",%progbits
+ 839              	.Ldebug_info0:
+ 840 0000 6F080000 		.4byte	0x86f
+ 841 0004 0400     		.2byte	0x4
+ 842 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 843 000a 04       		.byte	0x4
+ 844 000b 01       		.uleb128 0x1
+ 845 000c B5020000 		.4byte	.LASF83
+ 846 0010 0C       		.byte	0xc
+ 847 0011 0D040000 		.4byte	.LASF84
+ 848 0015 A7040000 		.4byte	.LASF85
+ 849 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 850 001d 00000000 		.4byte	0
+ 851 0021 00000000 		.4byte	.Ldebug_line0
+ 852 0025 02       		.uleb128 0x2
+ 853 0026 01       		.byte	0x1
+ 854 0027 06       		.byte	0x6
+ 855 0028 5D020000 		.4byte	.LASF0
+ 856 002c 02       		.uleb128 0x2
+ 857 002d 01       		.byte	0x1
+ 858 002e 08       		.byte	0x8
+ 859 002f 4F020000 		.4byte	.LASF1
+ 860 0033 02       		.uleb128 0x2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 24
+
+
+ 861 0034 02       		.byte	0x2
+ 862 0035 05       		.byte	0x5
+ 863 0036 69000000 		.4byte	.LASF2
+ 864 003a 02       		.uleb128 0x2
+ 865 003b 02       		.byte	0x2
+ 866 003c 07       		.byte	0x7
+ 867 003d 8A030000 		.4byte	.LASF3
+ 868 0041 03       		.uleb128 0x3
+ 869 0042 88040000 		.4byte	.LASF9
+ 870 0046 02       		.byte	0x2
+ 871 0047 3F       		.byte	0x3f
+ 872 0048 4C000000 		.4byte	0x4c
+ 873 004c 02       		.uleb128 0x2
+ 874 004d 04       		.byte	0x4
+ 875 004e 05       		.byte	0x5
+ 876 004f A5010000 		.4byte	.LASF4
+ 877 0053 02       		.uleb128 0x2
+ 878 0054 04       		.byte	0x4
+ 879 0055 07       		.byte	0x7
+ 880 0056 14040000 		.4byte	.LASF5
+ 881 005a 02       		.uleb128 0x2
+ 882 005b 08       		.byte	0x8
+ 883 005c 05       		.byte	0x5
+ 884 005d 83010000 		.4byte	.LASF6
+ 885 0061 02       		.uleb128 0x2
+ 886 0062 08       		.byte	0x8
+ 887 0063 07       		.byte	0x7
+ 888 0064 69020000 		.4byte	.LASF7
+ 889 0068 04       		.uleb128 0x4
+ 890 0069 04       		.byte	0x4
+ 891 006a 05       		.byte	0x5
+ 892 006b 696E7400 		.ascii	"int\000"
+ 893 006f 02       		.uleb128 0x2
+ 894 0070 04       		.byte	0x4
+ 895 0071 07       		.byte	0x7
+ 896 0072 80020000 		.4byte	.LASF8
+ 897 0076 03       		.uleb128 0x3
+ 898 0077 73030000 		.4byte	.LASF10
+ 899 007b 03       		.byte	0x3
+ 900 007c 2C       		.byte	0x2c
+ 901 007d 41000000 		.4byte	0x41
+ 902 0081 05       		.uleb128 0x5
+ 903 0082 CB030000 		.4byte	.LASF11
+ 904 0086 04       		.byte	0x4
+ 905 0087 E401     		.2byte	0x1e4
+ 906 0089 2C000000 		.4byte	0x2c
+ 907 008d 05       		.uleb128 0x5
+ 908 008e 2D010000 		.4byte	.LASF12
+ 909 0092 04       		.byte	0x4
+ 910 0093 E501     		.2byte	0x1e5
+ 911 0095 3A000000 		.4byte	0x3a
+ 912 0099 02       		.uleb128 0x2
+ 913 009a 04       		.byte	0x4
+ 914 009b 04       		.byte	0x4
+ 915 009c 63010000 		.4byte	.LASF13
+ 916 00a0 02       		.uleb128 0x2
+ 917 00a1 08       		.byte	0x8
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 25
+
+
+ 918 00a2 04       		.byte	0x4
+ 919 00a3 38040000 		.4byte	.LASF14
+ 920 00a7 02       		.uleb128 0x2
+ 921 00a8 01       		.byte	0x1
+ 922 00a9 08       		.byte	0x8
+ 923 00aa 6E030000 		.4byte	.LASF15
+ 924 00ae 02       		.uleb128 0x2
+ 925 00af 08       		.byte	0x8
+ 926 00b0 04       		.byte	0x4
+ 927 00b1 2B020000 		.4byte	.LASF16
+ 928 00b5 02       		.uleb128 0x2
+ 929 00b6 04       		.byte	0x4
+ 930 00b7 07       		.byte	0x7
+ 931 00b8 88000000 		.4byte	.LASF17
+ 932 00bc 06       		.uleb128 0x6
+ 933 00bd 3F040000 		.4byte	.LASF86
+ 934 00c1 01       		.byte	0x1
+ 935 00c2 2701     		.2byte	0x127
+ 936 00c4 8D000000 		.4byte	0x8d
+ 937 00c8 01       		.byte	0x1
+ 938 00c9 F1000000 		.4byte	0xf1
+ 939 00cd 07       		.uleb128 0x7
+ 940 00ce A7020000 		.4byte	.LASF87
+ 941 00d2 01       		.byte	0x1
+ 942 00d3 2701     		.2byte	0x127
+ 943 00d5 81000000 		.4byte	0x81
+ 944 00d9 08       		.uleb128 0x8
+ 945 00da 16000000 		.4byte	.LASF18
+ 946 00de 01       		.byte	0x1
+ 947 00df 2901     		.2byte	0x129
+ 948 00e1 8D000000 		.4byte	0x8d
+ 949 00e5 09       		.uleb128 0x9
+ 950 00e6 696900   		.ascii	"ii\000"
+ 951 00e9 01       		.byte	0x1
+ 952 00ea 2A01     		.2byte	0x12a
+ 953 00ec 81000000 		.4byte	0x81
+ 954 00f0 00       		.byte	0
+ 955 00f1 0A       		.uleb128 0xa
+ 956 00f2 7E050000 		.4byte	.LASF21
+ 957 00f6 01       		.byte	0x1
+ 958 00f7 3B       		.byte	0x3b
+ 959 00f8 00000000 		.4byte	.LFB63
+ 960 00fc 48000000 		.4byte	.LFE63-.LFB63
+ 961 0100 01       		.uleb128 0x1
+ 962 0101 9C       		.byte	0x9c
+ 963 0102 19010000 		.4byte	0x119
+ 964 0106 0B       		.uleb128 0xb
+ 965 0107 06000000 		.4byte	.LVL0
+ 966 010b BA060000 		.4byte	0x6ba
+ 967 010f 0C       		.uleb128 0xc
+ 968 0110 42000000 		.4byte	.LVL1
+ 969 0114 C5060000 		.4byte	0x6c5
+ 970 0118 00       		.byte	0
+ 971 0119 0D       		.uleb128 0xd
+ 972 011a 7B030000 		.4byte	.LASF23
+ 973 011e 01       		.byte	0x1
+ 974 011f 1A01     		.2byte	0x11a
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 26
+
+
+ 975 0121 8D000000 		.4byte	0x8d
+ 976 0125 00000000 		.4byte	.LFB66
+ 977 0129 16000000 		.4byte	.LFE66-.LFB66
+ 978 012d 01       		.uleb128 0x1
+ 979 012e 9C       		.byte	0x9c
+ 980 012f 83010000 		.4byte	0x183
+ 981 0133 0E       		.uleb128 0xe
+ 982 0134 37020000 		.4byte	.LASF19
+ 983 0138 01       		.byte	0x1
+ 984 0139 1A01     		.2byte	0x11a
+ 985 013b 81000000 		.4byte	0x81
+ 986 013f 00000000 		.4byte	.LLST0
+ 987 0143 0E       		.uleb128 0xe
+ 988 0144 4F030000 		.4byte	.LASF20
+ 989 0148 01       		.byte	0x1
+ 990 0149 1A01     		.2byte	0x11a
+ 991 014b 8D000000 		.4byte	0x8d
+ 992 014f 21000000 		.4byte	.LLST1
+ 993 0153 0F       		.uleb128 0xf
+ 994 0154 16000000 		.4byte	.LASF18
+ 995 0158 01       		.byte	0x1
+ 996 0159 1C01     		.2byte	0x11c
+ 997 015b 8D000000 		.4byte	0x8d
+ 998 015f 00       		.byte	0
+ 999 0160 0B       		.uleb128 0xb
+ 1000 0161 08000000 		.4byte	.LVL3
+ 1001 0165 D0060000 		.4byte	0x6d0
+ 1002 0169 0B       		.uleb128 0xb
+ 1003 016a 0C000000 		.4byte	.LVL4
+ 1004 016e DB060000 		.4byte	0x6db
+ 1005 0172 10       		.uleb128 0x10
+ 1006 0173 12000000 		.4byte	.LVL5
+ 1007 0177 E6060000 		.4byte	0x6e6
+ 1008 017b 11       		.uleb128 0x11
+ 1009 017c 01       		.uleb128 0x1
+ 1010 017d 50       		.byte	0x50
+ 1011 017e 02       		.uleb128 0x2
+ 1012 017f 74       		.byte	0x74
+ 1013 0180 00       		.sleb128 0
+ 1014 0181 00       		.byte	0
+ 1015 0182 00       		.byte	0
+ 1016 0183 0A       		.uleb128 0xa
+ 1017 0184 DB000000 		.4byte	.LASF22
+ 1018 0188 01       		.byte	0x1
+ 1019 0189 4F       		.byte	0x4f
+ 1020 018a 00000000 		.4byte	.LFB64
+ 1021 018e 4C010000 		.4byte	.LFE64-.LFB64
+ 1022 0192 01       		.uleb128 0x1
+ 1023 0193 9C       		.byte	0x9c
+ 1024 0194 0F020000 		.4byte	0x20f
+ 1025 0198 0B       		.uleb128 0xb
+ 1026 0199 0C000000 		.4byte	.LVL6
+ 1027 019d F1060000 		.4byte	0x6f1
+ 1028 01a1 0B       		.uleb128 0xb
+ 1029 01a2 1A000000 		.4byte	.LVL7
+ 1030 01a6 F1060000 		.4byte	0x6f1
+ 1031 01aa 0B       		.uleb128 0xb
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 27
+
+
+ 1032 01ab 38000000 		.4byte	.LVL8
+ 1033 01af C5060000 		.4byte	0x6c5
+ 1034 01b3 0B       		.uleb128 0xb
+ 1035 01b4 40000000 		.4byte	.LVL9
+ 1036 01b8 FC060000 		.4byte	0x6fc
+ 1037 01bc 0B       		.uleb128 0xb
+ 1038 01bd 48000000 		.4byte	.LVL10
+ 1039 01c1 FC060000 		.4byte	0x6fc
+ 1040 01c5 0B       		.uleb128 0xb
+ 1041 01c6 AA000000 		.4byte	.LVL11
+ 1042 01ca 19010000 		.4byte	0x119
+ 1043 01ce 12       		.uleb128 0x12
+ 1044 01cf C8000000 		.4byte	.LVL12
+ 1045 01d3 07070000 		.4byte	0x707
+ 1046 01d7 E1010000 		.4byte	0x1e1
+ 1047 01db 11       		.uleb128 0x11
+ 1048 01dc 01       		.uleb128 0x1
+ 1049 01dd 51       		.byte	0x51
+ 1050 01de 01       		.uleb128 0x1
+ 1051 01df 30       		.byte	0x30
+ 1052 01e0 00       		.byte	0
+ 1053 01e1 0B       		.uleb128 0xb
+ 1054 01e2 CE000000 		.4byte	.LVL13
+ 1055 01e6 12070000 		.4byte	0x712
+ 1056 01ea 0B       		.uleb128 0xb
+ 1057 01eb D2000000 		.4byte	.LVL14
+ 1058 01ef 1D070000 		.4byte	0x71d
+ 1059 01f3 0B       		.uleb128 0xb
+ 1060 01f4 12010000 		.4byte	.LVL15
+ 1061 01f8 28070000 		.4byte	0x728
+ 1062 01fc 0B       		.uleb128 0xb
+ 1063 01fd 16010000 		.4byte	.LVL16
+ 1064 0201 33070000 		.4byte	0x733
+ 1065 0205 0C       		.uleb128 0xc
+ 1066 0206 1E010000 		.4byte	.LVL17
+ 1067 020a 3E070000 		.4byte	0x73e
+ 1068 020e 00       		.byte	0
+ 1069 020f 13       		.uleb128 0x13
+ 1070 0210 BC000000 		.4byte	0xbc
+ 1071 0214 00000000 		.4byte	.LFB67
+ 1072 0218 98000000 		.4byte	.LFE67-.LFB67
+ 1073 021c 01       		.uleb128 0x1
+ 1074 021d 9C       		.byte	0x9c
+ 1075 021e 72030000 		.4byte	0x372
+ 1076 0222 14       		.uleb128 0x14
+ 1077 0223 CD000000 		.4byte	0xcd
+ 1078 0227 42000000 		.4byte	.LLST2
+ 1079 022b 15       		.uleb128 0x15
+ 1080 022c D9000000 		.4byte	0xd9
+ 1081 0230 63000000 		.4byte	.LLST3
+ 1082 0234 15       		.uleb128 0x15
+ 1083 0235 E5000000 		.4byte	0xe5
+ 1084 0239 84000000 		.4byte	.LLST4
+ 1085 023d 16       		.uleb128 0x16
+ 1086 023e 4A000000 		.4byte	.LBB4
+ 1087 0242 40000000 		.4byte	.LBE4-.LBB4
+ 1088 0246 E8020000 		.4byte	0x2e8
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 28
+
+
+ 1089 024a 17       		.uleb128 0x17
+ 1090 024b CD000000 		.4byte	0xcd
+ 1091 024f 18       		.uleb128 0x18
+ 1092 0250 4A000000 		.4byte	.LBB5
+ 1093 0254 40000000 		.4byte	.LBE5-.LBB5
+ 1094 0258 15       		.uleb128 0x15
+ 1095 0259 D9000000 		.4byte	0xd9
+ 1096 025d C8000000 		.4byte	.LLST5
+ 1097 0261 19       		.uleb128 0x19
+ 1098 0262 E5000000 		.4byte	0xe5
+ 1099 0266 12       		.uleb128 0x12
+ 1100 0267 50000000 		.4byte	.LVL34
+ 1101 026b 49070000 		.4byte	0x749
+ 1102 026f 79020000 		.4byte	0x279
+ 1103 0273 11       		.uleb128 0x11
+ 1104 0274 01       		.uleb128 0x1
+ 1105 0275 50       		.byte	0x50
+ 1106 0276 01       		.uleb128 0x1
+ 1107 0277 44       		.byte	0x44
+ 1108 0278 00       		.byte	0
+ 1109 0279 12       		.uleb128 0x12
+ 1110 027a 56000000 		.4byte	.LVL35
+ 1111 027e 54070000 		.4byte	0x754
+ 1112 0282 8C020000 		.4byte	0x28c
+ 1113 0286 11       		.uleb128 0x11
+ 1114 0287 01       		.uleb128 0x1
+ 1115 0288 50       		.byte	0x50
+ 1116 0289 01       		.uleb128 0x1
+ 1117 028a 30       		.byte	0x30
+ 1118 028b 00       		.byte	0
+ 1119 028c 0B       		.uleb128 0xb
+ 1120 028d 5A000000 		.4byte	.LVL36
+ 1121 0291 5F070000 		.4byte	0x75f
+ 1122 0295 0B       		.uleb128 0xb
+ 1123 0296 62000000 		.4byte	.LVL37
+ 1124 029a 6A070000 		.4byte	0x76a
+ 1125 029e 12       		.uleb128 0x12
+ 1126 029f 6C000000 		.4byte	.LVL39
+ 1127 02a3 49070000 		.4byte	0x749
+ 1128 02a7 B1020000 		.4byte	0x2b1
+ 1129 02ab 11       		.uleb128 0x11
+ 1130 02ac 01       		.uleb128 0x1
+ 1131 02ad 50       		.byte	0x50
+ 1132 02ae 01       		.uleb128 0x1
+ 1133 02af 44       		.byte	0x44
+ 1134 02b0 00       		.byte	0
+ 1135 02b1 12       		.uleb128 0x12
+ 1136 02b2 72000000 		.4byte	.LVL40
+ 1137 02b6 54070000 		.4byte	0x754
+ 1138 02ba C4020000 		.4byte	0x2c4
+ 1139 02be 11       		.uleb128 0x11
+ 1140 02bf 01       		.uleb128 0x1
+ 1141 02c0 50       		.byte	0x50
+ 1142 02c1 01       		.uleb128 0x1
+ 1143 02c2 30       		.byte	0x30
+ 1144 02c3 00       		.byte	0
+ 1145 02c4 0B       		.uleb128 0xb
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 29
+
+
+ 1146 02c5 76000000 		.4byte	.LVL41
+ 1147 02c9 5F070000 		.4byte	0x75f
+ 1148 02cd 0B       		.uleb128 0xb
+ 1149 02ce 7E000000 		.4byte	.LVL42
+ 1150 02d2 6A070000 		.4byte	0x76a
+ 1151 02d6 10       		.uleb128 0x10
+ 1152 02d7 88000000 		.4byte	.LVL44
+ 1153 02db 49070000 		.4byte	0x749
+ 1154 02df 11       		.uleb128 0x11
+ 1155 02e0 01       		.uleb128 0x1
+ 1156 02e1 50       		.byte	0x50
+ 1157 02e2 02       		.uleb128 0x2
+ 1158 02e3 08       		.byte	0x8
+ 1159 02e4 28       		.byte	0x28
+ 1160 02e5 00       		.byte	0
+ 1161 02e6 00       		.byte	0
+ 1162 02e7 00       		.byte	0
+ 1163 02e8 0B       		.uleb128 0xb
+ 1164 02e9 06000000 		.4byte	.LVL19
+ 1165 02ed 75070000 		.4byte	0x775
+ 1166 02f1 0B       		.uleb128 0xb
+ 1167 02f2 0A000000 		.4byte	.LVL20
+ 1168 02f6 80070000 		.4byte	0x780
+ 1169 02fa 12       		.uleb128 0x12
+ 1170 02fb 10000000 		.4byte	.LVL21
+ 1171 02ff 54070000 		.4byte	0x754
+ 1172 0303 0D030000 		.4byte	0x30d
+ 1173 0307 11       		.uleb128 0x11
+ 1174 0308 01       		.uleb128 0x1
+ 1175 0309 50       		.byte	0x50
+ 1176 030a 01       		.uleb128 0x1
+ 1177 030b 40       		.byte	0x40
+ 1178 030c 00       		.byte	0
+ 1179 030d 0B       		.uleb128 0xb
+ 1180 030e 14000000 		.4byte	.LVL22
+ 1181 0312 5F070000 		.4byte	0x75f
+ 1182 0316 12       		.uleb128 0x12
+ 1183 0317 1E000000 		.4byte	.LVL23
+ 1184 031b 49070000 		.4byte	0x749
+ 1185 031f 29030000 		.4byte	0x329
+ 1186 0323 11       		.uleb128 0x11
+ 1187 0324 01       		.uleb128 0x1
+ 1188 0325 50       		.byte	0x50
+ 1189 0326 01       		.uleb128 0x1
+ 1190 0327 44       		.byte	0x44
+ 1191 0328 00       		.byte	0
+ 1192 0329 0B       		.uleb128 0xb
+ 1193 032a 24000000 		.4byte	.LVL25
+ 1194 032e 6A070000 		.4byte	0x76a
+ 1195 0332 12       		.uleb128 0x12
+ 1196 0333 34000000 		.4byte	.LVL27
+ 1197 0337 49070000 		.4byte	0x749
+ 1198 033b 45030000 		.4byte	0x345
+ 1199 033f 11       		.uleb128 0x11
+ 1200 0340 01       		.uleb128 0x1
+ 1201 0341 50       		.byte	0x50
+ 1202 0342 01       		.uleb128 0x1
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 30
+
+
+ 1203 0343 44       		.byte	0x44
+ 1204 0344 00       		.byte	0
+ 1205 0345 12       		.uleb128 0x12
+ 1206 0346 3A000000 		.4byte	.LVL28
+ 1207 034a 54070000 		.4byte	0x754
+ 1208 034e 58030000 		.4byte	0x358
+ 1209 0352 11       		.uleb128 0x11
+ 1210 0353 01       		.uleb128 0x1
+ 1211 0354 50       		.byte	0x50
+ 1212 0355 01       		.uleb128 0x1
+ 1213 0356 30       		.byte	0x30
+ 1214 0357 00       		.byte	0
+ 1215 0358 0B       		.uleb128 0xb
+ 1216 0359 3E000000 		.4byte	.LVL29
+ 1217 035d 5F070000 		.4byte	0x75f
+ 1218 0361 10       		.uleb128 0x10
+ 1219 0362 90000000 		.4byte	.LVL46
+ 1220 0366 49070000 		.4byte	0x749
+ 1221 036a 11       		.uleb128 0x11
+ 1222 036b 01       		.uleb128 0x1
+ 1223 036c 50       		.byte	0x50
+ 1224 036d 02       		.uleb128 0x2
+ 1225 036e 08       		.byte	0x8
+ 1226 036f 28       		.byte	0x28
+ 1227 0370 00       		.byte	0
+ 1228 0371 00       		.byte	0
+ 1229 0372 1A       		.uleb128 0x1a
+ 1230 0373 00010000 		.4byte	.LASF24
+ 1231 0377 01       		.byte	0x1
+ 1232 0378 AE       		.byte	0xae
+ 1233 0379 68000000 		.4byte	0x68
+ 1234 037d 00000000 		.4byte	.LFB65
+ 1235 0381 78010000 		.4byte	.LFE65-.LFB65
+ 1236 0385 01       		.uleb128 0x1
+ 1237 0386 9C       		.byte	0x9c
+ 1238 0387 69050000 		.4byte	0x569
+ 1239 038b 0B       		.uleb128 0xb
+ 1240 038c 06000000 		.4byte	.LVL48
+ 1241 0390 8B070000 		.4byte	0x78b
+ 1242 0394 12       		.uleb128 0x12
+ 1243 0395 0E000000 		.4byte	.LVL49
+ 1244 0399 96070000 		.4byte	0x796
+ 1245 039d A9030000 		.4byte	0x3a9
+ 1246 03a1 11       		.uleb128 0x11
+ 1247 03a2 01       		.uleb128 0x1
+ 1248 03a3 50       		.byte	0x50
+ 1249 03a4 03       		.uleb128 0x3
+ 1250 03a5 0A       		.byte	0xa
+ 1251 03a6 D007     		.2byte	0x7d0
+ 1252 03a8 00       		.byte	0
+ 1253 03a9 12       		.uleb128 0x12
+ 1254 03aa 14000000 		.4byte	.LVL50
+ 1255 03ae A1070000 		.4byte	0x7a1
+ 1256 03b2 BC030000 		.4byte	0x3bc
+ 1257 03b6 11       		.uleb128 0x11
+ 1258 03b7 01       		.uleb128 0x1
+ 1259 03b8 50       		.byte	0x50
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 31
+
+
+ 1260 03b9 01       		.uleb128 0x1
+ 1261 03ba 31       		.byte	0x31
+ 1262 03bb 00       		.byte	0
+ 1263 03bc 12       		.uleb128 0x12
+ 1264 03bd 1A000000 		.4byte	.LVL51
+ 1265 03c1 75070000 		.4byte	0x775
+ 1266 03c5 CF030000 		.4byte	0x3cf
+ 1267 03c9 11       		.uleb128 0x11
+ 1268 03ca 01       		.uleb128 0x1
+ 1269 03cb 50       		.byte	0x50
+ 1270 03cc 01       		.uleb128 0x1
+ 1271 03cd 30       		.byte	0x30
+ 1272 03ce 00       		.byte	0
+ 1273 03cf 12       		.uleb128 0x12
+ 1274 03d0 20000000 		.4byte	.LVL52
+ 1275 03d4 AC070000 		.4byte	0x7ac
+ 1276 03d8 E2030000 		.4byte	0x3e2
+ 1277 03dc 11       		.uleb128 0x11
+ 1278 03dd 01       		.uleb128 0x1
+ 1279 03de 50       		.byte	0x50
+ 1280 03df 01       		.uleb128 0x1
+ 1281 03e0 30       		.byte	0x30
+ 1282 03e1 00       		.byte	0
+ 1283 03e2 12       		.uleb128 0x12
+ 1284 03e3 26000000 		.4byte	.LVL53
+ 1285 03e7 B7070000 		.4byte	0x7b7
+ 1286 03eb F5030000 		.4byte	0x3f5
+ 1287 03ef 11       		.uleb128 0x11
+ 1288 03f0 01       		.uleb128 0x1
+ 1289 03f1 50       		.byte	0x50
+ 1290 03f2 01       		.uleb128 0x1
+ 1291 03f3 33       		.byte	0x33
+ 1292 03f4 00       		.byte	0
+ 1293 03f5 0B       		.uleb128 0xb
+ 1294 03f6 2A000000 		.4byte	.LVL54
+ 1295 03fa C2070000 		.4byte	0x7c2
+ 1296 03fe 0B       		.uleb128 0xb
+ 1297 03ff 2E000000 		.4byte	.LVL55
+ 1298 0403 CD070000 		.4byte	0x7cd
+ 1299 0407 0B       		.uleb128 0xb
+ 1300 0408 32000000 		.4byte	.LVL56
+ 1301 040c 80070000 		.4byte	0x780
+ 1302 0410 0B       		.uleb128 0xb
+ 1303 0411 36000000 		.4byte	.LVL57
+ 1304 0415 D8070000 		.4byte	0x7d8
+ 1305 0419 0B       		.uleb128 0xb
+ 1306 041a 3A000000 		.4byte	.LVL58
+ 1307 041e E3070000 		.4byte	0x7e3
+ 1308 0422 0B       		.uleb128 0xb
+ 1309 0423 3E000000 		.4byte	.LVL59
+ 1310 0427 EE070000 		.4byte	0x7ee
+ 1311 042b 0B       		.uleb128 0xb
+ 1312 042c 42000000 		.4byte	.LVL60
+ 1313 0430 DB060000 		.4byte	0x6db
+ 1314 0434 0B       		.uleb128 0xb
+ 1315 0435 46000000 		.4byte	.LVL61
+ 1316 0439 F9070000 		.4byte	0x7f9
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 32
+
+
+ 1317 043d 0B       		.uleb128 0xb
+ 1318 043e 4A000000 		.4byte	.LVL62
+ 1319 0442 04080000 		.4byte	0x804
+ 1320 0446 0B       		.uleb128 0xb
+ 1321 0447 4E000000 		.4byte	.LVL63
+ 1322 044b 0F080000 		.4byte	0x80f
+ 1323 044f 12       		.uleb128 0x12
+ 1324 0450 54000000 		.4byte	.LVL64
+ 1325 0454 C5060000 		.4byte	0x6c5
+ 1326 0458 62040000 		.4byte	0x462
+ 1327 045c 11       		.uleb128 0x11
+ 1328 045d 01       		.uleb128 0x1
+ 1329 045e 50       		.byte	0x50
+ 1330 045f 01       		.uleb128 0x1
+ 1331 0460 30       		.byte	0x30
+ 1332 0461 00       		.byte	0
+ 1333 0462 0B       		.uleb128 0xb
+ 1334 0463 58000000 		.4byte	.LVL65
+ 1335 0467 1A080000 		.4byte	0x81a
+ 1336 046b 0B       		.uleb128 0xb
+ 1337 046c 5C000000 		.4byte	.LVL66
+ 1338 0470 25080000 		.4byte	0x825
+ 1339 0474 0B       		.uleb128 0xb
+ 1340 0475 60000000 		.4byte	.LVL67
+ 1341 0479 30080000 		.4byte	0x830
+ 1342 047d 12       		.uleb128 0x12
+ 1343 047e 78000000 		.4byte	.LVL68
+ 1344 0482 3B080000 		.4byte	0x83b
+ 1345 0486 94040000 		.4byte	0x494
+ 1346 048a 11       		.uleb128 0x11
+ 1347 048b 01       		.uleb128 0x1
+ 1348 048c 50       		.byte	0x50
+ 1349 048d 05       		.uleb128 0x5
+ 1350 048e 03       		.byte	0x3
+ 1351 048f 00000000 		.4byte	SS_Fall_Handler
+ 1352 0493 00       		.byte	0
+ 1353 0494 12       		.uleb128 0x12
+ 1354 0495 80000000 		.4byte	.LVL69
+ 1355 0499 46080000 		.4byte	0x846
+ 1356 049d AB040000 		.4byte	0x4ab
+ 1357 04a1 11       		.uleb128 0x11
+ 1358 04a2 01       		.uleb128 0x1
+ 1359 04a3 50       		.byte	0x50
+ 1360 04a4 05       		.uleb128 0x5
+ 1361 04a5 03       		.byte	0x3
+ 1362 04a6 00000000 		.4byte	SS_Rise_Handler
+ 1363 04aa 00       		.byte	0
+ 1364 04ab 12       		.uleb128 0x12
+ 1365 04ac 90000000 		.4byte	.LVL70
+ 1366 04b0 BC000000 		.4byte	0xbc
+ 1367 04b4 BE040000 		.4byte	0x4be
+ 1368 04b8 11       		.uleb128 0x11
+ 1369 04b9 01       		.uleb128 0x1
+ 1370 04ba 50       		.byte	0x50
+ 1371 04bb 01       		.uleb128 0x1
+ 1372 04bc 30       		.byte	0x30
+ 1373 04bd 00       		.byte	0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 33
+
+
+ 1374 04be 12       		.uleb128 0x12
+ 1375 04bf 98000000 		.4byte	.LVL71
+ 1376 04c3 BC000000 		.4byte	0xbc
+ 1377 04c7 D1040000 		.4byte	0x4d1
+ 1378 04cb 11       		.uleb128 0x11
+ 1379 04cc 01       		.uleb128 0x1
+ 1380 04cd 50       		.byte	0x50
+ 1381 04ce 01       		.uleb128 0x1
+ 1382 04cf 31       		.byte	0x31
+ 1383 04d0 00       		.byte	0
+ 1384 04d1 12       		.uleb128 0x12
+ 1385 04d2 A2000000 		.4byte	.LVL72
+ 1386 04d6 BC000000 		.4byte	0xbc
+ 1387 04da E4040000 		.4byte	0x4e4
+ 1388 04de 11       		.uleb128 0x11
+ 1389 04df 01       		.uleb128 0x1
+ 1390 04e0 50       		.byte	0x50
+ 1391 04e1 01       		.uleb128 0x1
+ 1392 04e2 32       		.byte	0x32
+ 1393 04e3 00       		.byte	0
+ 1394 04e4 12       		.uleb128 0x12
+ 1395 04e5 AE000000 		.4byte	.LVL73
+ 1396 04e9 49070000 		.4byte	0x749
+ 1397 04ed F9040000 		.4byte	0x4f9
+ 1398 04f1 11       		.uleb128 0x11
+ 1399 04f2 01       		.uleb128 0x1
+ 1400 04f3 50       		.byte	0x50
+ 1401 04f4 03       		.uleb128 0x3
+ 1402 04f5 0A       		.byte	0xa
+ 1403 04f6 7805     		.2byte	0x578
+ 1404 04f8 00       		.byte	0
+ 1405 04f9 0B       		.uleb128 0xb
+ 1406 04fa 00010000 		.4byte	.LVL74
+ 1407 04fe 51080000 		.4byte	0x851
+ 1408 0502 0B       		.uleb128 0xb
+ 1409 0503 06010000 		.4byte	.LVL75
+ 1410 0507 5C080000 		.4byte	0x85c
+ 1411 050b 0B       		.uleb128 0xb
+ 1412 050c 0A010000 		.4byte	.LVL76
+ 1413 0510 67080000 		.4byte	0x867
+ 1414 0514 0B       		.uleb128 0xb
+ 1415 0515 22010000 		.4byte	.LVL77
+ 1416 0519 AC070000 		.4byte	0x7ac
+ 1417 051d 12       		.uleb128 0x12
+ 1418 051e 28010000 		.4byte	.LVL78
+ 1419 0522 B7070000 		.4byte	0x7b7
+ 1420 0526 30050000 		.4byte	0x530
+ 1421 052a 11       		.uleb128 0x11
+ 1422 052b 01       		.uleb128 0x1
+ 1423 052c 50       		.byte	0x50
+ 1424 052d 01       		.uleb128 0x1
+ 1425 052e 30       		.byte	0x30
+ 1426 052f 00       		.byte	0
+ 1427 0530 12       		.uleb128 0x12
+ 1428 0531 30010000 		.4byte	.LVL79
+ 1429 0535 96070000 		.4byte	0x796
+ 1430 0539 45050000 		.4byte	0x545
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 34
+
+
+ 1431 053d 11       		.uleb128 0x11
+ 1432 053e 01       		.uleb128 0x1
+ 1433 053f 50       		.byte	0x50
+ 1434 0540 03       		.uleb128 0x3
+ 1435 0541 0A       		.byte	0xa
+ 1436 0542 204E     		.2byte	0x4e20
+ 1437 0544 00       		.byte	0
+ 1438 0545 12       		.uleb128 0x12
+ 1439 0546 36010000 		.4byte	.LVL80
+ 1440 054a A1070000 		.4byte	0x7a1
+ 1441 054e 58050000 		.4byte	0x558
+ 1442 0552 11       		.uleb128 0x11
+ 1443 0553 01       		.uleb128 0x1
+ 1444 0554 50       		.byte	0x50
+ 1445 0555 01       		.uleb128 0x1
+ 1446 0556 32       		.byte	0x32
+ 1447 0557 00       		.byte	0
+ 1448 0558 10       		.uleb128 0x10
+ 1449 0559 3C010000 		.4byte	.LVL81
+ 1450 055d 96070000 		.4byte	0x796
+ 1451 0561 11       		.uleb128 0x11
+ 1452 0562 01       		.uleb128 0x1
+ 1453 0563 50       		.byte	0x50
+ 1454 0564 02       		.uleb128 0x2
+ 1455 0565 77       		.byte	0x77
+ 1456 0566 00       		.sleb128 0
+ 1457 0567 00       		.byte	0
+ 1458 0568 00       		.byte	0
+ 1459 0569 1B       		.uleb128 0x1b
+ 1460 056a 69050000 		.4byte	.LASF25
+ 1461 056e 05       		.byte	0x5
+ 1462 056f 1207     		.2byte	0x712
+ 1463 0571 75050000 		.4byte	0x575
+ 1464 0575 1C       		.uleb128 0x1c
+ 1465 0576 76000000 		.4byte	0x76
+ 1466 057a 1D       		.uleb128 0x1d
+ 1467 057b AE010000 		.4byte	.LASF26
+ 1468 057f 01       		.byte	0x1
+ 1469 0580 23       		.byte	0x23
+ 1470 0581 8D000000 		.4byte	0x8d
+ 1471 0585 05       		.uleb128 0x5
+ 1472 0586 03       		.byte	0x3
+ 1473 0587 00000000 		.4byte	RPi_Command
+ 1474 058b 1D       		.uleb128 0x1d
+ 1475 058c 7A010000 		.4byte	.LASF27
+ 1476 0590 01       		.byte	0x1
+ 1477 0591 24       		.byte	0x24
+ 1478 0592 8D000000 		.4byte	0x8d
+ 1479 0596 05       		.uleb128 0x5
+ 1480 0597 03       		.byte	0x3
+ 1481 0598 00000000 		.4byte	RPi_Data
+ 1482 059c 1D       		.uleb128 0x1d
+ 1483 059d 1C020000 		.4byte	.LASF28
+ 1484 05a1 01       		.byte	0x1
+ 1485 05a2 25       		.byte	0x25
+ 1486 05a3 8D000000 		.4byte	0x8d
+ 1487 05a7 05       		.uleb128 0x5
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 35
+
+
+ 1488 05a8 03       		.byte	0x3
+ 1489 05a9 00000000 		.4byte	enc_a_Position
+ 1490 05ad 1D       		.uleb128 0x1d
+ 1491 05ae E8010000 		.4byte	.LASF29
+ 1492 05b2 01       		.byte	0x1
+ 1493 05b3 26       		.byte	0x26
+ 1494 05b4 8D000000 		.4byte	0x8d
+ 1495 05b8 05       		.uleb128 0x5
+ 1496 05b9 03       		.byte	0x3
+ 1497 05ba 00000000 		.4byte	enc_b_Position
+ 1498 05be 1D       		.uleb128 0x1d
+ 1499 05bf BA050000 		.4byte	.LASF30
+ 1500 05c3 01       		.byte	0x1
+ 1501 05c4 27       		.byte	0x27
+ 1502 05c5 8D000000 		.4byte	0x8d
+ 1503 05c9 05       		.uleb128 0x5
+ 1504 05ca 03       		.byte	0x3
+ 1505 05cb 00000000 		.4byte	enc_c_Position
+ 1506 05cf 1D       		.uleb128 0x1d
+ 1507 05d0 50040000 		.4byte	.LASF31
+ 1508 05d4 01       		.byte	0x1
+ 1509 05d5 28       		.byte	0x28
+ 1510 05d6 8D000000 		.4byte	0x8d
+ 1511 05da 05       		.uleb128 0x5
+ 1512 05db 03       		.byte	0x3
+ 1513 05dc 00000000 		.4byte	pwm_a_command
+ 1514 05e0 1D       		.uleb128 0x1d
+ 1515 05e1 FF040000 		.4byte	.LASF32
+ 1516 05e5 01       		.byte	0x1
+ 1517 05e6 29       		.byte	0x29
+ 1518 05e7 8D000000 		.4byte	0x8d
+ 1519 05eb 05       		.uleb128 0x5
+ 1520 05ec 03       		.byte	0x3
+ 1521 05ed 00000000 		.4byte	pwm_b_command
+ 1522 05f1 1D       		.uleb128 0x1d
+ 1523 05f2 1B010000 		.4byte	.LASF33
+ 1524 05f6 01       		.byte	0x1
+ 1525 05f7 2A       		.byte	0x2a
+ 1526 05f8 8D000000 		.4byte	0x8d
+ 1527 05fc 05       		.uleb128 0x5
+ 1528 05fd 03       		.byte	0x3
+ 1529 05fe 00000000 		.4byte	pwm_a_new_command
+ 1530 0602 1D       		.uleb128 0x1d
+ 1531 0603 0A020000 		.4byte	.LASF34
+ 1532 0607 01       		.byte	0x1
+ 1533 0608 2B       		.byte	0x2b
+ 1534 0609 8D000000 		.4byte	0x8d
+ 1535 060d 05       		.uleb128 0x5
+ 1536 060e 03       		.byte	0x3
+ 1537 060f 00000000 		.4byte	pwm_b_new_command
+ 1538 0613 1D       		.uleb128 0x1d
+ 1539 0614 73000000 		.4byte	.LASF35
+ 1540 0618 01       		.byte	0x1
+ 1541 0619 36       		.byte	0x36
+ 1542 061a 81000000 		.4byte	0x81
+ 1543 061e 05       		.uleb128 0x5
+ 1544 061f 03       		.byte	0x3
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 36
+
+
+ 1545 0620 00000000 		.4byte	read_counter
+ 1546 0624 1D       		.uleb128 0x1d
+ 1547 0625 34010000 		.4byte	.LASF36
+ 1548 0629 01       		.byte	0x1
+ 1549 062a 37       		.byte	0x37
+ 1550 062b 81000000 		.4byte	0x81
+ 1551 062f 05       		.uleb128 0x5
+ 1552 0630 03       		.byte	0x3
+ 1553 0631 00000000 		.4byte	PSOC_state
+ 1554 0635 1D       		.uleb128 0x1d
+ 1555 0636 CC010000 		.4byte	.LASF37
+ 1556 063a 01       		.byte	0x1
+ 1557 063b 38       		.byte	0x38
+ 1558 063c 81000000 		.4byte	0x81
+ 1559 0640 05       		.uleb128 0x5
+ 1560 0641 03       		.byte	0x3
+ 1561 0642 00000000 		.4byte	i2cAddress
+ 1562 0646 1D       		.uleb128 0x1d
+ 1563 0647 80000000 		.4byte	.LASF38
+ 1564 064b 01       		.byte	0x1
+ 1565 064c 39       		.byte	0x39
+ 1566 064d 81000000 		.4byte	0x81
+ 1567 0651 05       		.uleb128 0x5
+ 1568 0652 03       		.byte	0x3
+ 1569 0653 00000000 		.4byte	i2cData
+ 1570 0657 1E       		.uleb128 0x1e
+ 1571 0658 8D000000 		.4byte	0x8d
+ 1572 065c 67060000 		.4byte	0x667
+ 1573 0660 1F       		.uleb128 0x1f
+ 1574 0661 B5000000 		.4byte	0xb5
+ 1575 0665 03       		.byte	0x3
+ 1576 0666 00       		.byte	0
+ 1577 0667 1D       		.uleb128 0x1d
+ 1578 0668 60000000 		.4byte	.LASF39
+ 1579 066c 01       		.byte	0x1
+ 1580 066d A1       		.byte	0xa1
+ 1581 066e 57060000 		.4byte	0x657
+ 1582 0672 05       		.uleb128 0x5
+ 1583 0673 03       		.byte	0x3
+ 1584 0674 00000000 		.4byte	rxBuffer
+ 1585 0678 1D       		.uleb128 0x1d
+ 1586 0679 1D050000 		.4byte	.LASF40
+ 1587 067d 01       		.byte	0x1
+ 1588 067e A3       		.byte	0xa3
+ 1589 067f 81000000 		.4byte	0x81
+ 1590 0683 05       		.uleb128 0x5
+ 1591 0684 03       		.byte	0x3
+ 1592 0685 00000000 		.4byte	temp1
+ 1593 0689 1D       		.uleb128 0x1d
+ 1594 068a 3F010000 		.4byte	.LASF41
+ 1595 068e 01       		.byte	0x1
+ 1596 068f A4       		.byte	0xa4
+ 1597 0690 81000000 		.4byte	0x81
+ 1598 0694 05       		.uleb128 0x5
+ 1599 0695 03       		.byte	0x3
+ 1600 0696 00000000 		.4byte	temp2
+ 1601 069a 20       		.uleb128 0x20
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 37
+
+
+ 1602 069b 6900     		.ascii	"i\000"
+ 1603 069d 01       		.byte	0x1
+ 1604 069e A7       		.byte	0xa7
+ 1605 069f 81000000 		.4byte	0x81
+ 1606 06a3 05       		.uleb128 0x5
+ 1607 06a4 03       		.byte	0x3
+ 1608 06a5 00000000 		.4byte	i
+ 1609 06a9 1D       		.uleb128 0x1d
+ 1610 06aa FE030000 		.4byte	.LASF42
+ 1611 06ae 01       		.byte	0x1
+ 1612 06af A8       		.byte	0xa8
+ 1613 06b0 8D000000 		.4byte	0x8d
+ 1614 06b4 05       		.uleb128 0x5
+ 1615 06b5 03       		.byte	0x3
+ 1616 06b6 00000000 		.4byte	shutdown_count
+ 1617 06ba 21       		.uleb128 0x21
+ 1618 06bb 8E050000 		.4byte	.LASF43
+ 1619 06bf 8E050000 		.4byte	.LASF43
+ 1620 06c3 06       		.byte	0x6
+ 1621 06c4 28       		.byte	0x28
+ 1622 06c5 21       		.uleb128 0x21
+ 1623 06c6 3F000000 		.4byte	.LASF44
+ 1624 06ca 3F000000 		.4byte	.LASF44
+ 1625 06ce 07       		.byte	0x7
+ 1626 06cf 53       		.byte	0x53
+ 1627 06d0 21       		.uleb128 0x21
+ 1628 06d1 AF030000 		.4byte	.LASF45
+ 1629 06d5 AF030000 		.4byte	.LASF45
+ 1630 06d9 08       		.byte	0x8
+ 1631 06da 2F       		.byte	0x2f
+ 1632 06db 21       		.uleb128 0x21
+ 1633 06dc C9050000 		.4byte	.LASF46
+ 1634 06e0 C9050000 		.4byte	.LASF46
+ 1635 06e4 09       		.byte	0x9
+ 1636 06e5 66       		.byte	0x66
+ 1637 06e6 21       		.uleb128 0x21
+ 1638 06e7 E7040000 		.4byte	.LASF47
+ 1639 06eb E7040000 		.4byte	.LASF47
+ 1640 06ef 09       		.byte	0x9
+ 1641 06f0 5E       		.byte	0x5e
+ 1642 06f1 21       		.uleb128 0x21
+ 1643 06f2 0D050000 		.4byte	.LASF48
+ 1644 06f6 0D050000 		.4byte	.LASF48
+ 1645 06fa 07       		.byte	0x7
+ 1646 06fb 57       		.byte	0x57
+ 1647 06fc 21       		.uleb128 0x21
+ 1648 06fd 69010000 		.4byte	.LASF49
+ 1649 0701 69010000 		.4byte	.LASF49
+ 1650 0705 07       		.byte	0x7
+ 1651 0706 50       		.byte	0x50
+ 1652 0707 21       		.uleb128 0x21
+ 1653 0708 72040000 		.4byte	.LASF50
+ 1654 070c 72040000 		.4byte	.LASF50
+ 1655 0710 0A       		.byte	0xa
+ 1656 0711 B1       		.byte	0xb1
+ 1657 0712 21       		.uleb128 0x21
+ 1658 0713 05010000 		.4byte	.LASF51
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 38
+
+
+ 1659 0717 05010000 		.4byte	.LASF51
+ 1660 071b 0A       		.byte	0xa
+ 1661 071c B6       		.byte	0xb6
+ 1662 071d 21       		.uleb128 0x21
+ 1663 071e EB000000 		.4byte	.LASF52
+ 1664 0722 EB000000 		.4byte	.LASF52
+ 1665 0726 0A       		.byte	0xa
+ 1666 0727 B5       		.byte	0xb5
+ 1667 0728 21       		.uleb128 0x21
+ 1668 0729 26040000 		.4byte	.LASF53
+ 1669 072d 26040000 		.4byte	.LASF53
+ 1670 0731 07       		.byte	0x7
+ 1671 0732 4F       		.byte	0x4f
+ 1672 0733 21       		.uleb128 0x21
+ 1673 0734 A7050000 		.4byte	.LASF54
+ 1674 0738 A7050000 		.4byte	.LASF54
+ 1675 073c 07       		.byte	0x7
+ 1676 073d 5A       		.byte	0x5a
+ 1677 073e 21       		.uleb128 0x21
+ 1678 073f D1030000 		.4byte	.LASF55
+ 1679 0743 D1030000 		.4byte	.LASF55
+ 1680 0747 0B       		.byte	0xb
+ 1681 0748 28       		.byte	0x28
+ 1682 0749 21       		.uleb128 0x21
+ 1683 074a 45020000 		.4byte	.LASF56
+ 1684 074e 45020000 		.4byte	.LASF56
+ 1685 0752 0C       		.byte	0xc
+ 1686 0753 77       		.byte	0x77
+ 1687 0754 21       		.uleb128 0x21
+ 1688 0755 F7010000 		.4byte	.LASF57
+ 1689 0759 F7010000 		.4byte	.LASF57
+ 1690 075d 0D       		.byte	0xd
+ 1691 075e 5E       		.byte	0x5e
+ 1692 075f 21       		.uleb128 0x21
+ 1693 0760 BB000000 		.4byte	.LASF58
+ 1694 0764 BB000000 		.4byte	.LASF58
+ 1695 0768 0D       		.byte	0xd
+ 1696 0769 5C       		.byte	0x5c
+ 1697 076a 21       		.uleb128 0x21
+ 1698 076b 9D030000 		.4byte	.LASF59
+ 1699 076f 9D030000 		.4byte	.LASF59
+ 1700 0773 0D       		.byte	0xd
+ 1701 0774 60       		.byte	0x60
+ 1702 0775 21       		.uleb128 0x21
+ 1703 0776 92040000 		.4byte	.LASF60
+ 1704 077a 92040000 		.4byte	.LASF60
+ 1705 077e 0E       		.byte	0xe
+ 1706 077f 2F       		.byte	0x2f
+ 1707 0780 21       		.uleb128 0x21
+ 1708 0781 D7010000 		.4byte	.LASF61
+ 1709 0785 D7010000 		.4byte	.LASF61
+ 1710 0789 0D       		.byte	0xd
+ 1711 078a 66       		.byte	0x66
+ 1712 078b 21       		.uleb128 0x21
+ 1713 078c 3D050000 		.4byte	.LASF62
+ 1714 0790 3D050000 		.4byte	.LASF62
+ 1715 0794 0F       		.byte	0xf
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 39
+
+
+ 1716 0795 3F       		.byte	0x3f
+ 1717 0796 21       		.uleb128 0x21
+ 1718 0797 76050000 		.4byte	.LASF63
+ 1719 079b 76050000 		.4byte	.LASF63
+ 1720 079f 0C       		.byte	0xc
+ 1721 07a0 76       		.byte	0x76
+ 1722 07a1 21       		.uleb128 0x21
+ 1723 07a2 EA030000 		.4byte	.LASF64
+ 1724 07a6 EA030000 		.4byte	.LASF64
+ 1725 07aa 10       		.byte	0x10
+ 1726 07ab 2F       		.byte	0x2f
+ 1727 07ac 21       		.uleb128 0x21
+ 1728 07ad 00000000 		.4byte	.LASF65
+ 1729 07b1 00000000 		.4byte	.LASF65
+ 1730 07b5 11       		.byte	0x11
+ 1731 07b6 2F       		.byte	0x2f
+ 1732 07b7 21       		.uleb128 0x21
+ 1733 07b8 5E040000 		.4byte	.LASF66
+ 1734 07bc 5E040000 		.4byte	.LASF66
+ 1735 07c0 12       		.byte	0x12
+ 1736 07c1 2F       		.byte	0x2f
+ 1737 07c2 21       		.uleb128 0x21
+ 1738 07c3 1D000000 		.4byte	.LASF67
+ 1739 07c7 1D000000 		.4byte	.LASF67
+ 1740 07cb 13       		.byte	0x13
+ 1741 07cc 27       		.byte	0x27
+ 1742 07cd 21       		.uleb128 0x21
+ 1743 07ce 4A050000 		.4byte	.LASF68
+ 1744 07d2 4A050000 		.4byte	.LASF68
+ 1745 07d6 0D       		.byte	0xd
+ 1746 07d7 4D       		.byte	0x4d
+ 1747 07d8 21       		.uleb128 0x21
+ 1748 07d9 A6000000 		.4byte	.LASF69
+ 1749 07dd A6000000 		.4byte	.LASF69
+ 1750 07e1 0D       		.byte	0xd
+ 1751 07e2 64       		.byte	0x64
+ 1752 07e3 21       		.uleb128 0x21
+ 1753 07e4 91000000 		.4byte	.LASF70
+ 1754 07e8 91000000 		.4byte	.LASF70
+ 1755 07ec 0D       		.byte	0xd
+ 1756 07ed 65       		.byte	0x65
+ 1757 07ee 21       		.uleb128 0x21
+ 1758 07ef 57050000 		.4byte	.LASF71
+ 1759 07f3 57050000 		.4byte	.LASF71
+ 1760 07f7 09       		.byte	0x9
+ 1761 07f8 4D       		.byte	0x4d
+ 1762 07f9 21       		.uleb128 0x21
+ 1763 07fa 23050000 		.4byte	.LASF72
+ 1764 07fe 23050000 		.4byte	.LASF72
+ 1765 0802 09       		.byte	0x9
+ 1766 0803 64       		.byte	0x64
+ 1767 0804 21       		.uleb128 0x21
+ 1768 0805 8D020000 		.4byte	.LASF73
+ 1769 0809 8D020000 		.4byte	.LASF73
+ 1770 080d 09       		.byte	0x9
+ 1771 080e 65       		.byte	0x65
+ 1772 080f 21       		.uleb128 0x21
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 40
+
+
+ 1773 0810 45010000 		.4byte	.LASF74
+ 1774 0814 45010000 		.4byte	.LASF74
+ 1775 0818 07       		.byte	0x7
+ 1776 0819 46       		.byte	0x46
+ 1777 081a 21       		.uleb128 0x21
+ 1778 081b 54000000 		.4byte	.LASF75
+ 1779 081f 54000000 		.4byte	.LASF75
+ 1780 0823 14       		.byte	0x14
+ 1781 0824 92       		.byte	0x92
+ 1782 0825 21       		.uleb128 0x21
+ 1783 0826 43030000 		.4byte	.LASF76
+ 1784 082a 43030000 		.4byte	.LASF76
+ 1785 082e 15       		.byte	0x15
+ 1786 082f 92       		.byte	0x92
+ 1787 0830 21       		.uleb128 0x21
+ 1788 0831 CF000000 		.4byte	.LASF77
+ 1789 0835 CF000000 		.4byte	.LASF77
+ 1790 0839 0A       		.byte	0xa
+ 1791 083a 93       		.byte	0x93
+ 1792 083b 21       		.uleb128 0x21
+ 1793 083c 91010000 		.4byte	.LASF78
+ 1794 0840 91010000 		.4byte	.LASF78
+ 1795 0844 06       		.byte	0x6
+ 1796 0845 18       		.byte	0x18
+ 1797 0846 21       		.uleb128 0x21
+ 1798 0847 2B000000 		.4byte	.LASF79
+ 1799 084b 2B000000 		.4byte	.LASF79
+ 1800 084f 0B       		.byte	0xb
+ 1801 0850 18       		.byte	0x18
+ 1802 0851 21       		.uleb128 0x21
+ 1803 0852 5B030000 		.4byte	.LASF80
+ 1804 0856 5B030000 		.4byte	.LASF80
+ 1805 085a 14       		.byte	0x14
+ 1806 085b C3       		.byte	0xc3
+ 1807 085c 21       		.uleb128 0x21
+ 1808 085d 50010000 		.4byte	.LASF81
+ 1809 0861 50010000 		.4byte	.LASF81
+ 1810 0865 15       		.byte	0x15
+ 1811 0866 C3       		.byte	0xc3
+ 1812 0867 21       		.uleb128 0x21
+ 1813 0868 BA010000 		.4byte	.LASF82
+ 1814 086c BA010000 		.4byte	.LASF82
+ 1815 0870 16       		.byte	0x16
+ 1816 0871 30       		.byte	0x30
+ 1817 0872 00       		.byte	0
+ 1818              		.section	.debug_abbrev,"",%progbits
+ 1819              	.Ldebug_abbrev0:
+ 1820 0000 01       		.uleb128 0x1
+ 1821 0001 11       		.uleb128 0x11
+ 1822 0002 01       		.byte	0x1
+ 1823 0003 25       		.uleb128 0x25
+ 1824 0004 0E       		.uleb128 0xe
+ 1825 0005 13       		.uleb128 0x13
+ 1826 0006 0B       		.uleb128 0xb
+ 1827 0007 03       		.uleb128 0x3
+ 1828 0008 0E       		.uleb128 0xe
+ 1829 0009 1B       		.uleb128 0x1b
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 41
+
+
+ 1830 000a 0E       		.uleb128 0xe
+ 1831 000b 55       		.uleb128 0x55
+ 1832 000c 17       		.uleb128 0x17
+ 1833 000d 11       		.uleb128 0x11
+ 1834 000e 01       		.uleb128 0x1
+ 1835 000f 10       		.uleb128 0x10
+ 1836 0010 17       		.uleb128 0x17
+ 1837 0011 00       		.byte	0
+ 1838 0012 00       		.byte	0
+ 1839 0013 02       		.uleb128 0x2
+ 1840 0014 24       		.uleb128 0x24
+ 1841 0015 00       		.byte	0
+ 1842 0016 0B       		.uleb128 0xb
+ 1843 0017 0B       		.uleb128 0xb
+ 1844 0018 3E       		.uleb128 0x3e
+ 1845 0019 0B       		.uleb128 0xb
+ 1846 001a 03       		.uleb128 0x3
+ 1847 001b 0E       		.uleb128 0xe
+ 1848 001c 00       		.byte	0
+ 1849 001d 00       		.byte	0
+ 1850 001e 03       		.uleb128 0x3
+ 1851 001f 16       		.uleb128 0x16
+ 1852 0020 00       		.byte	0
+ 1853 0021 03       		.uleb128 0x3
+ 1854 0022 0E       		.uleb128 0xe
+ 1855 0023 3A       		.uleb128 0x3a
+ 1856 0024 0B       		.uleb128 0xb
+ 1857 0025 3B       		.uleb128 0x3b
+ 1858 0026 0B       		.uleb128 0xb
+ 1859 0027 49       		.uleb128 0x49
+ 1860 0028 13       		.uleb128 0x13
+ 1861 0029 00       		.byte	0
+ 1862 002a 00       		.byte	0
+ 1863 002b 04       		.uleb128 0x4
+ 1864 002c 24       		.uleb128 0x24
+ 1865 002d 00       		.byte	0
+ 1866 002e 0B       		.uleb128 0xb
+ 1867 002f 0B       		.uleb128 0xb
+ 1868 0030 3E       		.uleb128 0x3e
+ 1869 0031 0B       		.uleb128 0xb
+ 1870 0032 03       		.uleb128 0x3
+ 1871 0033 08       		.uleb128 0x8
+ 1872 0034 00       		.byte	0
+ 1873 0035 00       		.byte	0
+ 1874 0036 05       		.uleb128 0x5
+ 1875 0037 16       		.uleb128 0x16
+ 1876 0038 00       		.byte	0
+ 1877 0039 03       		.uleb128 0x3
+ 1878 003a 0E       		.uleb128 0xe
+ 1879 003b 3A       		.uleb128 0x3a
+ 1880 003c 0B       		.uleb128 0xb
+ 1881 003d 3B       		.uleb128 0x3b
+ 1882 003e 05       		.uleb128 0x5
+ 1883 003f 49       		.uleb128 0x49
+ 1884 0040 13       		.uleb128 0x13
+ 1885 0041 00       		.byte	0
+ 1886 0042 00       		.byte	0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 42
+
+
+ 1887 0043 06       		.uleb128 0x6
+ 1888 0044 2E       		.uleb128 0x2e
+ 1889 0045 01       		.byte	0x1
+ 1890 0046 3F       		.uleb128 0x3f
+ 1891 0047 19       		.uleb128 0x19
+ 1892 0048 03       		.uleb128 0x3
+ 1893 0049 0E       		.uleb128 0xe
+ 1894 004a 3A       		.uleb128 0x3a
+ 1895 004b 0B       		.uleb128 0xb
+ 1896 004c 3B       		.uleb128 0x3b
+ 1897 004d 05       		.uleb128 0x5
+ 1898 004e 27       		.uleb128 0x27
+ 1899 004f 19       		.uleb128 0x19
+ 1900 0050 49       		.uleb128 0x49
+ 1901 0051 13       		.uleb128 0x13
+ 1902 0052 20       		.uleb128 0x20
+ 1903 0053 0B       		.uleb128 0xb
+ 1904 0054 01       		.uleb128 0x1
+ 1905 0055 13       		.uleb128 0x13
+ 1906 0056 00       		.byte	0
+ 1907 0057 00       		.byte	0
+ 1908 0058 07       		.uleb128 0x7
+ 1909 0059 05       		.uleb128 0x5
+ 1910 005a 00       		.byte	0
+ 1911 005b 03       		.uleb128 0x3
+ 1912 005c 0E       		.uleb128 0xe
+ 1913 005d 3A       		.uleb128 0x3a
+ 1914 005e 0B       		.uleb128 0xb
+ 1915 005f 3B       		.uleb128 0x3b
+ 1916 0060 05       		.uleb128 0x5
+ 1917 0061 49       		.uleb128 0x49
+ 1918 0062 13       		.uleb128 0x13
+ 1919 0063 00       		.byte	0
+ 1920 0064 00       		.byte	0
+ 1921 0065 08       		.uleb128 0x8
+ 1922 0066 34       		.uleb128 0x34
+ 1923 0067 00       		.byte	0
+ 1924 0068 03       		.uleb128 0x3
+ 1925 0069 0E       		.uleb128 0xe
+ 1926 006a 3A       		.uleb128 0x3a
+ 1927 006b 0B       		.uleb128 0xb
+ 1928 006c 3B       		.uleb128 0x3b
+ 1929 006d 05       		.uleb128 0x5
+ 1930 006e 49       		.uleb128 0x49
+ 1931 006f 13       		.uleb128 0x13
+ 1932 0070 00       		.byte	0
+ 1933 0071 00       		.byte	0
+ 1934 0072 09       		.uleb128 0x9
+ 1935 0073 34       		.uleb128 0x34
+ 1936 0074 00       		.byte	0
+ 1937 0075 03       		.uleb128 0x3
+ 1938 0076 08       		.uleb128 0x8
+ 1939 0077 3A       		.uleb128 0x3a
+ 1940 0078 0B       		.uleb128 0xb
+ 1941 0079 3B       		.uleb128 0x3b
+ 1942 007a 05       		.uleb128 0x5
+ 1943 007b 49       		.uleb128 0x49
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 43
+
+
+ 1944 007c 13       		.uleb128 0x13
+ 1945 007d 00       		.byte	0
+ 1946 007e 00       		.byte	0
+ 1947 007f 0A       		.uleb128 0xa
+ 1948 0080 2E       		.uleb128 0x2e
+ 1949 0081 01       		.byte	0x1
+ 1950 0082 3F       		.uleb128 0x3f
+ 1951 0083 19       		.uleb128 0x19
+ 1952 0084 03       		.uleb128 0x3
+ 1953 0085 0E       		.uleb128 0xe
+ 1954 0086 3A       		.uleb128 0x3a
+ 1955 0087 0B       		.uleb128 0xb
+ 1956 0088 3B       		.uleb128 0x3b
+ 1957 0089 0B       		.uleb128 0xb
+ 1958 008a 27       		.uleb128 0x27
+ 1959 008b 19       		.uleb128 0x19
+ 1960 008c 11       		.uleb128 0x11
+ 1961 008d 01       		.uleb128 0x1
+ 1962 008e 12       		.uleb128 0x12
+ 1963 008f 06       		.uleb128 0x6
+ 1964 0090 40       		.uleb128 0x40
+ 1965 0091 18       		.uleb128 0x18
+ 1966 0092 9742     		.uleb128 0x2117
+ 1967 0094 19       		.uleb128 0x19
+ 1968 0095 01       		.uleb128 0x1
+ 1969 0096 13       		.uleb128 0x13
+ 1970 0097 00       		.byte	0
+ 1971 0098 00       		.byte	0
+ 1972 0099 0B       		.uleb128 0xb
+ 1973 009a 898201   		.uleb128 0x4109
+ 1974 009d 00       		.byte	0
+ 1975 009e 11       		.uleb128 0x11
+ 1976 009f 01       		.uleb128 0x1
+ 1977 00a0 31       		.uleb128 0x31
+ 1978 00a1 13       		.uleb128 0x13
+ 1979 00a2 00       		.byte	0
+ 1980 00a3 00       		.byte	0
+ 1981 00a4 0C       		.uleb128 0xc
+ 1982 00a5 898201   		.uleb128 0x4109
+ 1983 00a8 00       		.byte	0
+ 1984 00a9 11       		.uleb128 0x11
+ 1985 00aa 01       		.uleb128 0x1
+ 1986 00ab 9542     		.uleb128 0x2115
+ 1987 00ad 19       		.uleb128 0x19
+ 1988 00ae 31       		.uleb128 0x31
+ 1989 00af 13       		.uleb128 0x13
+ 1990 00b0 00       		.byte	0
+ 1991 00b1 00       		.byte	0
+ 1992 00b2 0D       		.uleb128 0xd
+ 1993 00b3 2E       		.uleb128 0x2e
+ 1994 00b4 01       		.byte	0x1
+ 1995 00b5 3F       		.uleb128 0x3f
+ 1996 00b6 19       		.uleb128 0x19
+ 1997 00b7 03       		.uleb128 0x3
+ 1998 00b8 0E       		.uleb128 0xe
+ 1999 00b9 3A       		.uleb128 0x3a
+ 2000 00ba 0B       		.uleb128 0xb
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 44
+
+
+ 2001 00bb 3B       		.uleb128 0x3b
+ 2002 00bc 05       		.uleb128 0x5
+ 2003 00bd 27       		.uleb128 0x27
+ 2004 00be 19       		.uleb128 0x19
+ 2005 00bf 49       		.uleb128 0x49
+ 2006 00c0 13       		.uleb128 0x13
+ 2007 00c1 11       		.uleb128 0x11
+ 2008 00c2 01       		.uleb128 0x1
+ 2009 00c3 12       		.uleb128 0x12
+ 2010 00c4 06       		.uleb128 0x6
+ 2011 00c5 40       		.uleb128 0x40
+ 2012 00c6 18       		.uleb128 0x18
+ 2013 00c7 9742     		.uleb128 0x2117
+ 2014 00c9 19       		.uleb128 0x19
+ 2015 00ca 01       		.uleb128 0x1
+ 2016 00cb 13       		.uleb128 0x13
+ 2017 00cc 00       		.byte	0
+ 2018 00cd 00       		.byte	0
+ 2019 00ce 0E       		.uleb128 0xe
+ 2020 00cf 05       		.uleb128 0x5
+ 2021 00d0 00       		.byte	0
+ 2022 00d1 03       		.uleb128 0x3
+ 2023 00d2 0E       		.uleb128 0xe
+ 2024 00d3 3A       		.uleb128 0x3a
+ 2025 00d4 0B       		.uleb128 0xb
+ 2026 00d5 3B       		.uleb128 0x3b
+ 2027 00d6 05       		.uleb128 0x5
+ 2028 00d7 49       		.uleb128 0x49
+ 2029 00d8 13       		.uleb128 0x13
+ 2030 00d9 02       		.uleb128 0x2
+ 2031 00da 17       		.uleb128 0x17
+ 2032 00db 00       		.byte	0
+ 2033 00dc 00       		.byte	0
+ 2034 00dd 0F       		.uleb128 0xf
+ 2035 00de 34       		.uleb128 0x34
+ 2036 00df 00       		.byte	0
+ 2037 00e0 03       		.uleb128 0x3
+ 2038 00e1 0E       		.uleb128 0xe
+ 2039 00e2 3A       		.uleb128 0x3a
+ 2040 00e3 0B       		.uleb128 0xb
+ 2041 00e4 3B       		.uleb128 0x3b
+ 2042 00e5 05       		.uleb128 0x5
+ 2043 00e6 49       		.uleb128 0x49
+ 2044 00e7 13       		.uleb128 0x13
+ 2045 00e8 1C       		.uleb128 0x1c
+ 2046 00e9 0B       		.uleb128 0xb
+ 2047 00ea 00       		.byte	0
+ 2048 00eb 00       		.byte	0
+ 2049 00ec 10       		.uleb128 0x10
+ 2050 00ed 898201   		.uleb128 0x4109
+ 2051 00f0 01       		.byte	0x1
+ 2052 00f1 11       		.uleb128 0x11
+ 2053 00f2 01       		.uleb128 0x1
+ 2054 00f3 31       		.uleb128 0x31
+ 2055 00f4 13       		.uleb128 0x13
+ 2056 00f5 00       		.byte	0
+ 2057 00f6 00       		.byte	0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 45
+
+
+ 2058 00f7 11       		.uleb128 0x11
+ 2059 00f8 8A8201   		.uleb128 0x410a
+ 2060 00fb 00       		.byte	0
+ 2061 00fc 02       		.uleb128 0x2
+ 2062 00fd 18       		.uleb128 0x18
+ 2063 00fe 9142     		.uleb128 0x2111
+ 2064 0100 18       		.uleb128 0x18
+ 2065 0101 00       		.byte	0
+ 2066 0102 00       		.byte	0
+ 2067 0103 12       		.uleb128 0x12
+ 2068 0104 898201   		.uleb128 0x4109
+ 2069 0107 01       		.byte	0x1
+ 2070 0108 11       		.uleb128 0x11
+ 2071 0109 01       		.uleb128 0x1
+ 2072 010a 31       		.uleb128 0x31
+ 2073 010b 13       		.uleb128 0x13
+ 2074 010c 01       		.uleb128 0x1
+ 2075 010d 13       		.uleb128 0x13
+ 2076 010e 00       		.byte	0
+ 2077 010f 00       		.byte	0
+ 2078 0110 13       		.uleb128 0x13
+ 2079 0111 2E       		.uleb128 0x2e
+ 2080 0112 01       		.byte	0x1
+ 2081 0113 31       		.uleb128 0x31
+ 2082 0114 13       		.uleb128 0x13
+ 2083 0115 11       		.uleb128 0x11
+ 2084 0116 01       		.uleb128 0x1
+ 2085 0117 12       		.uleb128 0x12
+ 2086 0118 06       		.uleb128 0x6
+ 2087 0119 40       		.uleb128 0x40
+ 2088 011a 18       		.uleb128 0x18
+ 2089 011b 9742     		.uleb128 0x2117
+ 2090 011d 19       		.uleb128 0x19
+ 2091 011e 01       		.uleb128 0x1
+ 2092 011f 13       		.uleb128 0x13
+ 2093 0120 00       		.byte	0
+ 2094 0121 00       		.byte	0
+ 2095 0122 14       		.uleb128 0x14
+ 2096 0123 05       		.uleb128 0x5
+ 2097 0124 00       		.byte	0
+ 2098 0125 31       		.uleb128 0x31
+ 2099 0126 13       		.uleb128 0x13
+ 2100 0127 02       		.uleb128 0x2
+ 2101 0128 17       		.uleb128 0x17
+ 2102 0129 00       		.byte	0
+ 2103 012a 00       		.byte	0
+ 2104 012b 15       		.uleb128 0x15
+ 2105 012c 34       		.uleb128 0x34
+ 2106 012d 00       		.byte	0
+ 2107 012e 31       		.uleb128 0x31
+ 2108 012f 13       		.uleb128 0x13
+ 2109 0130 02       		.uleb128 0x2
+ 2110 0131 17       		.uleb128 0x17
+ 2111 0132 00       		.byte	0
+ 2112 0133 00       		.byte	0
+ 2113 0134 16       		.uleb128 0x16
+ 2114 0135 0B       		.uleb128 0xb
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 46
+
+
+ 2115 0136 01       		.byte	0x1
+ 2116 0137 11       		.uleb128 0x11
+ 2117 0138 01       		.uleb128 0x1
+ 2118 0139 12       		.uleb128 0x12
+ 2119 013a 06       		.uleb128 0x6
+ 2120 013b 01       		.uleb128 0x1
+ 2121 013c 13       		.uleb128 0x13
+ 2122 013d 00       		.byte	0
+ 2123 013e 00       		.byte	0
+ 2124 013f 17       		.uleb128 0x17
+ 2125 0140 05       		.uleb128 0x5
+ 2126 0141 00       		.byte	0
+ 2127 0142 31       		.uleb128 0x31
+ 2128 0143 13       		.uleb128 0x13
+ 2129 0144 00       		.byte	0
+ 2130 0145 00       		.byte	0
+ 2131 0146 18       		.uleb128 0x18
+ 2132 0147 0B       		.uleb128 0xb
+ 2133 0148 01       		.byte	0x1
+ 2134 0149 11       		.uleb128 0x11
+ 2135 014a 01       		.uleb128 0x1
+ 2136 014b 12       		.uleb128 0x12
+ 2137 014c 06       		.uleb128 0x6
+ 2138 014d 00       		.byte	0
+ 2139 014e 00       		.byte	0
+ 2140 014f 19       		.uleb128 0x19
+ 2141 0150 34       		.uleb128 0x34
+ 2142 0151 00       		.byte	0
+ 2143 0152 31       		.uleb128 0x31
+ 2144 0153 13       		.uleb128 0x13
+ 2145 0154 00       		.byte	0
+ 2146 0155 00       		.byte	0
+ 2147 0156 1A       		.uleb128 0x1a
+ 2148 0157 2E       		.uleb128 0x2e
+ 2149 0158 01       		.byte	0x1
+ 2150 0159 3F       		.uleb128 0x3f
+ 2151 015a 19       		.uleb128 0x19
+ 2152 015b 03       		.uleb128 0x3
+ 2153 015c 0E       		.uleb128 0xe
+ 2154 015d 3A       		.uleb128 0x3a
+ 2155 015e 0B       		.uleb128 0xb
+ 2156 015f 3B       		.uleb128 0x3b
+ 2157 0160 0B       		.uleb128 0xb
+ 2158 0161 49       		.uleb128 0x49
+ 2159 0162 13       		.uleb128 0x13
+ 2160 0163 8701     		.uleb128 0x87
+ 2161 0165 19       		.uleb128 0x19
+ 2162 0166 11       		.uleb128 0x11
+ 2163 0167 01       		.uleb128 0x1
+ 2164 0168 12       		.uleb128 0x12
+ 2165 0169 06       		.uleb128 0x6
+ 2166 016a 40       		.uleb128 0x40
+ 2167 016b 18       		.uleb128 0x18
+ 2168 016c 9742     		.uleb128 0x2117
+ 2169 016e 19       		.uleb128 0x19
+ 2170 016f 01       		.uleb128 0x1
+ 2171 0170 13       		.uleb128 0x13
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 47
+
+
+ 2172 0171 00       		.byte	0
+ 2173 0172 00       		.byte	0
+ 2174 0173 1B       		.uleb128 0x1b
+ 2175 0174 34       		.uleb128 0x34
+ 2176 0175 00       		.byte	0
+ 2177 0176 03       		.uleb128 0x3
+ 2178 0177 0E       		.uleb128 0xe
+ 2179 0178 3A       		.uleb128 0x3a
+ 2180 0179 0B       		.uleb128 0xb
+ 2181 017a 3B       		.uleb128 0x3b
+ 2182 017b 05       		.uleb128 0x5
+ 2183 017c 49       		.uleb128 0x49
+ 2184 017d 13       		.uleb128 0x13
+ 2185 017e 3F       		.uleb128 0x3f
+ 2186 017f 19       		.uleb128 0x19
+ 2187 0180 3C       		.uleb128 0x3c
+ 2188 0181 19       		.uleb128 0x19
+ 2189 0182 00       		.byte	0
+ 2190 0183 00       		.byte	0
+ 2191 0184 1C       		.uleb128 0x1c
+ 2192 0185 35       		.uleb128 0x35
+ 2193 0186 00       		.byte	0
+ 2194 0187 49       		.uleb128 0x49
+ 2195 0188 13       		.uleb128 0x13
+ 2196 0189 00       		.byte	0
+ 2197 018a 00       		.byte	0
+ 2198 018b 1D       		.uleb128 0x1d
+ 2199 018c 34       		.uleb128 0x34
+ 2200 018d 00       		.byte	0
+ 2201 018e 03       		.uleb128 0x3
+ 2202 018f 0E       		.uleb128 0xe
+ 2203 0190 3A       		.uleb128 0x3a
+ 2204 0191 0B       		.uleb128 0xb
+ 2205 0192 3B       		.uleb128 0x3b
+ 2206 0193 0B       		.uleb128 0xb
+ 2207 0194 49       		.uleb128 0x49
+ 2208 0195 13       		.uleb128 0x13
+ 2209 0196 3F       		.uleb128 0x3f
+ 2210 0197 19       		.uleb128 0x19
+ 2211 0198 02       		.uleb128 0x2
+ 2212 0199 18       		.uleb128 0x18
+ 2213 019a 00       		.byte	0
+ 2214 019b 00       		.byte	0
+ 2215 019c 1E       		.uleb128 0x1e
+ 2216 019d 01       		.uleb128 0x1
+ 2217 019e 01       		.byte	0x1
+ 2218 019f 49       		.uleb128 0x49
+ 2219 01a0 13       		.uleb128 0x13
+ 2220 01a1 01       		.uleb128 0x1
+ 2221 01a2 13       		.uleb128 0x13
+ 2222 01a3 00       		.byte	0
+ 2223 01a4 00       		.byte	0
+ 2224 01a5 1F       		.uleb128 0x1f
+ 2225 01a6 21       		.uleb128 0x21
+ 2226 01a7 00       		.byte	0
+ 2227 01a8 49       		.uleb128 0x49
+ 2228 01a9 13       		.uleb128 0x13
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 48
+
+
+ 2229 01aa 2F       		.uleb128 0x2f
+ 2230 01ab 0B       		.uleb128 0xb
+ 2231 01ac 00       		.byte	0
+ 2232 01ad 00       		.byte	0
+ 2233 01ae 20       		.uleb128 0x20
+ 2234 01af 34       		.uleb128 0x34
+ 2235 01b0 00       		.byte	0
+ 2236 01b1 03       		.uleb128 0x3
+ 2237 01b2 08       		.uleb128 0x8
+ 2238 01b3 3A       		.uleb128 0x3a
+ 2239 01b4 0B       		.uleb128 0xb
+ 2240 01b5 3B       		.uleb128 0x3b
+ 2241 01b6 0B       		.uleb128 0xb
+ 2242 01b7 49       		.uleb128 0x49
+ 2243 01b8 13       		.uleb128 0x13
+ 2244 01b9 3F       		.uleb128 0x3f
+ 2245 01ba 19       		.uleb128 0x19
+ 2246 01bb 02       		.uleb128 0x2
+ 2247 01bc 18       		.uleb128 0x18
+ 2248 01bd 00       		.byte	0
+ 2249 01be 00       		.byte	0
+ 2250 01bf 21       		.uleb128 0x21
+ 2251 01c0 2E       		.uleb128 0x2e
+ 2252 01c1 00       		.byte	0
+ 2253 01c2 3F       		.uleb128 0x3f
+ 2254 01c3 19       		.uleb128 0x19
+ 2255 01c4 3C       		.uleb128 0x3c
+ 2256 01c5 19       		.uleb128 0x19
+ 2257 01c6 6E       		.uleb128 0x6e
+ 2258 01c7 0E       		.uleb128 0xe
+ 2259 01c8 03       		.uleb128 0x3
+ 2260 01c9 0E       		.uleb128 0xe
+ 2261 01ca 3A       		.uleb128 0x3a
+ 2262 01cb 0B       		.uleb128 0xb
+ 2263 01cc 3B       		.uleb128 0x3b
+ 2264 01cd 0B       		.uleb128 0xb
+ 2265 01ce 00       		.byte	0
+ 2266 01cf 00       		.byte	0
+ 2267 01d0 00       		.byte	0
+ 2268              		.section	.debug_loc,"",%progbits
+ 2269              	.Ldebug_loc0:
+ 2270              	.LLST0:
+ 2271 0000 00000000 		.4byte	.LVL2
+ 2272 0004 07000000 		.4byte	.LVL3-1
+ 2273 0008 0100     		.2byte	0x1
+ 2274 000a 50       		.byte	0x50
+ 2275 000b 07000000 		.4byte	.LVL3-1
+ 2276 000f 16000000 		.4byte	.LFE66
+ 2277 0013 0400     		.2byte	0x4
+ 2278 0015 F3       		.byte	0xf3
+ 2279 0016 01       		.uleb128 0x1
+ 2280 0017 50       		.byte	0x50
+ 2281 0018 9F       		.byte	0x9f
+ 2282 0019 00000000 		.4byte	0
+ 2283 001d 00000000 		.4byte	0
+ 2284              	.LLST1:
+ 2285 0021 00000000 		.4byte	.LVL2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 49
+
+
+ 2286 0025 07000000 		.4byte	.LVL3-1
+ 2287 0029 0100     		.2byte	0x1
+ 2288 002b 51       		.byte	0x51
+ 2289 002c 07000000 		.4byte	.LVL3-1
+ 2290 0030 16000000 		.4byte	.LFE66
+ 2291 0034 0400     		.2byte	0x4
+ 2292 0036 F3       		.byte	0xf3
+ 2293 0037 01       		.uleb128 0x1
+ 2294 0038 51       		.byte	0x51
+ 2295 0039 9F       		.byte	0x9f
+ 2296 003a 00000000 		.4byte	0
+ 2297 003e 00000000 		.4byte	0
+ 2298              	.LLST2:
+ 2299 0042 00000000 		.4byte	.LVL18
+ 2300 0046 05000000 		.4byte	.LVL19-1
+ 2301 004a 0100     		.2byte	0x1
+ 2302 004c 50       		.byte	0x50
+ 2303 004d 05000000 		.4byte	.LVL19-1
+ 2304 0051 98000000 		.4byte	.LFE67
+ 2305 0055 0400     		.2byte	0x4
+ 2306 0057 F3       		.byte	0xf3
+ 2307 0058 01       		.uleb128 0x1
+ 2308 0059 50       		.byte	0x50
+ 2309 005a 9F       		.byte	0x9f
+ 2310 005b 00000000 		.4byte	0
+ 2311 005f 00000000 		.4byte	0
+ 2312              	.LLST3:
+ 2313 0063 8A000000 		.4byte	.LVL45
+ 2314 0067 94000000 		.4byte	.LVL47
+ 2315 006b 0400     		.2byte	0x4
+ 2316 006d 0B       		.byte	0xb
+ 2317 006e 00F0     		.2byte	0xf000
+ 2318 0070 9F       		.byte	0x9f
+ 2319 0071 94000000 		.4byte	.LVL47
+ 2320 0075 98000000 		.4byte	.LFE67
+ 2321 0079 0100     		.2byte	0x1
+ 2322 007b 54       		.byte	0x54
+ 2323 007c 00000000 		.4byte	0
+ 2324 0080 00000000 		.4byte	0
+ 2325              	.LLST4:
+ 2326 0084 1E000000 		.4byte	.LVL23
+ 2327 0088 20000000 		.4byte	.LVL24
+ 2328 008c 0200     		.2byte	0x2
+ 2329 008e 30       		.byte	0x30
+ 2330 008f 9F       		.byte	0x9f
+ 2331 0090 28000000 		.4byte	.LVL26
+ 2332 0094 42000000 		.4byte	.LVL30
+ 2333 0098 0100     		.2byte	0x1
+ 2334 009a 55       		.byte	0x55
+ 2335 009b 42000000 		.4byte	.LVL30
+ 2336 009f 44000000 		.4byte	.LVL31
+ 2337 00a3 0300     		.2byte	0x3
+ 2338 00a5 74       		.byte	0x74
+ 2339 00a6 01       		.sleb128 1
+ 2340 00a7 9F       		.byte	0x9f
+ 2341 00a8 44000000 		.4byte	.LVL31
+ 2342 00ac 46000000 		.4byte	.LVL32
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 50
+
+
+ 2343 00b0 0300     		.2byte	0x3
+ 2344 00b2 75       		.byte	0x75
+ 2345 00b3 01       		.sleb128 1
+ 2346 00b4 9F       		.byte	0x9f
+ 2347 00b5 46000000 		.4byte	.LVL32
+ 2348 00b9 98000000 		.4byte	.LFE67
+ 2349 00bd 0100     		.2byte	0x1
+ 2350 00bf 55       		.byte	0x55
+ 2351 00c0 00000000 		.4byte	0
+ 2352 00c4 00000000 		.4byte	0
+ 2353              	.LLST5:
+ 2354 00c8 66000000 		.4byte	.LVL38
+ 2355 00cc 88000000 		.4byte	.LVL44
+ 2356 00d0 0100     		.2byte	0x1
+ 2357 00d2 54       		.byte	0x54
+ 2358 00d3 00000000 		.4byte	0
+ 2359 00d7 00000000 		.4byte	0
+ 2360              		.section	.debug_aranges,"",%progbits
+ 2361 0000 3C000000 		.4byte	0x3c
+ 2362 0004 0200     		.2byte	0x2
+ 2363 0006 00000000 		.4byte	.Ldebug_info0
+ 2364 000a 04       		.byte	0x4
+ 2365 000b 00       		.byte	0
+ 2366 000c 0000     		.2byte	0
+ 2367 000e 0000     		.2byte	0
+ 2368 0010 00000000 		.4byte	.LFB63
+ 2369 0014 48000000 		.4byte	.LFE63-.LFB63
+ 2370 0018 00000000 		.4byte	.LFB66
+ 2371 001c 16000000 		.4byte	.LFE66-.LFB66
+ 2372 0020 00000000 		.4byte	.LFB64
+ 2373 0024 4C010000 		.4byte	.LFE64-.LFB64
+ 2374 0028 00000000 		.4byte	.LFB67
+ 2375 002c 98000000 		.4byte	.LFE67-.LFB67
+ 2376 0030 00000000 		.4byte	.LFB65
+ 2377 0034 78010000 		.4byte	.LFE65-.LFB65
+ 2378 0038 00000000 		.4byte	0
+ 2379 003c 00000000 		.4byte	0
+ 2380              		.section	.debug_ranges,"",%progbits
+ 2381              	.Ldebug_ranges0:
+ 2382 0000 00000000 		.4byte	.LFB63
+ 2383 0004 48000000 		.4byte	.LFE63
+ 2384 0008 00000000 		.4byte	.LFB66
+ 2385 000c 16000000 		.4byte	.LFE66
+ 2386 0010 00000000 		.4byte	.LFB64
+ 2387 0014 4C010000 		.4byte	.LFE64
+ 2388 0018 00000000 		.4byte	.LFB67
+ 2389 001c 98000000 		.4byte	.LFE67
+ 2390 0020 00000000 		.4byte	.LFB65
+ 2391 0024 78010000 		.4byte	.LFE65
+ 2392 0028 00000000 		.4byte	0
+ 2393 002c 00000000 		.4byte	0
+ 2394              		.section	.debug_line,"",%progbits
+ 2395              	.Ldebug_line0:
+ 2396 0000 5E030000 		.section	.debug_str,"MS",%progbits,1
+ 2396      02005602 
+ 2396      00000201 
+ 2396      FB0E0D00 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 51
+
+
+ 2396      01010101 
+ 2397              	.LASF65:
+ 2398 0000 436F6E74 		.ascii	"Control_Reg_LED_Write\000"
+ 2398      726F6C5F 
+ 2398      5265675F 
+ 2398      4C45445F 
+ 2398      57726974 
+ 2399              	.LASF18:
+ 2400 0016 72657375 		.ascii	"result\000"
+ 2400      6C7400
+ 2401              	.LASF67:
+ 2402 001d 436C6F63 		.ascii	"Clock_1_Start\000"
+ 2402      6B5F315F 
+ 2402      53746172 
+ 2402      7400
+ 2403              	.LASF79:
+ 2404 002b 6973725F 		.ascii	"isr_SS_Rise_StartEx\000"
+ 2404      53535F52 
+ 2404      6973655F 
+ 2404      53746172 
+ 2404      74457800 
+ 2405              	.LASF44:
+ 2406 003f 53504953 		.ascii	"SPIS_WriteTxDataZero\000"
+ 2406      5F577269 
+ 2406      74655478 
+ 2406      44617461 
+ 2406      5A65726F 
+ 2407              	.LASF75:
+ 2408 0054 50574D5F 		.ascii	"PWM_1_Start\000"
+ 2408      315F5374 
+ 2408      61727400 
+ 2409              	.LASF39:
+ 2410 0060 72784275 		.ascii	"rxBuffer\000"
+ 2410      66666572 
+ 2410      00
+ 2411              	.LASF2:
+ 2412 0069 73686F72 		.ascii	"short int\000"
+ 2412      7420696E 
+ 2412      7400
+ 2413              	.LASF35:
+ 2414 0073 72656164 		.ascii	"read_counter\000"
+ 2414      5F636F75 
+ 2414      6E746572 
+ 2414      00
+ 2415              	.LASF38:
+ 2416 0080 69326344 		.ascii	"i2cData\000"
+ 2416      61746100 
+ 2417              	.LASF17:
+ 2418 0088 73697A65 		.ascii	"sizetype\000"
+ 2418      74797065 
+ 2418      00
+ 2419              	.LASF70:
+ 2420 0091 5350494D 		.ascii	"SPIM_1_ClearTxBuffer\000"
+ 2420      5F315F43 
+ 2420      6C656172 
+ 2420      54784275 
+ 2420      66666572 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 52
+
+
+ 2421              	.LASF69:
+ 2422 00a6 5350494D 		.ascii	"SPIM_1_ClearRxBuffer\000"
+ 2422      5F315F43 
+ 2422      6C656172 
+ 2422      52784275 
+ 2422      66666572 
+ 2423              	.LASF58:
+ 2424 00bb 5350494D 		.ascii	"SPIM_1_ReadTxStatus\000"
+ 2424      5F315F52 
+ 2424      65616454 
+ 2424      78537461 
+ 2424      74757300 
+ 2425              	.LASF77:
+ 2426 00cf 4932435F 		.ascii	"I2C_1_Start\000"
+ 2426      315F5374 
+ 2426      61727400 
+ 2427              	.LASF22:
+ 2428 00db 53535F52 		.ascii	"SS_Rise_Handler\000"
+ 2428      6973655F 
+ 2428      48616E64 
+ 2428      6C657200 
+ 2429              	.LASF52:
+ 2430 00eb 4932435F 		.ascii	"I2C_1_MasterSendStop\000"
+ 2430      315F4D61 
+ 2430      73746572 
+ 2430      53656E64 
+ 2430      53746F70 
+ 2431              	.LASF24:
+ 2432 0100 6D61696E 		.ascii	"main\000"
+ 2432      00
+ 2433              	.LASF51:
+ 2434 0105 4932435F 		.ascii	"I2C_1_MasterWriteByte\000"
+ 2434      315F4D61 
+ 2434      73746572 
+ 2434      57726974 
+ 2434      65427974 
+ 2435              	.LASF33:
+ 2436 011b 70776D5F 		.ascii	"pwm_a_new_command\000"
+ 2436      615F6E65 
+ 2436      775F636F 
+ 2436      6D6D616E 
+ 2436      6400
+ 2437              	.LASF12:
+ 2438 012d 75696E74 		.ascii	"uint16\000"
+ 2438      313600
+ 2439              	.LASF36:
+ 2440 0134 50534F43 		.ascii	"PSOC_state\000"
+ 2440      5F737461 
+ 2440      746500
+ 2441              	.LASF41:
+ 2442 013f 74656D70 		.ascii	"temp2\000"
+ 2442      3200
+ 2443              	.LASF74:
+ 2444 0145 53504953 		.ascii	"SPIS_Start\000"
+ 2444      5F537461 
+ 2444      727400
+ 2445              	.LASF81:
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 53
+
+
+ 2446 0150 50574D5F 		.ascii	"PWM_2_WriteCompare\000"
+ 2446      325F5772 
+ 2446      69746543 
+ 2446      6F6D7061 
+ 2446      726500
+ 2447              	.LASF13:
+ 2448 0163 666C6F61 		.ascii	"float\000"
+ 2448      7400
+ 2449              	.LASF49:
+ 2450 0169 53504953 		.ascii	"SPIS_WriteTxData\000"
+ 2450      5F577269 
+ 2450      74655478 
+ 2450      44617461 
+ 2450      00
+ 2451              	.LASF27:
+ 2452 017a 5250695F 		.ascii	"RPi_Data\000"
+ 2452      44617461 
+ 2452      00
+ 2453              	.LASF6:
+ 2454 0183 6C6F6E67 		.ascii	"long long int\000"
+ 2454      206C6F6E 
+ 2454      6720696E 
+ 2454      7400
+ 2455              	.LASF78:
+ 2456 0191 6973725F 		.ascii	"isr_SS_Fall_StartEx\000"
+ 2456      53535F46 
+ 2456      616C6C5F 
+ 2456      53746172 
+ 2456      74457800 
+ 2457              	.LASF4:
+ 2458 01a5 6C6F6E67 		.ascii	"long int\000"
+ 2458      20696E74 
+ 2458      00
+ 2459              	.LASF26:
+ 2460 01ae 5250695F 		.ascii	"RPi_Command\000"
+ 2460      436F6D6D 
+ 2460      616E6400 
+ 2461              	.LASF82:
+ 2462 01ba 53746174 		.ascii	"Status_Reg_1_Read\000"
+ 2462      75735F52 
+ 2462      65675F31 
+ 2462      5F526561 
+ 2462      6400
+ 2463              	.LASF37:
+ 2464 01cc 69326341 		.ascii	"i2cAddress\000"
+ 2464      64647265 
+ 2464      737300
+ 2465              	.LASF61:
+ 2466 01d7 5350494D 		.ascii	"SPIM_1_ClearFIFO\000"
+ 2466      5F315F43 
+ 2466      6C656172 
+ 2466      4649464F 
+ 2466      00
+ 2467              	.LASF29:
+ 2468 01e8 656E635F 		.ascii	"enc_b_Position\000"
+ 2468      625F506F 
+ 2468      73697469 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 54
+
+
+ 2468      6F6E00
+ 2469              	.LASF57:
+ 2470 01f7 5350494D 		.ascii	"SPIM_1_WriteTxData\000"
+ 2470      5F315F57 
+ 2470      72697465 
+ 2470      54784461 
+ 2470      746100
+ 2471              	.LASF34:
+ 2472 020a 70776D5F 		.ascii	"pwm_b_new_command\000"
+ 2472      625F6E65 
+ 2472      775F636F 
+ 2472      6D6D616E 
+ 2472      6400
+ 2473              	.LASF28:
+ 2474 021c 656E635F 		.ascii	"enc_a_Position\000"
+ 2474      615F506F 
+ 2474      73697469 
+ 2474      6F6E00
+ 2475              	.LASF16:
+ 2476 022b 6C6F6E67 		.ascii	"long double\000"
+ 2476      20646F75 
+ 2476      626C6500 
+ 2477              	.LASF19:
+ 2478 0237 4368616E 		.ascii	"ChannelNumber\000"
+ 2478      6E656C4E 
+ 2478      756D6265 
+ 2478      7200
+ 2479              	.LASF56:
+ 2480 0245 43794465 		.ascii	"CyDelayUs\000"
+ 2480      6C617955 
+ 2480      7300
+ 2481              	.LASF1:
+ 2482 024f 756E7369 		.ascii	"unsigned char\000"
+ 2482      676E6564 
+ 2482      20636861 
+ 2482      7200
+ 2483              	.LASF0:
+ 2484 025d 7369676E 		.ascii	"signed char\000"
+ 2484      65642063 
+ 2484      68617200 
+ 2485              	.LASF7:
+ 2486 0269 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2486      206C6F6E 
+ 2486      6720756E 
+ 2486      7369676E 
+ 2486      65642069 
+ 2487              	.LASF8:
+ 2488 0280 756E7369 		.ascii	"unsigned int\000"
+ 2488      676E6564 
+ 2488      20696E74 
+ 2488      00
+ 2489              	.LASF73:
+ 2490 028d 5350494D 		.ascii	"SPIM_SigGen_ClearTxBuffer\000"
+ 2490      5F536967 
+ 2490      47656E5F 
+ 2490      436C6561 
+ 2490      72547842 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 55
+
+
+ 2491              	.LASF87:
+ 2492 02a7 656E636F 		.ascii	"encoderNumber\000"
+ 2492      6465724E 
+ 2492      756D6265 
+ 2492      7200
+ 2493              	.LASF83:
+ 2494 02b5 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2494      43313120 
+ 2494      352E342E 
+ 2494      31203230 
+ 2494      31363036 
+ 2495 02e8 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2495      20726576 
+ 2495      6973696F 
+ 2495      6E203233 
+ 2495      37373135 
+ 2496 031b 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 2496      66756E63 
+ 2496      74696F6E 
+ 2496      2D736563 
+ 2496      74696F6E 
+ 2497              	.LASF76:
+ 2498 0343 50574D5F 		.ascii	"PWM_2_Start\000"
+ 2498      325F5374 
+ 2498      61727400 
+ 2499              	.LASF20:
+ 2500 034f 436F6D6D 		.ascii	"CommandWord\000"
+ 2500      616E6457 
+ 2500      6F726400 
+ 2501              	.LASF80:
+ 2502 035b 50574D5F 		.ascii	"PWM_1_WriteCompare\000"
+ 2502      315F5772 
+ 2502      69746543 
+ 2502      6F6D7061 
+ 2502      726500
+ 2503              	.LASF15:
+ 2504 036e 63686172 		.ascii	"char\000"
+ 2504      00
+ 2505              	.LASF10:
+ 2506 0373 696E7433 		.ascii	"int32_t\000"
+ 2506      325F7400 
+ 2507              	.LASF23:
+ 2508 037b 57726974 		.ascii	"WriteSignalGen\000"
+ 2508      65536967 
+ 2508      6E616C47 
+ 2508      656E00
+ 2509              	.LASF3:
+ 2510 038a 73686F72 		.ascii	"short unsigned int\000"
+ 2510      7420756E 
+ 2510      7369676E 
+ 2510      65642069 
+ 2510      6E7400
+ 2511              	.LASF59:
+ 2512 039d 5350494D 		.ascii	"SPIM_1_ReadRxData\000"
+ 2512      5F315F52 
+ 2512      65616452 
+ 2512      78446174 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 56
+
+
+ 2512      6100
+ 2513              	.LASF45:
+ 2514 03af 436F6E74 		.ascii	"Control_Reg_SS_SigGen_Write\000"
+ 2514      726F6C5F 
+ 2514      5265675F 
+ 2514      53535F53 
+ 2514      69674765 
+ 2515              	.LASF11:
+ 2516 03cb 75696E74 		.ascii	"uint8\000"
+ 2516      3800
+ 2517              	.LASF55:
+ 2518 03d1 6973725F 		.ascii	"isr_SS_Rise_ClearPending\000"
+ 2518      53535F52 
+ 2518      6973655F 
+ 2518      436C6561 
+ 2518      7250656E 
+ 2519              	.LASF64:
+ 2520 03ea 456E6162 		.ascii	"EnableBattery_Write\000"
+ 2520      6C654261 
+ 2520      74746572 
+ 2520      795F5772 
+ 2520      69746500 
+ 2521              	.LASF42:
+ 2522 03fe 73687574 		.ascii	"shutdown_count\000"
+ 2522      646F776E 
+ 2522      5F636F75 
+ 2522      6E7400
+ 2523              	.LASF84:
+ 2524 040d 6D61696E 		.ascii	"main.c\000"
+ 2524      2E6300
+ 2525              	.LASF5:
+ 2526 0414 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2526      20756E73 
+ 2526      69676E65 
+ 2526      6420696E 
+ 2526      7400
+ 2527              	.LASF53:
+ 2528 0426 53504953 		.ascii	"SPIS_ReadRxStatus\000"
+ 2528      5F526561 
+ 2528      64527853 
+ 2528      74617475 
+ 2528      7300
+ 2529              	.LASF14:
+ 2530 0438 646F7562 		.ascii	"double\000"
+ 2530      6C6500
+ 2531              	.LASF86:
+ 2532 043f 52656164 		.ascii	"ReadEncoderValue\000"
+ 2532      456E636F 
+ 2532      64657256 
+ 2532      616C7565 
+ 2532      00
+ 2533              	.LASF31:
+ 2534 0450 70776D5F 		.ascii	"pwm_a_command\000"
+ 2534      615F636F 
+ 2534      6D6D616E 
+ 2534      6400
+ 2535              	.LASF66:
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 57
+
+
+ 2536 045e 52706949 		.ascii	"RpiInterrupts_Write\000"
+ 2536      6E746572 
+ 2536      72757074 
+ 2536      735F5772 
+ 2536      69746500 
+ 2537              	.LASF50:
+ 2538 0472 4932435F 		.ascii	"I2C_1_MasterSendStart\000"
+ 2538      315F4D61 
+ 2538      73746572 
+ 2538      53656E64 
+ 2538      53746172 
+ 2539              	.LASF9:
+ 2540 0488 5F5F696E 		.ascii	"__int32_t\000"
+ 2540      7433325F 
+ 2540      7400
+ 2541              	.LASF60:
+ 2542 0492 436F6E74 		.ascii	"Control_Reg_SS_Write\000"
+ 2542      726F6C5F 
+ 2542      5265675F 
+ 2542      53535F57 
+ 2542      72697465 
+ 2543              	.LASF85:
+ 2544 04a7 433A5C55 		.ascii	"C:\\Users\\harlow2016\\Documents\\PSOC_Designs\\Rpi"
+ 2544      73657273 
+ 2544      5C686172 
+ 2544      6C6F7732 
+ 2544      3031365C 
+ 2545 04d5 4D49425C 		.ascii	"MIB\\Number3.cydsn\000"
+ 2545      4E756D62 
+ 2545      6572332E 
+ 2545      63796473 
+ 2545      6E00
+ 2546              	.LASF47:
+ 2547 04e7 5350494D 		.ascii	"SPIM_SigGen_WriteTxData\000"
+ 2547      5F536967 
+ 2547      47656E5F 
+ 2547      57726974 
+ 2547      65547844 
+ 2548              	.LASF32:
+ 2549 04ff 70776D5F 		.ascii	"pwm_b_command\000"
+ 2549      625F636F 
+ 2549      6D6D616E 
+ 2549      6400
+ 2550              	.LASF48:
+ 2551 050d 53504953 		.ascii	"SPIS_ReadRxData\000"
+ 2551      5F526561 
+ 2551      64527844 
+ 2551      61746100 
+ 2552              	.LASF40:
+ 2553 051d 74656D70 		.ascii	"temp1\000"
+ 2553      3100
+ 2554              	.LASF72:
+ 2555 0523 5350494D 		.ascii	"SPIM_SigGen_ClearRxBuffer\000"
+ 2555      5F536967 
+ 2555      47656E5F 
+ 2555      436C6561 
+ 2555      72527842 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc1Mjvxb.s 			page 58
+
+
+ 2556              	.LASF62:
+ 2557 053d 436F6D70 		.ascii	"Comp_1_Start\000"
+ 2557      5F315F53 
+ 2557      74617274 
+ 2557      00
+ 2558              	.LASF68:
+ 2559 054a 5350494D 		.ascii	"SPIM_1_Start\000"
+ 2559      5F315F53 
+ 2559      74617274 
+ 2559      00
+ 2560              	.LASF71:
+ 2561 0557 5350494D 		.ascii	"SPIM_SigGen_Start\000"
+ 2561      5F536967 
+ 2561      47656E5F 
+ 2561      53746172 
+ 2561      7400
+ 2562              	.LASF25:
+ 2563 0569 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2563      52784275 
+ 2563      66666572 
+ 2563      00
+ 2564              	.LASF63:
+ 2565 0576 43794465 		.ascii	"CyDelay\000"
+ 2565      6C617900 
+ 2566              	.LASF21:
+ 2567 057e 53535F46 		.ascii	"SS_Fall_Handler\000"
+ 2567      616C6C5F 
+ 2567      48616E64 
+ 2567      6C657200 
+ 2568              	.LASF43:
+ 2569 058e 6973725F 		.ascii	"isr_SS_Fall_ClearPending\000"
+ 2569      53535F46 
+ 2569      616C6C5F 
+ 2569      436C6561 
+ 2569      7250656E 
+ 2570              	.LASF54:
+ 2571 05a7 53504953 		.ascii	"SPIS_ClearRxBuffer\000"
+ 2571      5F436C65 
+ 2571      61725278 
+ 2571      42756666 
+ 2571      657200
+ 2572              	.LASF30:
+ 2573 05ba 656E635F 		.ascii	"enc_c_Position\000"
+ 2573      635F506F 
+ 2573      73697469 
+ 2573      6F6E00
+ 2574              	.LASF46:
+ 2575 05c9 5350494D 		.ascii	"SPIM_SigGen_ClearFIFO\000"
+ 2575      5F536967 
+ 2575      47656E5F 
+ 2575      436C6561 
+ 2575      72464946 
+ 2576              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
