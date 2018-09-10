@@ -3,7 +3,6 @@
 # May 2018
 
 from time import sleep
-import .RPiMIB
 
 freq_clock = 16000000 #Hz
 
