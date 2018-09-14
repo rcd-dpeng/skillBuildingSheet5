@@ -1,7 +1,7 @@
 import Slush
 from Slush.Devices import L6470Registers as LReg
 from .slush_manager import slush_board as b
-
+b = Slush.sBoard()
 
 class Stepper(Slush.Motor):
 
@@ -41,9 +41,9 @@ class Stepper(Slush.Motor):
 
         self.hard_stop()
         self.set_as_home()
-
+ 
     def read_switch(self):
-        if self.get_status() & 0x4: return 1
+        if self.getStatus() & 0x4: return 1
         else: return 0
 
     #relative move that blocks movement
@@ -76,3 +76,21 @@ class Stepper(Slush.Motor):
 
     def stop(self):
         self.hard_stop()
+
+    def hard_stop(self):
+        self.hardStop()
+
+    def go_To(self,number_of_steps):
+        self.gotTo(number_of_steps)
+
+    def wait_move_finish(self):
+        self.waitMoveFinish()
+
+    def set_as_home(self):
+        self.setAsHome()
+
+    def set_max_speed(self,speed):
+        self.setMaxSpeed(speed)
+
+    
+    

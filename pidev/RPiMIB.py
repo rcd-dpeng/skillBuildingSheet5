@@ -17,8 +17,9 @@ GPIO.setup(22, GPIO.IN)
 
 # set up SPI between the Raspberry Pi and the PiMIB board
 spi = spidev.SpiDev()
-#spiFrequency = 16000000
-spiFrequency = 1000000
+spiFrequency = 16000000
+#spiFrequency = 1000000
+#spiFrequency = 10000000
 
 #takes 0, 1, or 2
 def readEncoder(encoder):
@@ -99,3 +100,5 @@ def shutdownHandler():
 def startShutdownHandlerThread():
     t = Thread(target=shutdownHandler)
     t.start()
+def setFrequency(freq):
+    spiFrequency = freq
