@@ -79,15 +79,9 @@ CY_ISR(SS_Rise_Handler)
 {
     if (PSOC_state == idle_state) {
         RPi_Command = SPIS_ReadRxData();
-        /* This is a hack because the PSOC is shifting the input one
-           bit to the right. */
-        RPi_Command = RPi_Command << 1;
         read_counter = 0u;
     } else {
         RPi_Data = SPIS_ReadRxData();
-        /* This is a hack because the PSOC is shifting the input one
-           bit to the right. */
-        RPi_Data = RPi_Data << 1;
     }
     
     /* Routine to write to sig gen over SPI or Power Amp Gain over I2C */
