@@ -52,64 +52,68 @@ uint16 pwm_b_new_command;
 
 
 uint8 read_counter;
-uint8  PSOC_state;
+uint8 PSOC_state = idle_state;
 uint8 i2cAddress;
 uint8 i2cData;
 
 CY_ISR(SS_Fall_Handler)
 {
     /*  load the encoder position data into the transmit data registers*/
-
     isr_SS_Fall_ClearPending();
-   if (PSOC_state == idle_state) {
-       SPIS_WriteTxDataZero(0x0001);
-   } else if (PSOC_state == write_funcGen1_state) {
-       SPIS_WriteTxDataZero(0x0020 );
-   } else if (PSOC_state == write_funcGen2_state) {
-       SPIS_WriteTxDataZero(0x0040 );
-   }  else if (PSOC_state == write_Amp_state) {
-       SPIS_WriteTxDataZero(0x0080 );
-   }    else if (PSOC_state == write_pwm_a_state) {
-       SPIS_WriteTxDataZero(0x0100 );
-   } else if (PSOC_state == write_pwm_b_state) {
-       SPIS_WriteTxDataZero(0x0200 );
+    if (PSOC_state == idle_state) {
+        SPIS_WriteTxDataZero(0x0001);
+    } else if (PSOC_state == write_funcGen1_state) {
+        SPIS_WriteTxDataZero(0x0020);
+    } else if (PSOC_state == write_funcGen2_state) {
+        SPIS_WriteTxDataZero(0x0040);
+    }  else if (PSOC_state == write_Amp_state) {
+        SPIS_WriteTxDataZero(0x0080);
+    }    else if (PSOC_state == write_pwm_a_state) {
+        SPIS_WriteTxDataZero(0x0100);
+    } else if (PSOC_state == write_pwm_b_state) {
+        SPIS_WriteTxDataZero(0x0200);
    }
 }
 
 CY_ISR(SS_Rise_Handler)
 {
-    if (PSOC_state == idle_state)
-    {
+    if (PSOC_state == idle_state) {
         RPi_Command = SPIS_ReadRxData();
+        /* This is a hack because the PSOC is shifting the input one
+           bit to the right. */
+        RPi_Command = RPi_Command << 1;
         read_counter = 0u;
     } else {
         RPi_Data = SPIS_ReadRxData();
+        /* This is a hack because the PSOC is shifting the input one
+           bit to the right. */
+        RPi_Data = RPi_Data << 1;
     }
     
-/*    Routine to write to sig gen over SPI or Power Amp Gain over I2C */
+    /* Routine to write to sig gen over SPI or Power Amp Gain over I2C */
     
-    if (PSOC_state == idle_state)  {
-        if (RPi_Command == 0x0010)  {          
+    if (PSOC_state == idle_state) {
+        if (RPi_Command == 0x0010) {          
            PSOC_state = read_encoder_state;
            SPIS_WriteTxDataZero(enc_a_Position);
            SPIS_WriteTxData(enc_b_Position);
            SPIS_WriteTxData(enc_c_Position);
            read_counter = 0u; 
-        } else if (RPi_Command == 0x0020)  {
+        } else if (RPi_Command == 0x0020) {
            PSOC_state = write_funcGen1_state;
-        } else if (RPi_Command == 0x0040)  {
+        } else if (RPi_Command == 0x0040) {
            PSOC_state = write_funcGen2_state;
-        }  else if (RPi_Command == 0x0080)  {
+        }  else if (RPi_Command == 0x0080) {
            PSOC_state = write_Amp_state;
-        }  else if (RPi_Command == 0x0100)  {
+        }  else if (RPi_Command == 0x0100) {
            PSOC_state = write_pwm_a_state;
-        }  else if (RPi_Command == 0x0200)  {
+        }  else if (RPi_Command == 0x0200) {
            PSOC_state = write_pwm_b_state;
         }
     } else  if  ( PSOC_state == read_encoder_state) {      
         if (read_counter < 2u) {
             read_counter +=1;
-        } else  {
+        } else {
             PSOC_state = idle_state;
             read_counter = 0u;
         }
@@ -120,50 +124,36 @@ CY_ISR(SS_Rise_Handler)
         WriteSignalGen(1u, RPi_Data); 
         PSOC_state = idle_state;
     } else if ( PSOC_state == write_Amp_state) {
-        i2cAddress = ((uint8) (RPi_Data >>8));
+        i2cAddress = ((uint8) (RPi_Data >> 8));
         i2cData = ((uint8) (RPi_Data & 0x00ff));
-        I2C_1_MasterSendStart(i2cAddress,0);
-        I2C_1_MasterWriteByte(i2cData);I2C_1_MasterSendStop();
+        I2C_1_MasterSendStart(i2cAddress, 0);
+        I2C_1_MasterWriteByte(i2cData);
+        I2C_1_MasterSendStop();
         PSOC_state = idle_state;       
      } else if ( PSOC_state == write_pwm_a_state) {
         pwm_a_new_command = RPi_Data;
-        if ( pwm_a_new_command < 1000u) {
-            pwm_a_new_command = 1000u;
-        } else if (pwm_a_new_command > 2000u)  {
-            pwm_a_new_command = 2000u;
-        }
-       /* PWM_1_WriteCompare(pwm_a_command);  */
+        /* PWM_1_WriteCompare(pwm_a_command);  */
         PSOC_state = idle_state;  
     } else if ( PSOC_state == write_pwm_b_state) {
         pwm_b_new_command = RPi_Data;
-        if ( pwm_b_new_command < 1000u) {
-            pwm_b_new_command = 1000u;
-        } else if (pwm_b_new_command > 2000u)  {
-            pwm_b_new_command = 2000u;
-        }
-     /*   PWM_2_WriteCompare(pwm_b_command);   */
+        /* PWM_2_WriteCompare(pwm_b_command);   */
         PSOC_state = idle_state;         
-     } else {
-         PSOC_state = idle_state;
+    } else {
+        PSOC_state = idle_state;
     }
 
     SPIS_ReadRxStatus();
     SPIS_ClearRxBuffer();
     isr_SS_Rise_ClearPending();
-   
 }
-
 
 /* The txBuffer size is equal (BUFFER_SIZE-1) because for SPI Mode where CPHA == 0 and
 * CPOL == 0 one byte writes directly in SPI TX FIFO using SPIS_WriteTxDataZero() API.
 */
 
-uint16 rxBuffer [4];
-
- uint8 temp1;
- uint8 temp2;
-
-
+uint16 rxBuffer[4];
+uint8 temp1;
+uint8 temp2;
 uint8 i;
 uint16 shutdown_count;
 
@@ -204,83 +194,78 @@ int main()
      read_counter = 0u;
       
     CyGlobalIntEnable; 
-    isr_SS_Fall_StartEx(SS_Fall_Handler );
-    isr_SS_Rise_StartEx( SS_Rise_Handler );
+    isr_SS_Fall_StartEx(SS_Fall_Handler);
+    isr_SS_Rise_StartEx(SS_Rise_Handler);
  
     RPi_Command = 0x000f;
   
     shutdown_count = 0;
 
-    while (1)  {
-        
-     /* read the encoder values  */     
-      enc_a_Position = ReadEncoderValue(0u);    
-      enc_b_Position = ReadEncoderValue(1u);        
-      enc_c_Position = ReadEncoderValue(2u);
+    while (1) {
+        /* read the encoder values  */     
+        enc_a_Position = ReadEncoderValue(0u);    
+        enc_b_Position = ReadEncoderValue(1u);        
+        enc_c_Position = ReadEncoderValue(2u);
       
-    /* This code monitors the main power input.  A local backup batter supply prevents  */
-    /* power from being removed from the raspberry pi before it has been properly shutdown   */
-    /* Monitor the presence of the main power input */    
-    /*  If power has been removed for more than 5000 times through this loop -  -  about 20 seconds */
-    /*  Interrupt the Raspberry Pi telling it to shut itself down  */
-    /*  allow 20 sec for the Pi to shut down then turn off back up power. */
-      CyDelayUs(1400u);
+        /* This code monitors the main power input.  A local backup batter supply prevents  */
+        /* power from being removed from the raspberry pi before it has been properly shutdown   */
+        /* Monitor the presence of the main power input */    
+        /*  If power has been removed for more than 5000 times through this loop -  -  about 20 seconds */
+        /*  Interrupt the Raspberry Pi telling it to shut itself down  */
+        /*  allow 20 sec for the Pi to shut down then turn off back up power. */
+        CyDelayUs(1400u);
 
-    
-    /* implenemt slew rate for changes in servo position*/
-    if (pwm_a_new_command > pwm_a_command ) {
-        if ((pwm_a_new_command - pwm_a_command) > 50) {
-            pwm_a_command +=50;
+        /* implenemt slew rate for changes in servo position*/
+        if (pwm_a_new_command > pwm_a_command) {
+            if ((pwm_a_new_command - pwm_a_command) > 50) {
+                pwm_a_command +=50;
+            } else {
+                pwm_a_command = pwm_a_new_command;
+            }
         } else {
-            pwm_a_command = pwm_a_new_command;
+            if ((pwm_a_command - pwm_a_new_command) > 50)  {
+                pwm_a_command -=50;
+            } else {
+                pwm_a_command = pwm_a_new_command;
+            }
         }
-    } else {
-        if ((pwm_a_command - pwm_a_new_command) > 50)  {
-            pwm_a_command -=50;
-        } else {
-             pwm_a_command = pwm_a_new_command;
-        }
-    }
 
-    
-     if (pwm_b_new_command > pwm_b_command ) {
-        if ((pwm_b_new_command - pwm_b_command) > 50) {
-            pwm_b_command +=50;
+        if (pwm_b_new_command > pwm_b_command) {
+            if ((pwm_b_new_command - pwm_b_command) > 50) {
+                pwm_b_command +=50;
+            } else {
+                pwm_b_command = pwm_b_new_command;
+            }
         } else {
-            pwm_b_command = pwm_b_new_command;
+            if ((pwm_b_command - pwm_b_new_command) > 50)  {
+                pwm_b_command -=50;
+            } else {
+                 pwm_b_command = pwm_b_new_command;
+            }
         }
-    } else {
-        if ((pwm_b_command - pwm_b_new_command) > 50)  {
-            pwm_b_command -=50;
+    
+        PWM_1_WriteCompare(pwm_a_command);
+        PWM_2_WriteCompare(pwm_b_command);
+    
+        if (Status_Reg_1_Read() == 1u) {
+            shutdown_count += 1;
+            if (shutdown_count == 2000u) {      
+                CyGlobalIntDisable; 
+                Control_Reg_LED_Write(1u);
+                /* tell Pi to shut down */ 
+                RpiInterrupts_Write(0u);
+                CyDelay(20000u);
+                /* Wait 60 seconds then turn off back up power */
+                EnableBattery_Write(2u);
+                CyDelay(2000u);
+            }
         } else {
-             pwm_b_command = pwm_b_new_command;
+            shutdown_count = 0u;
         }
-    }
-    
-    PWM_1_WriteCompare(pwm_a_command);
-    PWM_2_WriteCompare(pwm_b_command);
-    
-    
-      if (Status_Reg_1_Read() == 1u) {
-        shutdown_count +=1;
-        if (shutdown_count == 2000u) {      
-            CyGlobalIntDisable; 
-             Control_Reg_LED_Write(1u);
-            /* tell Pi to shut down */ 
-           RpiInterrupts_Write(0u);
-           CyDelay(20000u);
-        /* Wait 60 seconds then turn off back up power */
-           EnableBattery_Write(2u);
-           CyDelay(2000u);
-        }
-      } else {
-         shutdown_count =0u;
-      }
     }
 }
 
-uint16 WriteSignalGen(uint8 ChannelNumber, uint16 CommandWord)
-{
+uint16 WriteSignalGen(uint8 ChannelNumber, uint16 CommandWord){
     uint16 result;
     Control_Reg_SS_SigGen_Write(ChannelNumber);
     SPIM_SigGen_ClearFIFO();
@@ -288,7 +273,6 @@ uint16 WriteSignalGen(uint8 ChannelNumber, uint16 CommandWord)
     while (!(SPIM_SigGen_STS_SPI_DONE));
     result = 0u;
     return(result);
-   
 }
 
 
