@@ -3,7 +3,7 @@ from Slush.Devices import L6470Registers as LReg
 from .slush_manager import slush_board as b
 b = Slush.sBoard()
 
-class Stepper(Slush.Motor):
+class stepper(Slush.Motor):
 
     # Stepper constructor, if no parameter is specified they will default
     # to given values
@@ -69,10 +69,10 @@ class Stepper(Slush.Motor):
         self.go_to(int(number_of_steps))
 
     def get_GPIO_state(self, port, pin):
-        return b.get_IO_state(port, pin)
+        return b.getIOState(port, pin)
 
     def set_GPIO_state(self, port, pin, state):
-        return b.set_IO_state(port, pin, state)
+        return b.setIOState(port, pin, state)
 
     def stop(self):
         self.hard_stop()
