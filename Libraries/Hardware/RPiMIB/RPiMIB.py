@@ -21,8 +21,6 @@ GPIO.setup(22, GPIO.IN)
 spi = spidev.SpiDev()
 spiFrequency = 1000000
 
-
-
 #takes 0, 1, or 2
 def readEncoder(encoder):
     global spi
@@ -71,11 +69,6 @@ def sendI2C(address, data):
     spi.xfer([address, data], spiFrequency, 1)  # I2C write to IC address 0x41 with data 0x17  0x41 = Amp1
 
 def sendPWM(pin, data):
-    if (data > 2000) : 
-        data = 2000
-    elif (data <1000):
-        data = 1000
-        
     MsByte = data >> 8
     LsByte = data & 0x00ff
         
@@ -93,7 +86,7 @@ def shutdown():
     cleanup();
     print("Shutting down in 2 seconds")
     sleep(2)
-#    os.system("sudo shutdown now -h")
+    os.system("sudo shutdown now -h")
 
 def shutdownHandler():
     print("Shutdown Handler Started");
