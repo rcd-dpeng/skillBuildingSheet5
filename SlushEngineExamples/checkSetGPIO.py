@@ -13,14 +13,12 @@ import time
 #initalizes the board and all its functions
 SlushEngine = Slush.sBoard()
 
-#reads pin A0 and prints the value
+#writes to pin A07 and B0-7 and prints the value
 while(1):
     for j in range(0, 2):
         label = ("A", "B")[j == 1]
         for i in range(0, 8):
-            #print("Pin " + label + str(i) + ": " + str(SlushEngine.setIOState(j, i, 1)) + " ON.")
-            print("Pin " + label + str(i) + ": " + str(j) + " ON.")
+            print("Pin " + label + str(i) + ": " + str(SlushEngine.setIOState(j, i, 1)) + " ON.")
             time.sleep(0.5)
-            #print("Pin " + label + str(i) + ": " + str(SlushEngine.setIOState(j, i, 0)) + " OFF.")
-            print("Pin " + label + str(i) + ": " + str(j) + " OFF.")
+            print("Pin " + label + str(i) + ": " + str(SlushEngine.setIOState(j, i, 0)) + " OFF.")
             time.sleep(0.5)
