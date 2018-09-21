@@ -1,5 +1,7 @@
 To set up the power_shutdown module:
 
+Make sure the repo is cloned in Documents
+
 First, copy the power_shutdown folder into the proper modules folder with the command:
 sudo cp -r /home/pi/Documents/RaspberryPiCommon/RpiMIB/ShutdownModule/power_shutdown /lib/modules/4.14.69-v7+/kernel/drivers
 
