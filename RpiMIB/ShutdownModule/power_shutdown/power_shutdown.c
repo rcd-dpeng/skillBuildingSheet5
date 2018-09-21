@@ -16,7 +16,7 @@ static int __init power_shutdown_init(void) {
 	gpio_export(21, false);
 	gpio_direction_input(21);
 	IRQnumber = gpio_to_irq(21);
-	result = request_irq(IRQnumber, (irq_handler_t) irq_handler, IRQF_TRIGGER_RISING, "irq_handler", NULL); 
+	result = request_irq(IRQnumber, (irq_handler_t) irq_handler, IRQF_TRIGGER_FALLING, "irq_handler", NULL); 
 	return 0;
 }
 
