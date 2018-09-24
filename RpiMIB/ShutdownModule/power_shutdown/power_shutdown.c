@@ -3,6 +3,7 @@
 #include <linux/kernel.h>
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
+#include <linux/jiffies.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Miles Kretschmer");
@@ -24,7 +25,9 @@ static char * shutdown_argv[] =
     { "/sbin/shutdown", "-h", "-P", "now", NULL };
 
 static irq_handler_t irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs) {
-	call_usermodehelper(shutdown_argv[0], shutdown_argv, NULL, UMH_NO_WAIT);
+	if ((jiffies_64/HZ) > 30) {
+		call_usermodehelper(shutdown_argv[0], shutdown_argv, NULL, UMH_NO_WAIT);
+	}
 	return (irq_handler_t) IRQ_HANDLED;
 }
 
