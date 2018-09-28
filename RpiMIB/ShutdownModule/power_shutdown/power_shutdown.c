@@ -26,8 +26,8 @@ static int __init power_shutdown_init(void) {
 	return 0;
 }
 
-//static char * shutdown_argv[] = 
-//    { "/sbin/shutdown", "-h", "-P", "now", NULL };
+static char * shutdown_argv[] = 
+    { "/sbin/shutdown", "-h", "-P", "now", NULL };
 
 static irq_handler_t irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs) {
 	time = (unsigned long long)get_jiffies_64();
@@ -35,9 +35,9 @@ static irq_handler_t irq_handler(unsigned int irq, void *dev_id, struct pt_regs 
 	time -= start;
 	do_div(time, frequency);
 	printk(KERN_INFO "Interrupted at %llu", time);
-	//if (time > 30) {
-		//call_usermodehelper(shutdown_argv[0], shutdown_argv, NULL, UMH_NO_WAIT);
-	//}
+	if (time > 30) {
+		call_usermodehelper(shutdown_argv[0], shutdown_argv, NULL, UMH_NO_WAIT);
+	}
 	return (irq_handler_t) IRQ_HANDLED;
 }
 
