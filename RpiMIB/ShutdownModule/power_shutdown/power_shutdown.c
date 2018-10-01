@@ -35,7 +35,7 @@ static irq_handler_t irq_handler(unsigned int irq, void *dev_id, struct pt_regs 
 	time -= start;
 	do_div(time, frequency);
 	printk(KERN_INFO "Interrupted at %llu", time);
-	if (time > 30) {
+	if (time > 15) {
 		call_usermodehelper(shutdown_argv[0], shutdown_argv, NULL, UMH_NO_WAIT);
 	}
 	return (irq_handler_t) IRQ_HANDLED;
