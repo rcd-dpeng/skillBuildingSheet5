@@ -11,6 +11,7 @@ import RPi.GPIO as GPIO
 from threading import Thread
 
 SHUTDOWN_PORT = 21
+CLOCK_POLARITY_MODE = 0
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SHUTDOWN_PORT, GPIO.IN)    
@@ -19,8 +20,6 @@ GPIO.setup(22, GPIO.IN)
 # set up SPI between the Raspberry Pi and the PiMIB board
 spi = spidev.SpiDev()
 spiFrequency = 1000000
-
-
 
 #takes 0, 1, or 2
 def readEncoder(encoder):
@@ -52,6 +51,7 @@ def readEncoder(encoder):
 
 def openSPI():
     spi.open(0,0)
+    spi.mode = CLOCK_POLARITY_MODE
 
 def closeSPI():
     spi.close()
@@ -69,11 +69,6 @@ def sendI2C(address, data):
     spi.xfer([address, data], spiFrequency, 1)  # I2C write to IC address 0x41 with data 0x17  0x41 = Amp1
 
 def sendPWM(pin, data):
-    if (data > 2000) : 
-        data = 2000
-    elif (data <1000):
-        data = 1000
-        
     MsByte = data >> 8
     LsByte = data & 0x00ff
         
@@ -91,7 +86,7 @@ def shutdown():
     cleanup();
     print("Shutting down in 2 seconds")
     sleep(2)
-#    os.system("sudo shutdown now -h")
+    os.system("sudo shutdown now -h")
 
 def shutdownHandler():
     print("Shutdown Handler Started");
