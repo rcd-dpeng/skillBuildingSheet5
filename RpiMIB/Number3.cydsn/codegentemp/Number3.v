@@ -1,6 +1,6 @@
 // ======================================================================
 // Number3.v generated from TopDesign.cysch
-// 09/07/2018 at 12:32
+// 10/01/2018 at 15:58
 // This file is auto generated. ANY EDITS YOU MAKE MAY BE LOST WHEN THIS FILE IS REGENERATED!!!
 // ======================================================================
 
@@ -995,6 +995,7 @@ module top ;
           wire  Net_254;
           wire  Net_221;
           wire  Net_19;
+          wire  Net_855;
           wire  Net_2313;
           wire  Net_2237;
           wire  Net_2241;
@@ -1041,7 +1042,6 @@ module top ;
           wire  Net_862;
     electrical  Net_316;
     electrical  Net_852;
-          wire  Net_855;
 
 	wire [0:0] tmpOE__MISO_1_net;
 	wire [0:0] tmpIO_0__MISO_1_net;

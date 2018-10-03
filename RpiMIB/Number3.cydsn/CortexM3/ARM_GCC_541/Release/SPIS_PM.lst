@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
   12:Generated_Source\PSoC5/SPIS_PM.c **** * Copyright 2008-2015, Cypress Semiconductor Corporation.  All rights reserved.
   13:Generated_Source\PSoC5/SPIS_PM.c **** * You may use this file only in accordance with the license, terms, conditions,
   14:Generated_Source\PSoC5/SPIS_PM.c **** * disclaimers, and limitations in the end user license agreement accompanying
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 2
 
 
   15:Generated_Source\PSoC5/SPIS_PM.c **** * the software package with which this file was provided.
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
   50              		.cfi_endproc
   51              	.LFE1:
   52              		.size	SPIS_RestoreConfig, .-SPIS_RestoreConfig
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 3
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 3
 
 
   53              		.section	.text.SPIS_Sleep,"ax",%progbits
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
   77              	.L4:
   93:Generated_Source\PSoC5/SPIS_PM.c ****     }
   94:Generated_Source\PSoC5/SPIS_PM.c ****     else /* Components block is disabled */
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 4
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 4
 
 
   95:Generated_Source\PSoC5/SPIS_PM.c ****     {
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  127:Generated_Source\PSoC5/SPIS_PM.c **** *
  128:Generated_Source\PSoC5/SPIS_PM.c **** * Reentrant:
  129:Generated_Source\PSoC5/SPIS_PM.c **** *  No.
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 5
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 5
 
 
  130:Generated_Source\PSoC5/SPIS_PM.c **** *
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  128 0016 00BF     		.align	2
  129              	.L11:
  130 0018 00000000 		.word	.LANCHOR0
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 6
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 6
 
 
  131              		.cfi_endproc
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  185 0051 05       		.byte	0x5
  186 0052 00000000 		.4byte	.LASF6
  187 0056 02       		.uleb128 0x2
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 7
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 7
 
 
  188 0057 08       		.byte	0x8
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  242 00bf 07       		.uleb128 0x7
  243 00c0 AF000000 		.4byte	.LASF17
  244 00c4 03       		.byte	0x3
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 8
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 8
 
 
  245 00c5 3C       		.byte	0x3c
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  299 0140 05       		.uleb128 0x5
  300 0141 03       		.byte	0x3
  301 0142 00000000 		.4byte	SPIS_backup
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 9
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 9
 
 
  302 0146 0F       		.uleb128 0xf
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  356 0024 0B       		.uleb128 0xb
  357 0025 03       		.uleb128 0x3
  358 0026 08       		.uleb128 0x8
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 10
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 10
 
 
  359 0027 00       		.byte	0
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  413 005d 0E       		.uleb128 0xe
  414 005e 3A       		.uleb128 0x3a
  415 005f 0B       		.uleb128 0xb
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 11
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 11
 
 
  416 0060 3B       		.uleb128 0x3b
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  470 0097 06       		.uleb128 0x6
  471 0098 40       		.uleb128 0x40
  472 0099 18       		.uleb128 0x18
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 12
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 12
 
 
  473 009a 9742     		.uleb128 0x2117
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  527 00d6 3B       		.uleb128 0x3b
  528 00d7 0B       		.uleb128 0xb
  529 00d8 00       		.byte	0
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 13
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 13
 
 
  530 00d9 00       		.byte	0
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  568      435400
  569              	.LASF19:
  570 003a 53504953 		.ascii	"SPIS_Sleep\000"
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 14
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 14
 
 
  570      5F536C65 
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  594      3031365C 
  595 00f4 4D49425C 		.ascii	"MIB\\Number3.cydsn\000"
  595      4E756D62 
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 15
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 15
 
 
  595      6572332E 
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 1
  617 0202 53504953 		.ascii	"SPIS_Enable\000"
  617      5F456E61 
  617      626C6500 
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\cc2XGRsD.s 			page 16
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccIX5wfX.s 			page 16
 
 
  618              	.LASF15:

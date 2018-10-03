@@ -13,7 +13,7 @@
 <v>Output</v>
 </TreeKeys>
 <TreeStates>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="RpiMIB\Number3\Source Files\main.c">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
 <ExpandedNodeIds>
 <v>RpiMIB</v>
 <v>RpiMIB\Number3</v>
@@ -33,6 +33,7 @@
 <v>RpiMIB\Number3\Source Files</v>
 <v>RpiMIB\Number3\Source Files\main.c</v>
 <v>RpiMIB\Number3\Generated_Source</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5</v>
 <v>RpiMIB\Number3\SPIM_Example.pdf</v>
 </ExpandedNodeIds>
 <VisibleNodeIds>
@@ -55,7 +56,31 @@
 <v>RpiMIB\Number3\Source Files\main.c</v>
 <v>RpiMIB\Number3\Generated_Source</v>
 <v>RpiMIB\Number3\Generated_Source\PSoC5</v>
-<v>RpiMIB\Number3\SPIM_Example.pdf</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Clock_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Clock_2</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Comp_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Control_Reg_LED</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Control_Reg_SS</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Control_Reg_SS_SigGen</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_1a</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_1b</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_1c</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_2a</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_2b</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_2c</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cy_boot</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Em_EEPROM_Dynamic</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\en_level_shift</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\enable_battery</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\EnableBattery</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\I2C_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\I2C_1_IntClock</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\isr_SS_Fall</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\isr_SS_Rise</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\MISO_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\MOSI_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\MOSI_2</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Pin_1</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 <CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
@@ -251,59 +276,6 @@
 <VisibleNodeIds>
 <v>RpiMIB</v>
 <v>RpiMIB\Number3</v>
-<v>RpiMIB\Number3\CortexM3</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_1.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_2.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Comp_1.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Comp_1_PM.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_LED.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_LED_PM.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_SS.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_SS_PM.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_SS_SigGen.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_SS_SigGen_PM.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1a.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1b.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1c.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_2a.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_2b.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_2c.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cy_em_eeprom.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyBootAsmGnu.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyDmac.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyFlash.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyLib.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\en_level_shift.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\enable_battery.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\EnableBattery.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\EnableBattery_PM.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_BOOT.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_INT.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_IntClock.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_MASTER.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_PM.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_SLAVE.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_SS_Fall.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_SS_Rise.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MISO_1.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MOSI_1.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MOSI_2.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Pin_1.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_1.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_1_PM.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_2.lst</v>
-<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_2_PM.lst</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 </TreeStates>
@@ -389,61 +361,43 @@
 <CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="128" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="129" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
 <CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="130" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="131" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
 <CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="132" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="133" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="134" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="135" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="189" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="137" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="190" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="138" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="222" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="139" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="223" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="140" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="224" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="141" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="226" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="142" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="229" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="144" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="198" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="199" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="231" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="230" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
 <CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="232" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="233" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="235" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="237" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
 <CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="238" DocumentName=".\Number3.cydsn\main.c" />
@@ -455,31 +409,19 @@
 <CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="241" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="246" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="244" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="245" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
 <CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="247" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="248" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="251" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="250" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="253" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="254" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="256" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="260" DocumentName=".\Number3.cydsn\main.c" />
-</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
-<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
-<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="261" DocumentName=".\Number3.cydsn\main.c" />
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="252" DocumentName=".\Number3.cydsn\main.c" />
 </CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
 <CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
 <CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="40" DocumentName=".\Number3.cydsn\main.c" />
@@ -518,9 +460,14 @@
 </CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
 <Unloaded />
 <OpenDocs>
-<name v=".\Number3.cydsn\main.c" />
 <name v=".\Number3.cydsn\Generated_Source\PSoC5\PWM_1.c" />
 <name v=".\Number3.cydsn\Number3.cydwr" />
+<name v=".\Number3.cydsn\TopDesign\TopDesign.cysch" />
+<name v=".\Number3.cydsn\main.c" />
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\CyLib.h" />
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\RpiInterrupts.c" />
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\RpiInterrupts.h" />
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\cyfitter.h" />
 </OpenDocs>
 <OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
 
@@ -528,7 +475,7 @@
   Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
   http://www.actiprosoftware.com
 
---><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1005, 832" SelectedTabbedMdiWindow="43ed7b29-3952-4155-9117-a4173b3fc52d"><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="d50d4adc-fa38-4db6-9b65-f9c875afbbb4" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\main.c" Guid="43ed7b29-3952-4155-9117-a4173b3fc52d" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\PWM_1.c" Guid="0521c4a7-be13-4cc4-b094-fc60f9a4e6af" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Number3.cydwr" Guid="93ffe678-50f3-4802-91d4-5bef3d82001d" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="615, 316" SelectedTabbedMdiWindow="43ed7b29-3952-4155-9117-a4173b3fc52d"><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\PWM_1.c" Guid="0521c4a7-be13-4cc4-b094-fc60f9a4e6af" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Number3.cydwr" Guid="93ffe678-50f3-4802-91d4-5bef3d82001d" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\TopDesign\TopDesign.cysch" Guid="ceca5570-a6af-4f44-94d8-90725da9d2f6" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\main.c" Guid="43ed7b29-3952-4155-9117-a4173b3fc52d" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="d50d4adc-fa38-4db6-9b65-f9c875afbbb4" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\CyLib.h" Guid="40846451-fe9d-4c49-b2ac-3457965ac0b6" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\RpiInterrupts.c" Guid="50f7c045-7dd2-4a2d-812a-27f57505ef7d" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\RpiInterrupts.h" Guid="9874443b-07d3-42a0-a289-704ec0e93af0" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\cyfitter.h" Guid="81327cbe-93aa-456f-8d2a-6bb4fd7fde51" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
 <config v="Release" />
 <AutoUpdate v="true" />
 </CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>

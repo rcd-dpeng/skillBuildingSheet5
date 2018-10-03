@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
   12:Generated_Source\PSoC5/SPIM_SigGen_PM.c **** * Copyright 2008-2015, Cypress Semiconductor Corporation.  All rights reserved.
   13:Generated_Source\PSoC5/SPIM_SigGen_PM.c **** * You may use this file only in accordance with the license, terms, conditions,
   14:Generated_Source\PSoC5/SPIM_SigGen_PM.c **** * disclaimers, and limitations in the end user license agreement accompanying
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 2
 
 
   15:Generated_Source\PSoC5/SPIM_SigGen_PM.c **** * the software package with which this file was provided.
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
   50              		.cfi_endproc
   51              	.LFE1:
   52              		.size	SPIM_SigGen_RestoreConfig, .-SPIM_SigGen_RestoreConfig
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 3
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 3
 
 
   53              		.section	.text.SPIM_SigGen_Sleep,"ax",%progbits
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
   77              	.L4:
   78 0010 91640040 		.word	1073767569
   79 0014 00000000 		.word	.LANCHOR0
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 4
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 4
 
 
   80              		.cfi_endproc
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  128:Generated_Source\PSoC5/SPIM_SigGen_PM.c ****         SPIM_SigGen_rxBufferRead  = 0u;
  129:Generated_Source\PSoC5/SPIM_SigGen_PM.c ****         SPIM_SigGen_rxBufferWrite = 0u;
  130:Generated_Source\PSoC5/SPIM_SigGen_PM.c ****     #endif /* (SPIM_SigGen_RX_SOFTWARE_BUF_ENABLED) */
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 5
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 5
 
 
  131:Generated_Source\PSoC5/SPIM_SigGen_PM.c **** 
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  136              		.section	.debug_info,"",%progbits
  137              	.Ldebug_info0:
  138 0000 64010000 		.4byte	0x164
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 6
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 6
 
 
  139 0004 0400     		.2byte	0x4
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  193 0071 E401     		.2byte	0x1e4
  194 0073 2C000000 		.4byte	0x2c
  195 0077 02       		.uleb128 0x2
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 7
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 7
 
 
  196 0078 04       		.byte	0x4
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  250 00df 0A       		.uleb128 0xa
  251 00e0 D7000000 		.4byte	0xd7
  252 00e4 00000000 		.4byte	.LFB1
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 8
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 8
 
 
  253 00e8 02000000 		.4byte	.LFE1-.LFB1
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  307 0166 4C       		.byte	0x4c
  308 0167 00       		.byte	0
  309              		.section	.debug_abbrev,"",%progbits
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 9
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 9
 
 
  310              	.Ldebug_abbrev0:
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  364 0035 00       		.byte	0
  365 0036 05       		.uleb128 0x5
  366 0037 35       		.uleb128 0x35
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 10
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 10
 
 
  367 0038 00       		.byte	0
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  421 006e 0B       		.uleb128 0xb
  422 006f 3B       		.uleb128 0x3b
  423 0070 0B       		.uleb128 0xb
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 11
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 11
 
 
  424 0071 27       		.uleb128 0x27
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  478 00ac 13       		.uleb128 0x13
  479 00ad 00       		.byte	0
  480 00ae 00       		.byte	0
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 12
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 12
 
 
  481 00af 0D       		.uleb128 0xd
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  535 0020 00000000 		.4byte	.LFB3
  536 0024 1C000000 		.4byte	.LFE3-.LFB3
  537 0028 00000000 		.4byte	0
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 13
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 13
 
 
  538 002c 00000000 		.4byte	0
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  565      65642069 
  566              	.LASF9:
  567 007e 666C6F61 		.ascii	"float\000"
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 14
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 14
 
 
  567      7400
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  588      31363036 
  589 0174 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
  589      20726576 
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 15
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 15
 
 
  589      6973696F 
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 1
  610      47656E5F 
  610      436C6561 
  610      72464946 
-ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccZ7OW3d.s 			page 16
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccBfWUAg.s 			page 16
 
 
  611              	.LASF15:

@@ -83,7 +83,7 @@ CY_ISR(SS_Rise_Handler)
         RPi_Command = SPIS_ReadRxData();
         read_counter = 0u;
     } else {
-        RPi_Data = SPIS_ReadRxData();
+        RPi_Data =  SPIS_ReadRxData();
     }
     
 /*    Routine to write to sig gen over SPI or Power Amp Gain over I2C */
@@ -127,20 +127,10 @@ CY_ISR(SS_Rise_Handler)
         PSOC_state = idle_state;       
      } else if ( PSOC_state == write_pwm_a_state) {
         pwm_a_new_command = RPi_Data;
-        if ( pwm_a_new_command < 1000u) {
-            pwm_a_new_command = 1000u;
-        } else if (pwm_a_new_command > 2000u)  {
-            pwm_a_new_command = 2000u;
-        }
        /* PWM_1_WriteCompare(pwm_a_command);  */
         PSOC_state = idle_state;  
     } else if ( PSOC_state == write_pwm_b_state) {
         pwm_b_new_command = RPi_Data;
-        if ( pwm_b_new_command < 1000u) {
-            pwm_b_new_command = 1000u;
-        } else if (pwm_b_new_command > 2000u)  {
-            pwm_b_new_command = 2000u;
-        }
      /*   PWM_2_WriteCompare(pwm_b_command);   */
         PSOC_state = idle_state;         
      } else {
@@ -172,14 +162,15 @@ uint16 shutdown_count;
 ********************************************************************************
 *******************************************************************************/
 int main()
-{
+{   
+    RpiInterrupts_Write(3u);  // 9.25.18 - New location, trying to force the interrupts high as early as possible
     Comp_1_Start();
     CyDelay(2000u);
     /* Enable Battery Backup circuit and interface circuits between RPi and PSOC  */
     EnableBattery_Write(1u);
     Control_Reg_SS_Write(0u);
     Control_Reg_LED_Write(0u);
-    RpiInterrupts_Write(3u);     
+    //RpiInterrupts_Write(3u);     // 9.25.18 - Original location, moving this to the start of this function
     Clock_1_Start();
  
     SPIM_1_Start();
@@ -263,6 +254,9 @@ int main()
     
       if (Status_Reg_1_Read() == 1u) {
         shutdown_count +=1;
+//        if (shutdown_count == 2000u) {        //9.25.18 - The while loop executes in about 2ms total.
+                                                //          2ms * 2000 = 4 seconds, not 20 seconds as described above.
+                                                //          Changing to 10000 to get 20 seconds.
         if (shutdown_count == 2000u) {      
             CyGlobalIntDisable; 
              Control_Reg_LED_Write(1u);
@@ -276,7 +270,9 @@ int main()
       } else {
          shutdown_count =0u;
       }
+
     }
+    
 }
 
 uint16 WriteSignalGen(uint8 ChannelNumber, uint16 CommandWord)
