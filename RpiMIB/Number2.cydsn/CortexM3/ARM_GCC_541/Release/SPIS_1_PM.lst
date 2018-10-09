@@ -1,0 +1,1033 @@
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"SPIS_1_PM.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.SPIS_1_SaveConfig,"ax",%progbits
+  20              		.align	1
+  21              		.global	SPIS_1_SaveConfig
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	SPIS_1_SaveConfig, %function
+  25              	SPIS_1_SaveConfig:
+  26              	.LFB5:
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+  31 0000 7047     		bx	lr
+  32              		.cfi_endproc
+  33              	.LFE5:
+  34              		.size	SPIS_1_SaveConfig, .-SPIS_1_SaveConfig
+  35              		.section	.text.SPIS_1_RestoreConfig,"ax",%progbits
+  36              		.align	1
+  37              		.global	SPIS_1_RestoreConfig
+  38              		.thumb
+  39              		.thumb_func
+  40              		.type	SPIS_1_RestoreConfig, %function
+  41              	SPIS_1_RestoreConfig:
+  42              	.LFB1:
+  43              		.file 1 "Generated_Source\\PSoC5\\SPIS_1_PM.c"
+   1:Generated_Source\PSoC5/SPIS_1_PM.c **** /*******************************************************************************
+   2:Generated_Source\PSoC5/SPIS_1_PM.c **** * File Name: SPIS_1_PM.c
+   3:Generated_Source\PSoC5/SPIS_1_PM.c **** * Version 2.70
+   4:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+   5:Generated_Source\PSoC5/SPIS_1_PM.c **** * Description:
+   6:Generated_Source\PSoC5/SPIS_1_PM.c **** *  This file contains the setup, control and status commands to support
+   7:Generated_Source\PSoC5/SPIS_1_PM.c **** *  component operations in low power mode.
+   8:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+   9:Generated_Source\PSoC5/SPIS_1_PM.c **** * Note:
+  10:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  11:Generated_Source\PSoC5/SPIS_1_PM.c **** ********************************************************************************
+  12:Generated_Source\PSoC5/SPIS_1_PM.c **** * Copyright 2008-2015, Cypress Semiconductor Corporation.  All rights reserved.
+  13:Generated_Source\PSoC5/SPIS_1_PM.c **** * You may use this file only in accordance with the license, terms, conditions,
+  14:Generated_Source\PSoC5/SPIS_1_PM.c **** * disclaimers, and limitations in the end user license agreement accompanying
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 2
+
+
+  15:Generated_Source\PSoC5/SPIS_1_PM.c **** * the software package with which this file was provided.
+  16:Generated_Source\PSoC5/SPIS_1_PM.c **** *******************************************************************************/
+  17:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  18:Generated_Source\PSoC5/SPIS_1_PM.c **** #include "SPIS_1_PVT.h"
+  19:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  20:Generated_Source\PSoC5/SPIS_1_PM.c **** static SPIS_1_BACKUP_STRUCT SPIS_1_backup = 
+  21:Generated_Source\PSoC5/SPIS_1_PM.c **** {
+  22:Generated_Source\PSoC5/SPIS_1_PM.c ****     SPIS_1_DISABLED,
+  23:Generated_Source\PSoC5/SPIS_1_PM.c ****     SPIS_1_BITCTR_INIT,
+  24:Generated_Source\PSoC5/SPIS_1_PM.c **** };
+  25:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  26:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  27:Generated_Source\PSoC5/SPIS_1_PM.c **** /*******************************************************************************
+  28:Generated_Source\PSoC5/SPIS_1_PM.c **** * Function Name: SPIS_1_SaveConfig
+  29:Generated_Source\PSoC5/SPIS_1_PM.c **** ********************************************************************************
+  30:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  31:Generated_Source\PSoC5/SPIS_1_PM.c **** * Summary:
+  32:Generated_Source\PSoC5/SPIS_1_PM.c **** *  Empty function. Included for consistency with other components.
+  33:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  34:Generated_Source\PSoC5/SPIS_1_PM.c **** * Parameters:
+  35:Generated_Source\PSoC5/SPIS_1_PM.c **** *  None.
+  36:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  37:Generated_Source\PSoC5/SPIS_1_PM.c **** * Return:
+  38:Generated_Source\PSoC5/SPIS_1_PM.c **** *  None.
+  39:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  40:Generated_Source\PSoC5/SPIS_1_PM.c **** *******************************************************************************/
+  41:Generated_Source\PSoC5/SPIS_1_PM.c **** void SPIS_1_SaveConfig(void) 
+  42:Generated_Source\PSoC5/SPIS_1_PM.c **** {
+  43:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  44:Generated_Source\PSoC5/SPIS_1_PM.c **** }
+  45:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  46:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  47:Generated_Source\PSoC5/SPIS_1_PM.c **** /*******************************************************************************
+  48:Generated_Source\PSoC5/SPIS_1_PM.c **** * Function Name: SPIS_1_RestoreConfig
+  49:Generated_Source\PSoC5/SPIS_1_PM.c **** ********************************************************************************
+  50:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  51:Generated_Source\PSoC5/SPIS_1_PM.c **** * Summary:
+  52:Generated_Source\PSoC5/SPIS_1_PM.c **** *  Empty function. Included for consistency with other components.
+  53:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  54:Generated_Source\PSoC5/SPIS_1_PM.c **** * Parameters:
+  55:Generated_Source\PSoC5/SPIS_1_PM.c **** *  None.
+  56:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  57:Generated_Source\PSoC5/SPIS_1_PM.c **** * Return:
+  58:Generated_Source\PSoC5/SPIS_1_PM.c **** *  None.
+  59:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  60:Generated_Source\PSoC5/SPIS_1_PM.c **** *******************************************************************************/
+  61:Generated_Source\PSoC5/SPIS_1_PM.c **** void SPIS_1_RestoreConfig(void) 
+  62:Generated_Source\PSoC5/SPIS_1_PM.c **** {
+  44              		.loc 1 62 0
+  45              		.cfi_startproc
+  46              		@ args = 0, pretend = 0, frame = 0
+  47              		@ frame_needed = 0, uses_anonymous_args = 0
+  48              		@ link register save eliminated.
+  49 0000 7047     		bx	lr
+  50              		.cfi_endproc
+  51              	.LFE1:
+  52              		.size	SPIS_1_RestoreConfig, .-SPIS_1_RestoreConfig
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 3
+
+
+  53              		.section	.text.SPIS_1_Sleep,"ax",%progbits
+  54              		.align	1
+  55              		.global	SPIS_1_Sleep
+  56              		.thumb
+  57              		.thumb_func
+  58              		.type	SPIS_1_Sleep, %function
+  59              	SPIS_1_Sleep:
+  60              	.LFB2:
+  63:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  64:Generated_Source\PSoC5/SPIS_1_PM.c **** }
+  65:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  66:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  67:Generated_Source\PSoC5/SPIS_1_PM.c **** /*******************************************************************************
+  68:Generated_Source\PSoC5/SPIS_1_PM.c **** * Function Name: SPIS_1_Sleep
+  69:Generated_Source\PSoC5/SPIS_1_PM.c **** ********************************************************************************
+  70:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  71:Generated_Source\PSoC5/SPIS_1_PM.c **** * Summary:
+  72:Generated_Source\PSoC5/SPIS_1_PM.c **** *  Prepare SPI Slave Component goes to sleep.
+  73:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  74:Generated_Source\PSoC5/SPIS_1_PM.c **** * Parameters:
+  75:Generated_Source\PSoC5/SPIS_1_PM.c **** *  None.
+  76:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  77:Generated_Source\PSoC5/SPIS_1_PM.c **** * Return:
+  78:Generated_Source\PSoC5/SPIS_1_PM.c **** *  None.
+  79:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  80:Generated_Source\PSoC5/SPIS_1_PM.c **** * Global Variables:
+  81:Generated_Source\PSoC5/SPIS_1_PM.c **** *  SPIS_1_backup - modified when non-retention registers are saved.
+  82:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  83:Generated_Source\PSoC5/SPIS_1_PM.c **** * Reentrant:
+  84:Generated_Source\PSoC5/SPIS_1_PM.c **** *  No.
+  85:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+  86:Generated_Source\PSoC5/SPIS_1_PM.c **** *******************************************************************************/
+  87:Generated_Source\PSoC5/SPIS_1_PM.c **** void SPIS_1_Sleep(void) 
+  88:Generated_Source\PSoC5/SPIS_1_PM.c **** {
+  61              		.loc 1 88 0
+  62              		.cfi_startproc
+  63              		@ args = 0, pretend = 0, frame = 0
+  64              		@ frame_needed = 0, uses_anonymous_args = 0
+  65              		@ link register save eliminated.
+  89:Generated_Source\PSoC5/SPIS_1_PM.c ****     /* Save components enable state */
+  90:Generated_Source\PSoC5/SPIS_1_PM.c ****     if ((SPIS_1_TX_STATUS_ACTL_REG & SPIS_1_INT_ENABLE) != 0u)
+  66              		.loc 1 90 0
+  67 0000 064B     		ldr	r3, .L7
+  68 0002 074A     		ldr	r2, .L7+4
+  69 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  70 0006 03F01003 		and	r3, r3, #16
+  71 000a 03F0FF01 		and	r1, r3, #255
+  72 000e 13B1     		cbz	r3, .L4
+  91:Generated_Source\PSoC5/SPIS_1_PM.c ****     {
+  92:Generated_Source\PSoC5/SPIS_1_PM.c ****         SPIS_1_backup.enableState = 1u;
+  73              		.loc 1 92 0
+  74 0010 0123     		movs	r3, #1
+  75 0012 1370     		strb	r3, [r2]
+  76 0014 00E0     		b	.L5
+  77              	.L4:
+  93:Generated_Source\PSoC5/SPIS_1_PM.c ****     }
+  94:Generated_Source\PSoC5/SPIS_1_PM.c ****     else /* Components block is disabled */
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 4
+
+
+  95:Generated_Source\PSoC5/SPIS_1_PM.c ****     {
+  96:Generated_Source\PSoC5/SPIS_1_PM.c ****         SPIS_1_backup.enableState = 0u;
+  78              		.loc 1 96 0
+  79 0016 1170     		strb	r1, [r2]
+  80              	.L5:
+  97:Generated_Source\PSoC5/SPIS_1_PM.c ****     }
+  98:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+  99:Generated_Source\PSoC5/SPIS_1_PM.c ****     SPIS_1_Stop();
+  81              		.loc 1 99 0
+  82 0018 FFF7FEBF 		b	SPIS_1_Stop
+  83              	.LVL0:
+  84              	.L8:
+  85              		.align	2
+  86              	.L7:
+  87 001c 97640040 		.word	1073767575
+  88 0020 00000000 		.word	.LANCHOR0
+  89              		.cfi_endproc
+  90              	.LFE2:
+  91              		.size	SPIS_1_Sleep, .-SPIS_1_Sleep
+  92              		.section	.text.SPIS_1_Wakeup,"ax",%progbits
+  93              		.align	1
+  94              		.global	SPIS_1_Wakeup
+  95              		.thumb
+  96              		.thumb_func
+  97              		.type	SPIS_1_Wakeup, %function
+  98              	SPIS_1_Wakeup:
+  99              	.LFB3:
+ 100:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+ 101:Generated_Source\PSoC5/SPIS_1_PM.c **** }
+ 102:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+ 103:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+ 104:Generated_Source\PSoC5/SPIS_1_PM.c **** /*******************************************************************************
+ 105:Generated_Source\PSoC5/SPIS_1_PM.c **** * Function Name: SPIS_1_Wakeup
+ 106:Generated_Source\PSoC5/SPIS_1_PM.c **** ********************************************************************************
+ 107:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+ 108:Generated_Source\PSoC5/SPIS_1_PM.c **** * Summary:
+ 109:Generated_Source\PSoC5/SPIS_1_PM.c **** *  Prepare SPIM Component to wake up.
+ 110:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+ 111:Generated_Source\PSoC5/SPIS_1_PM.c **** * Parameters:
+ 112:Generated_Source\PSoC5/SPIS_1_PM.c **** *  None.
+ 113:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+ 114:Generated_Source\PSoC5/SPIS_1_PM.c **** * Return:
+ 115:Generated_Source\PSoC5/SPIS_1_PM.c **** *  None.
+ 116:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+ 117:Generated_Source\PSoC5/SPIS_1_PM.c **** * Global Variables:
+ 118:Generated_Source\PSoC5/SPIS_1_PM.c **** *  SPIS_1_backup - used when non-retention registers are restored.
+ 119:Generated_Source\PSoC5/SPIS_1_PM.c **** *  SPIS_1_txBufferWrite - modified every function call - resets to
+ 120:Generated_Source\PSoC5/SPIS_1_PM.c **** *  zero.
+ 121:Generated_Source\PSoC5/SPIS_1_PM.c **** *  SPIS_1_txBufferRead - modified every function call - resets to
+ 122:Generated_Source\PSoC5/SPIS_1_PM.c **** *  zero.
+ 123:Generated_Source\PSoC5/SPIS_1_PM.c **** *  SPIS_1_rxBufferWrite - modified every function call - resets to
+ 124:Generated_Source\PSoC5/SPIS_1_PM.c **** *  zero.
+ 125:Generated_Source\PSoC5/SPIS_1_PM.c **** *  SPIS_1_rxBufferRead - modified every function call - resets to
+ 126:Generated_Source\PSoC5/SPIS_1_PM.c **** *  zero.
+ 127:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+ 128:Generated_Source\PSoC5/SPIS_1_PM.c **** * Reentrant:
+ 129:Generated_Source\PSoC5/SPIS_1_PM.c **** *  No.
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 5
+
+
+ 130:Generated_Source\PSoC5/SPIS_1_PM.c **** *
+ 131:Generated_Source\PSoC5/SPIS_1_PM.c **** *******************************************************************************/
+ 132:Generated_Source\PSoC5/SPIS_1_PM.c **** void SPIS_1_Wakeup(void) 
+ 133:Generated_Source\PSoC5/SPIS_1_PM.c **** {
+ 100              		.loc 1 133 0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 0
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+ 134:Generated_Source\PSoC5/SPIS_1_PM.c ****     #if (SPIS_1_TX_SOFTWARE_BUF_ENABLED)
+ 135:Generated_Source\PSoC5/SPIS_1_PM.c ****         SPIS_1_txBufferFull = 0u;
+ 104              		.loc 1 135 0
+ 105 0000 0B4A     		ldr	r2, .L11
+ 133:Generated_Source\PSoC5/SPIS_1_PM.c ****     #if (SPIS_1_TX_SOFTWARE_BUF_ENABLED)
+ 106              		.loc 1 133 0
+ 107 0002 08B5     		push	{r3, lr}
+ 108              		.cfi_def_cfa_offset 8
+ 109              		.cfi_offset 3, -8
+ 110              		.cfi_offset 14, -4
+ 111              		.loc 1 135 0
+ 112 0004 0023     		movs	r3, #0
+ 113 0006 1370     		strb	r3, [r2]
+ 136:Generated_Source\PSoC5/SPIS_1_PM.c ****         SPIS_1_txBufferRead = 0u;
+ 114              		.loc 1 136 0
+ 115 0008 0A4A     		ldr	r2, .L11+4
+ 116 000a 1370     		strb	r3, [r2]
+ 137:Generated_Source\PSoC5/SPIS_1_PM.c ****         SPIS_1_txBufferWrite = 0u;
+ 117              		.loc 1 137 0
+ 118 000c 0A4A     		ldr	r2, .L11+8
+ 119 000e 1370     		strb	r3, [r2]
+ 138:Generated_Source\PSoC5/SPIS_1_PM.c ****     #endif /* SPIS_1_TX_SOFTWARE_BUF_ENABLED */
+ 139:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+ 140:Generated_Source\PSoC5/SPIS_1_PM.c ****     #if (SPIS_1_RX_SOFTWARE_BUF_ENABLED)
+ 141:Generated_Source\PSoC5/SPIS_1_PM.c ****         SPIS_1_rxBufferFull = 0u;
+ 120              		.loc 1 141 0
+ 121 0010 0A4A     		ldr	r2, .L11+12
+ 122 0012 1370     		strb	r3, [r2]
+ 142:Generated_Source\PSoC5/SPIS_1_PM.c ****         SPIS_1_rxBufferRead = 0u;
+ 123              		.loc 1 142 0
+ 124 0014 0A4A     		ldr	r2, .L11+16
+ 125 0016 1370     		strb	r3, [r2]
+ 143:Generated_Source\PSoC5/SPIS_1_PM.c ****         SPIS_1_rxBufferWrite = 0u;
+ 126              		.loc 1 143 0
+ 127 0018 0A4A     		ldr	r2, .L11+20
+ 128 001a 1370     		strb	r3, [r2]
+ 144:Generated_Source\PSoC5/SPIS_1_PM.c ****     #endif /* SPIS_1_RX_SOFTWARE_BUF_ENABLED */
+ 145:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+ 146:Generated_Source\PSoC5/SPIS_1_PM.c ****     SPIS_1_ClearFIFO();
+ 129              		.loc 1 146 0
+ 130 001c FFF7FEFF 		bl	SPIS_1_ClearFIFO
+ 131              	.LVL1:
+ 147:Generated_Source\PSoC5/SPIS_1_PM.c **** 
+ 148:Generated_Source\PSoC5/SPIS_1_PM.c ****     /* Restore components block enable state */
+ 149:Generated_Source\PSoC5/SPIS_1_PM.c ****     if (SPIS_1_backup.enableState != 0u)
+ 132              		.loc 1 149 0
+ 133 0020 094B     		ldr	r3, .L11+24
+ 134 0022 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 135 0024 1BB1     		cbz	r3, .L9
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 6
+
+
+ 150:Generated_Source\PSoC5/SPIS_1_PM.c ****     {
+ 151:Generated_Source\PSoC5/SPIS_1_PM.c ****          /* Components block was enabled */
+ 152:Generated_Source\PSoC5/SPIS_1_PM.c ****          SPIS_1_Enable();
+ 153:Generated_Source\PSoC5/SPIS_1_PM.c ****     } /* Do nothing if components block was disabled */
+ 154:Generated_Source\PSoC5/SPIS_1_PM.c **** }
+ 136              		.loc 1 154 0
+ 137 0026 BDE80840 		pop	{r3, lr}
+ 138              		.cfi_remember_state
+ 139              		.cfi_restore 14
+ 140              		.cfi_restore 3
+ 141              		.cfi_def_cfa_offset 0
+ 152:Generated_Source\PSoC5/SPIS_1_PM.c ****     } /* Do nothing if components block was disabled */
+ 142              		.loc 1 152 0
+ 143 002a FFF7FEBF 		b	SPIS_1_Enable
+ 144              	.LVL2:
+ 145              	.L9:
+ 146              		.cfi_restore_state
+ 147 002e 08BD     		pop	{r3, pc}
+ 148              	.L12:
+ 149              		.align	2
+ 150              	.L11:
+ 151 0030 00000000 		.word	SPIS_1_txBufferFull
+ 152 0034 00000000 		.word	SPIS_1_txBufferRead
+ 153 0038 00000000 		.word	SPIS_1_txBufferWrite
+ 154 003c 00000000 		.word	SPIS_1_rxBufferFull
+ 155 0040 00000000 		.word	SPIS_1_rxBufferRead
+ 156 0044 00000000 		.word	SPIS_1_rxBufferWrite
+ 157 0048 00000000 		.word	.LANCHOR0
+ 158              		.cfi_endproc
+ 159              	.LFE3:
+ 160              		.size	SPIS_1_Wakeup, .-SPIS_1_Wakeup
+ 161              		.data
+ 162              		.set	.LANCHOR0,. + 0
+ 163              		.type	SPIS_1_backup, %object
+ 164              		.size	SPIS_1_backup, 2
+ 165              	SPIS_1_backup:
+ 166 0000 00       		.byte	0
+ 167 0001 07       		.byte	7
+ 168              		.text
+ 169              	.Letext0:
+ 170              		.file 2 "Generated_Source\\PSoC5\\cytypes.h"
+ 171              		.file 3 "Generated_Source\\PSoC5\\SPIS_1.h"
+ 172              		.file 4 "Generated_Source\\PSoC5\\SPIS_1_PVT.h"
+ 173              		.section	.debug_info,"",%progbits
+ 174              	.Ldebug_info0:
+ 175 0000 A6010000 		.4byte	0x1a6
+ 176 0004 0400     		.2byte	0x4
+ 177 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 178 000a 04       		.byte	0x4
+ 179 000b 01       		.uleb128 0x1
+ 180 000c 7C000000 		.4byte	.LASF30
+ 181 0010 0C       		.byte	0xc
+ 182 0011 83020000 		.4byte	.LASF31
+ 183 0015 1F020000 		.4byte	.LASF32
+ 184 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 185 001d 00000000 		.4byte	0
+ 186 0021 00000000 		.4byte	.Ldebug_line0
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 7
+
+
+ 187 0025 02       		.uleb128 0x2
+ 188 0026 01       		.byte	0x1
+ 189 0027 06       		.byte	0x6
+ 190 0028 4F020000 		.4byte	.LASF0
+ 191 002c 02       		.uleb128 0x2
+ 192 002d 01       		.byte	0x1
+ 193 002e 08       		.byte	0x8
+ 194 002f 69000000 		.4byte	.LASF1
+ 195 0033 02       		.uleb128 0x2
+ 196 0034 02       		.byte	0x2
+ 197 0035 05       		.byte	0x5
+ 198 0036 F4010000 		.4byte	.LASF2
+ 199 003a 02       		.uleb128 0x2
+ 200 003b 02       		.byte	0x2
+ 201 003c 07       		.byte	0x7
+ 202 003d 43000000 		.4byte	.LASF3
+ 203 0041 02       		.uleb128 0x2
+ 204 0042 04       		.byte	0x4
+ 205 0043 05       		.byte	0x5
+ 206 0044 FE010000 		.4byte	.LASF4
+ 207 0048 02       		.uleb128 0x2
+ 208 0049 04       		.byte	0x4
+ 209 004a 07       		.byte	0x7
+ 210 004b 6F010000 		.4byte	.LASF5
+ 211 004f 02       		.uleb128 0x2
+ 212 0050 08       		.byte	0x8
+ 213 0051 05       		.byte	0x5
+ 214 0052 CD010000 		.4byte	.LASF6
+ 215 0056 02       		.uleb128 0x2
+ 216 0057 08       		.byte	0x8
+ 217 0058 07       		.byte	0x7
+ 218 0059 AD010000 		.4byte	.LASF7
+ 219 005d 03       		.uleb128 0x3
+ 220 005e 04       		.byte	0x4
+ 221 005f 05       		.byte	0x5
+ 222 0060 696E7400 		.ascii	"int\000"
+ 223 0064 02       		.uleb128 0x2
+ 224 0065 04       		.byte	0x4
+ 225 0066 07       		.byte	0x7
+ 226 0067 81010000 		.4byte	.LASF8
+ 227 006b 04       		.uleb128 0x4
+ 228 006c 0A010000 		.4byte	.LASF12
+ 229 0070 02       		.byte	0x2
+ 230 0071 9201     		.2byte	0x192
+ 231 0073 2C000000 		.4byte	0x2c
+ 232 0077 02       		.uleb128 0x2
+ 233 0078 04       		.byte	0x4
+ 234 0079 04       		.byte	0x4
+ 235 007a 63000000 		.4byte	.LASF9
+ 236 007e 02       		.uleb128 0x2
+ 237 007f 08       		.byte	0x8
+ 238 0080 04       		.byte	0x4
+ 239 0081 10010000 		.4byte	.LASF10
+ 240 0085 02       		.uleb128 0x2
+ 241 0086 01       		.byte	0x1
+ 242 0087 08       		.byte	0x8
+ 243 0088 DB010000 		.4byte	.LASF11
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 8
+
+
+ 244 008c 04       		.uleb128 0x4
+ 245 008d 77000000 		.4byte	.LASF13
+ 246 0091 02       		.byte	0x2
+ 247 0092 3C02     		.2byte	0x23c
+ 248 0094 98000000 		.4byte	0x98
+ 249 0098 05       		.uleb128 0x5
+ 250 0099 6B000000 		.4byte	0x6b
+ 251 009d 02       		.uleb128 0x2
+ 252 009e 08       		.byte	0x8
+ 253 009f 04       		.byte	0x4
+ 254 00a0 13020000 		.4byte	.LASF14
+ 255 00a4 02       		.uleb128 0x2
+ 256 00a5 04       		.byte	0x4
+ 257 00a6 07       		.byte	0x7
+ 258 00a7 C4010000 		.4byte	.LASF15
+ 259 00ab 06       		.uleb128 0x6
+ 260 00ac 02       		.byte	0x2
+ 261 00ad 03       		.byte	0x3
+ 262 00ae 39       		.byte	0x39
+ 263 00af CC000000 		.4byte	0xcc
+ 264 00b3 07       		.uleb128 0x7
+ 265 00b4 07020000 		.4byte	.LASF16
+ 266 00b8 03       		.byte	0x3
+ 267 00b9 3B       		.byte	0x3b
+ 268 00ba 6B000000 		.4byte	0x6b
+ 269 00be 00       		.byte	0
+ 270 00bf 07       		.uleb128 0x7
+ 271 00c0 4F010000 		.4byte	.LASF17
+ 272 00c4 03       		.byte	0x3
+ 273 00c5 3C       		.byte	0x3c
+ 274 00c6 6B000000 		.4byte	0x6b
+ 275 00ca 01       		.byte	0x1
+ 276 00cb 00       		.byte	0
+ 277 00cc 08       		.uleb128 0x8
+ 278 00cd 3A010000 		.4byte	.LASF18
+ 279 00d1 03       		.byte	0x3
+ 280 00d2 3D       		.byte	0x3d
+ 281 00d3 AB000000 		.4byte	0xab
+ 282 00d7 09       		.uleb128 0x9
+ 283 00d8 25010000 		.4byte	.LASF33
+ 284 00dc 01       		.byte	0x1
+ 285 00dd 3D       		.byte	0x3d
+ 286 00de 01       		.byte	0x1
+ 287 00df 0A       		.uleb128 0xa
+ 288 00e0 D7000000 		.4byte	0xd7
+ 289 00e4 00000000 		.4byte	.LFB1
+ 290 00e8 02000000 		.4byte	.LFE1-.LFB1
+ 291 00ec 01       		.uleb128 0x1
+ 292 00ed 9C       		.byte	0x9c
+ 293 00ee 0B       		.uleb128 0xb
+ 294 00ef 56000000 		.4byte	.LASF19
+ 295 00f3 01       		.byte	0x1
+ 296 00f4 57       		.byte	0x57
+ 297 00f5 00000000 		.4byte	.LFB2
+ 298 00f9 24000000 		.4byte	.LFE2-.LFB2
+ 299 00fd 01       		.uleb128 0x1
+ 300 00fe 9C       		.byte	0x9c
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 9
+
+
+ 301 00ff 0D010000 		.4byte	0x10d
+ 302 0103 0C       		.uleb128 0xc
+ 303 0104 1C000000 		.4byte	.LVL0
+ 304 0108 88010000 		.4byte	0x188
+ 305 010c 00       		.byte	0
+ 306 010d 0B       		.uleb128 0xb
+ 307 010e 9F010000 		.4byte	.LASF20
+ 308 0112 01       		.byte	0x1
+ 309 0113 84       		.byte	0x84
+ 310 0114 00000000 		.4byte	.LFB3
+ 311 0118 4C000000 		.4byte	.LFE3-.LFB3
+ 312 011c 01       		.uleb128 0x1
+ 313 011d 9C       		.byte	0x9c
+ 314 011e 35010000 		.4byte	0x135
+ 315 0122 0D       		.uleb128 0xd
+ 316 0123 20000000 		.4byte	.LVL1
+ 317 0127 93010000 		.4byte	0x193
+ 318 012b 0C       		.uleb128 0xc
+ 319 012c 2E000000 		.4byte	.LVL2
+ 320 0130 9E010000 		.4byte	0x19e
+ 321 0134 00       		.byte	0
+ 322 0135 0E       		.uleb128 0xe
+ 323 0136 17010000 		.4byte	.LASF34
+ 324 013a 01       		.byte	0x1
+ 325 013b 14       		.byte	0x14
+ 326 013c CC000000 		.4byte	0xcc
+ 327 0140 05       		.uleb128 0x5
+ 328 0141 03       		.byte	0x3
+ 329 0142 00000000 		.4byte	SPIS_1_backup
+ 330 0146 0F       		.uleb128 0xf
+ 331 0147 0C000000 		.4byte	.LASF21
+ 332 014b 04       		.byte	0x4
+ 333 014c 26       		.byte	0x26
+ 334 014d 98000000 		.4byte	0x98
+ 335 0151 0F       		.uleb128 0xf
+ 336 0152 20000000 		.4byte	.LASF22
+ 337 0156 04       		.byte	0x4
+ 338 0157 27       		.byte	0x27
+ 339 0158 98000000 		.4byte	0x98
+ 340 015c 0F       		.uleb128 0xf
+ 341 015d 6F020000 		.4byte	.LASF23
+ 342 0161 04       		.byte	0x4
+ 343 0162 28       		.byte	0x28
+ 344 0163 98000000 		.4byte	0x98
+ 345 0167 0F       		.uleb128 0xf
+ 346 0168 5B020000 		.4byte	.LASF24
+ 347 016c 04       		.byte	0x4
+ 348 016d 2F       		.byte	0x2f
+ 349 016e 98000000 		.4byte	0x98
+ 350 0172 0F       		.uleb128 0xf
+ 351 0173 5A010000 		.4byte	.LASF25
+ 352 0177 04       		.byte	0x4
+ 353 0178 30       		.byte	0x30
+ 354 0179 98000000 		.4byte	0x98
+ 355 017d 0F       		.uleb128 0xf
+ 356 017e E0010000 		.4byte	.LASF26
+ 357 0182 04       		.byte	0x4
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 10
+
+
+ 358 0183 31       		.byte	0x31
+ 359 0184 98000000 		.4byte	0x98
+ 360 0188 10       		.uleb128 0x10
+ 361 0189 00000000 		.4byte	.LASF27
+ 362 018d 00000000 		.4byte	.LASF27
+ 363 0191 03       		.byte	0x3
+ 364 0192 47       		.byte	0x47
+ 365 0193 10       		.uleb128 0x10
+ 366 0194 8E010000 		.4byte	.LASF28
+ 367 0198 8E010000 		.4byte	.LASF28
+ 368 019c 03       		.byte	0x3
+ 369 019d 63       		.byte	0x63
+ 370 019e 10       		.uleb128 0x10
+ 371 019f 35000000 		.4byte	.LASF29
+ 372 01a3 35000000 		.4byte	.LASF29
+ 373 01a7 03       		.byte	0x3
+ 374 01a8 45       		.byte	0x45
+ 375 01a9 00       		.byte	0
+ 376              		.section	.debug_abbrev,"",%progbits
+ 377              	.Ldebug_abbrev0:
+ 378 0000 01       		.uleb128 0x1
+ 379 0001 11       		.uleb128 0x11
+ 380 0002 01       		.byte	0x1
+ 381 0003 25       		.uleb128 0x25
+ 382 0004 0E       		.uleb128 0xe
+ 383 0005 13       		.uleb128 0x13
+ 384 0006 0B       		.uleb128 0xb
+ 385 0007 03       		.uleb128 0x3
+ 386 0008 0E       		.uleb128 0xe
+ 387 0009 1B       		.uleb128 0x1b
+ 388 000a 0E       		.uleb128 0xe
+ 389 000b 55       		.uleb128 0x55
+ 390 000c 17       		.uleb128 0x17
+ 391 000d 11       		.uleb128 0x11
+ 392 000e 01       		.uleb128 0x1
+ 393 000f 10       		.uleb128 0x10
+ 394 0010 17       		.uleb128 0x17
+ 395 0011 00       		.byte	0
+ 396 0012 00       		.byte	0
+ 397 0013 02       		.uleb128 0x2
+ 398 0014 24       		.uleb128 0x24
+ 399 0015 00       		.byte	0
+ 400 0016 0B       		.uleb128 0xb
+ 401 0017 0B       		.uleb128 0xb
+ 402 0018 3E       		.uleb128 0x3e
+ 403 0019 0B       		.uleb128 0xb
+ 404 001a 03       		.uleb128 0x3
+ 405 001b 0E       		.uleb128 0xe
+ 406 001c 00       		.byte	0
+ 407 001d 00       		.byte	0
+ 408 001e 03       		.uleb128 0x3
+ 409 001f 24       		.uleb128 0x24
+ 410 0020 00       		.byte	0
+ 411 0021 0B       		.uleb128 0xb
+ 412 0022 0B       		.uleb128 0xb
+ 413 0023 3E       		.uleb128 0x3e
+ 414 0024 0B       		.uleb128 0xb
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 11
+
+
+ 415 0025 03       		.uleb128 0x3
+ 416 0026 08       		.uleb128 0x8
+ 417 0027 00       		.byte	0
+ 418 0028 00       		.byte	0
+ 419 0029 04       		.uleb128 0x4
+ 420 002a 16       		.uleb128 0x16
+ 421 002b 00       		.byte	0
+ 422 002c 03       		.uleb128 0x3
+ 423 002d 0E       		.uleb128 0xe
+ 424 002e 3A       		.uleb128 0x3a
+ 425 002f 0B       		.uleb128 0xb
+ 426 0030 3B       		.uleb128 0x3b
+ 427 0031 05       		.uleb128 0x5
+ 428 0032 49       		.uleb128 0x49
+ 429 0033 13       		.uleb128 0x13
+ 430 0034 00       		.byte	0
+ 431 0035 00       		.byte	0
+ 432 0036 05       		.uleb128 0x5
+ 433 0037 35       		.uleb128 0x35
+ 434 0038 00       		.byte	0
+ 435 0039 49       		.uleb128 0x49
+ 436 003a 13       		.uleb128 0x13
+ 437 003b 00       		.byte	0
+ 438 003c 00       		.byte	0
+ 439 003d 06       		.uleb128 0x6
+ 440 003e 13       		.uleb128 0x13
+ 441 003f 01       		.byte	0x1
+ 442 0040 0B       		.uleb128 0xb
+ 443 0041 0B       		.uleb128 0xb
+ 444 0042 3A       		.uleb128 0x3a
+ 445 0043 0B       		.uleb128 0xb
+ 446 0044 3B       		.uleb128 0x3b
+ 447 0045 0B       		.uleb128 0xb
+ 448 0046 01       		.uleb128 0x1
+ 449 0047 13       		.uleb128 0x13
+ 450 0048 00       		.byte	0
+ 451 0049 00       		.byte	0
+ 452 004a 07       		.uleb128 0x7
+ 453 004b 0D       		.uleb128 0xd
+ 454 004c 00       		.byte	0
+ 455 004d 03       		.uleb128 0x3
+ 456 004e 0E       		.uleb128 0xe
+ 457 004f 3A       		.uleb128 0x3a
+ 458 0050 0B       		.uleb128 0xb
+ 459 0051 3B       		.uleb128 0x3b
+ 460 0052 0B       		.uleb128 0xb
+ 461 0053 49       		.uleb128 0x49
+ 462 0054 13       		.uleb128 0x13
+ 463 0055 38       		.uleb128 0x38
+ 464 0056 0B       		.uleb128 0xb
+ 465 0057 00       		.byte	0
+ 466 0058 00       		.byte	0
+ 467 0059 08       		.uleb128 0x8
+ 468 005a 16       		.uleb128 0x16
+ 469 005b 00       		.byte	0
+ 470 005c 03       		.uleb128 0x3
+ 471 005d 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 12
+
+
+ 472 005e 3A       		.uleb128 0x3a
+ 473 005f 0B       		.uleb128 0xb
+ 474 0060 3B       		.uleb128 0x3b
+ 475 0061 0B       		.uleb128 0xb
+ 476 0062 49       		.uleb128 0x49
+ 477 0063 13       		.uleb128 0x13
+ 478 0064 00       		.byte	0
+ 479 0065 00       		.byte	0
+ 480 0066 09       		.uleb128 0x9
+ 481 0067 2E       		.uleb128 0x2e
+ 482 0068 00       		.byte	0
+ 483 0069 3F       		.uleb128 0x3f
+ 484 006a 19       		.uleb128 0x19
+ 485 006b 03       		.uleb128 0x3
+ 486 006c 0E       		.uleb128 0xe
+ 487 006d 3A       		.uleb128 0x3a
+ 488 006e 0B       		.uleb128 0xb
+ 489 006f 3B       		.uleb128 0x3b
+ 490 0070 0B       		.uleb128 0xb
+ 491 0071 27       		.uleb128 0x27
+ 492 0072 19       		.uleb128 0x19
+ 493 0073 20       		.uleb128 0x20
+ 494 0074 0B       		.uleb128 0xb
+ 495 0075 00       		.byte	0
+ 496 0076 00       		.byte	0
+ 497 0077 0A       		.uleb128 0xa
+ 498 0078 2E       		.uleb128 0x2e
+ 499 0079 00       		.byte	0
+ 500 007a 31       		.uleb128 0x31
+ 501 007b 13       		.uleb128 0x13
+ 502 007c 11       		.uleb128 0x11
+ 503 007d 01       		.uleb128 0x1
+ 504 007e 12       		.uleb128 0x12
+ 505 007f 06       		.uleb128 0x6
+ 506 0080 40       		.uleb128 0x40
+ 507 0081 18       		.uleb128 0x18
+ 508 0082 9742     		.uleb128 0x2117
+ 509 0084 19       		.uleb128 0x19
+ 510 0085 00       		.byte	0
+ 511 0086 00       		.byte	0
+ 512 0087 0B       		.uleb128 0xb
+ 513 0088 2E       		.uleb128 0x2e
+ 514 0089 01       		.byte	0x1
+ 515 008a 3F       		.uleb128 0x3f
+ 516 008b 19       		.uleb128 0x19
+ 517 008c 03       		.uleb128 0x3
+ 518 008d 0E       		.uleb128 0xe
+ 519 008e 3A       		.uleb128 0x3a
+ 520 008f 0B       		.uleb128 0xb
+ 521 0090 3B       		.uleb128 0x3b
+ 522 0091 0B       		.uleb128 0xb
+ 523 0092 27       		.uleb128 0x27
+ 524 0093 19       		.uleb128 0x19
+ 525 0094 11       		.uleb128 0x11
+ 526 0095 01       		.uleb128 0x1
+ 527 0096 12       		.uleb128 0x12
+ 528 0097 06       		.uleb128 0x6
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 13
+
+
+ 529 0098 40       		.uleb128 0x40
+ 530 0099 18       		.uleb128 0x18
+ 531 009a 9742     		.uleb128 0x2117
+ 532 009c 19       		.uleb128 0x19
+ 533 009d 01       		.uleb128 0x1
+ 534 009e 13       		.uleb128 0x13
+ 535 009f 00       		.byte	0
+ 536 00a0 00       		.byte	0
+ 537 00a1 0C       		.uleb128 0xc
+ 538 00a2 898201   		.uleb128 0x4109
+ 539 00a5 00       		.byte	0
+ 540 00a6 11       		.uleb128 0x11
+ 541 00a7 01       		.uleb128 0x1
+ 542 00a8 9542     		.uleb128 0x2115
+ 543 00aa 19       		.uleb128 0x19
+ 544 00ab 31       		.uleb128 0x31
+ 545 00ac 13       		.uleb128 0x13
+ 546 00ad 00       		.byte	0
+ 547 00ae 00       		.byte	0
+ 548 00af 0D       		.uleb128 0xd
+ 549 00b0 898201   		.uleb128 0x4109
+ 550 00b3 00       		.byte	0
+ 551 00b4 11       		.uleb128 0x11
+ 552 00b5 01       		.uleb128 0x1
+ 553 00b6 31       		.uleb128 0x31
+ 554 00b7 13       		.uleb128 0x13
+ 555 00b8 00       		.byte	0
+ 556 00b9 00       		.byte	0
+ 557 00ba 0E       		.uleb128 0xe
+ 558 00bb 34       		.uleb128 0x34
+ 559 00bc 00       		.byte	0
+ 560 00bd 03       		.uleb128 0x3
+ 561 00be 0E       		.uleb128 0xe
+ 562 00bf 3A       		.uleb128 0x3a
+ 563 00c0 0B       		.uleb128 0xb
+ 564 00c1 3B       		.uleb128 0x3b
+ 565 00c2 0B       		.uleb128 0xb
+ 566 00c3 49       		.uleb128 0x49
+ 567 00c4 13       		.uleb128 0x13
+ 568 00c5 02       		.uleb128 0x2
+ 569 00c6 18       		.uleb128 0x18
+ 570 00c7 00       		.byte	0
+ 571 00c8 00       		.byte	0
+ 572 00c9 0F       		.uleb128 0xf
+ 573 00ca 34       		.uleb128 0x34
+ 574 00cb 00       		.byte	0
+ 575 00cc 03       		.uleb128 0x3
+ 576 00cd 0E       		.uleb128 0xe
+ 577 00ce 3A       		.uleb128 0x3a
+ 578 00cf 0B       		.uleb128 0xb
+ 579 00d0 3B       		.uleb128 0x3b
+ 580 00d1 0B       		.uleb128 0xb
+ 581 00d2 49       		.uleb128 0x49
+ 582 00d3 13       		.uleb128 0x13
+ 583 00d4 3F       		.uleb128 0x3f
+ 584 00d5 19       		.uleb128 0x19
+ 585 00d6 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 14
+
+
+ 586 00d7 19       		.uleb128 0x19
+ 587 00d8 00       		.byte	0
+ 588 00d9 00       		.byte	0
+ 589 00da 10       		.uleb128 0x10
+ 590 00db 2E       		.uleb128 0x2e
+ 591 00dc 00       		.byte	0
+ 592 00dd 3F       		.uleb128 0x3f
+ 593 00de 19       		.uleb128 0x19
+ 594 00df 3C       		.uleb128 0x3c
+ 595 00e0 19       		.uleb128 0x19
+ 596 00e1 6E       		.uleb128 0x6e
+ 597 00e2 0E       		.uleb128 0xe
+ 598 00e3 03       		.uleb128 0x3
+ 599 00e4 0E       		.uleb128 0xe
+ 600 00e5 3A       		.uleb128 0x3a
+ 601 00e6 0B       		.uleb128 0xb
+ 602 00e7 3B       		.uleb128 0x3b
+ 603 00e8 0B       		.uleb128 0xb
+ 604 00e9 00       		.byte	0
+ 605 00ea 00       		.byte	0
+ 606 00eb 00       		.byte	0
+ 607              		.section	.debug_aranges,"",%progbits
+ 608 0000 2C000000 		.4byte	0x2c
+ 609 0004 0200     		.2byte	0x2
+ 610 0006 00000000 		.4byte	.Ldebug_info0
+ 611 000a 04       		.byte	0x4
+ 612 000b 00       		.byte	0
+ 613 000c 0000     		.2byte	0
+ 614 000e 0000     		.2byte	0
+ 615 0010 00000000 		.4byte	.LFB1
+ 616 0014 02000000 		.4byte	.LFE1-.LFB1
+ 617 0018 00000000 		.4byte	.LFB2
+ 618 001c 24000000 		.4byte	.LFE2-.LFB2
+ 619 0020 00000000 		.4byte	.LFB3
+ 620 0024 4C000000 		.4byte	.LFE3-.LFB3
+ 621 0028 00000000 		.4byte	0
+ 622 002c 00000000 		.4byte	0
+ 623              		.section	.debug_ranges,"",%progbits
+ 624              	.Ldebug_ranges0:
+ 625 0000 00000000 		.4byte	.LFB1
+ 626 0004 02000000 		.4byte	.LFE1
+ 627 0008 00000000 		.4byte	.LFB2
+ 628 000c 24000000 		.4byte	.LFE2
+ 629 0010 00000000 		.4byte	.LFB3
+ 630 0014 4C000000 		.4byte	.LFE3
+ 631 0018 00000000 		.4byte	0
+ 632 001c 00000000 		.4byte	0
+ 633              		.section	.debug_line,"",%progbits
+ 634              	.Ldebug_line0:
+ 635 0000 A6000000 		.section	.debug_str,"MS",%progbits,1
+ 635      02006200 
+ 635      00000201 
+ 635      FB0E0D00 
+ 635      01010101 
+ 636              	.LASF27:
+ 637 0000 53504953 		.ascii	"SPIS_1_Stop\000"
+ 637      5F315F53 
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 15
+
+
+ 637      746F7000 
+ 638              	.LASF21:
+ 639 000c 53504953 		.ascii	"SPIS_1_rxBufferRead\000"
+ 639      5F315F72 
+ 639      78427566 
+ 639      66657252 
+ 639      65616400 
+ 640              	.LASF22:
+ 641 0020 53504953 		.ascii	"SPIS_1_rxBufferWrite\000"
+ 641      5F315F72 
+ 641      78427566 
+ 641      66657257 
+ 641      72697465 
+ 642              	.LASF29:
+ 643 0035 53504953 		.ascii	"SPIS_1_Enable\000"
+ 643      5F315F45 
+ 643      6E61626C 
+ 643      6500
+ 644              	.LASF3:
+ 645 0043 73686F72 		.ascii	"short unsigned int\000"
+ 645      7420756E 
+ 645      7369676E 
+ 645      65642069 
+ 645      6E7400
+ 646              	.LASF19:
+ 647 0056 53504953 		.ascii	"SPIS_1_Sleep\000"
+ 647      5F315F53 
+ 647      6C656570 
+ 647      00
+ 648              	.LASF9:
+ 649 0063 666C6F61 		.ascii	"float\000"
+ 649      7400
+ 650              	.LASF1:
+ 651 0069 756E7369 		.ascii	"unsigned char\000"
+ 651      676E6564 
+ 651      20636861 
+ 651      7200
+ 652              	.LASF13:
+ 653 0077 72656738 		.ascii	"reg8\000"
+ 653      00
+ 654              	.LASF30:
+ 655 007c 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 655      43313120 
+ 655      352E342E 
+ 655      31203230 
+ 655      31363036 
+ 656 00af 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 656      20726576 
+ 656      6973696F 
+ 656      6E203233 
+ 656      37373135 
+ 657 00e2 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 657      66756E63 
+ 657      74696F6E 
+ 657      2D736563 
+ 657      74696F6E 
+ 658              	.LASF12:
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 16
+
+
+ 659 010a 75696E74 		.ascii	"uint8\000"
+ 659      3800
+ 660              	.LASF10:
+ 661 0110 646F7562 		.ascii	"double\000"
+ 661      6C6500
+ 662              	.LASF34:
+ 663 0117 53504953 		.ascii	"SPIS_1_backup\000"
+ 663      5F315F62 
+ 663      61636B75 
+ 663      7000
+ 664              	.LASF33:
+ 665 0125 53504953 		.ascii	"SPIS_1_RestoreConfig\000"
+ 665      5F315F52 
+ 665      6573746F 
+ 665      7265436F 
+ 665      6E666967 
+ 666              	.LASF18:
+ 667 013a 53504953 		.ascii	"SPIS_1_BACKUP_STRUCT\000"
+ 667      5F315F42 
+ 667      41434B55 
+ 667      505F5354 
+ 667      52554354 
+ 668              	.LASF17:
+ 669 014f 636E7472 		.ascii	"cntrPeriod\000"
+ 669      50657269 
+ 669      6F6400
+ 670              	.LASF25:
+ 671 015a 53504953 		.ascii	"SPIS_1_txBufferWrite\000"
+ 671      5F315F74 
+ 671      78427566 
+ 671      66657257 
+ 671      72697465 
+ 672              	.LASF5:
+ 673 016f 6C6F6E67 		.ascii	"long unsigned int\000"
+ 673      20756E73 
+ 673      69676E65 
+ 673      6420696E 
+ 673      7400
+ 674              	.LASF8:
+ 675 0181 756E7369 		.ascii	"unsigned int\000"
+ 675      676E6564 
+ 675      20696E74 
+ 675      00
+ 676              	.LASF28:
+ 677 018e 53504953 		.ascii	"SPIS_1_ClearFIFO\000"
+ 677      5F315F43 
+ 677      6C656172 
+ 677      4649464F 
+ 677      00
+ 678              	.LASF20:
+ 679 019f 53504953 		.ascii	"SPIS_1_Wakeup\000"
+ 679      5F315F57 
+ 679      616B6575 
+ 679      7000
+ 680              	.LASF7:
+ 681 01ad 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 681      206C6F6E 
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 17
+
+
+ 681      6720756E 
+ 681      7369676E 
+ 681      65642069 
+ 682              	.LASF15:
+ 683 01c4 73697A65 		.ascii	"sizetype\000"
+ 683      74797065 
+ 683      00
+ 684              	.LASF6:
+ 685 01cd 6C6F6E67 		.ascii	"long long int\000"
+ 685      206C6F6E 
+ 685      6720696E 
+ 685      7400
+ 686              	.LASF11:
+ 687 01db 63686172 		.ascii	"char\000"
+ 687      00
+ 688              	.LASF26:
+ 689 01e0 53504953 		.ascii	"SPIS_1_txBufferFull\000"
+ 689      5F315F74 
+ 689      78427566 
+ 689      66657246 
+ 689      756C6C00 
+ 690              	.LASF2:
+ 691 01f4 73686F72 		.ascii	"short int\000"
+ 691      7420696E 
+ 691      7400
+ 692              	.LASF4:
+ 693 01fe 6C6F6E67 		.ascii	"long int\000"
+ 693      20696E74 
+ 693      00
+ 694              	.LASF16:
+ 695 0207 656E6162 		.ascii	"enableState\000"
+ 695      6C655374 
+ 695      61746500 
+ 696              	.LASF14:
+ 697 0213 6C6F6E67 		.ascii	"long double\000"
+ 697      20646F75 
+ 697      626C6500 
+ 698              	.LASF32:
+ 699 021f 443A5C44 		.ascii	"D:\\Documents\\DPEA_Projects\\RpiMIB\\Number2.cydsn"
+ 699      6F63756D 
+ 699      656E7473 
+ 699      5C445045 
+ 699      415F5072 
+ 700 024e 00       		.ascii	"\000"
+ 701              	.LASF0:
+ 702 024f 7369676E 		.ascii	"signed char\000"
+ 702      65642063 
+ 702      68617200 
+ 703              	.LASF24:
+ 704 025b 53504953 		.ascii	"SPIS_1_txBufferRead\000"
+ 704      5F315F74 
+ 704      78427566 
+ 704      66657252 
+ 704      65616400 
+ 705              	.LASF23:
+ 706 026f 53504953 		.ascii	"SPIS_1_rxBufferFull\000"
+ 706      5F315F72 
+ARM GAS  C:\Users\Joe\AppData\Local\Temp\cconBnlg.s 			page 18
+
+
+ 706      78427566 
+ 706      66657246 
+ 706      756C6C00 
+ 707              	.LASF31:
+ 708 0283 47656E65 		.ascii	"Generated_Source\\PSoC5\\SPIS_1_PM.c\000"
+ 708      72617465 
+ 708      645F536F 
+ 708      75726365 
+ 708      5C50536F 
+ 709              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

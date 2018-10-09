@@ -1,0 +1,9 @@
+--------------- Build Started: 10/01/2018 14:47:45 Project: Number3, Configuration: ARM GCC 5.4-2016-q2-update Release ---------------
+The code generation step is up to date.
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Release/main.lst -g -D NDEBUG -Wall -ffunction-sections -ffat-lto-objects -Os -c main.c -o .\CortexM3\ARM_GCC_541\Release\main.o
+main.c: In function 'SS_Rise_Handler':
+main.c:86:21: error: expected expression before ';' token
+         RPi_Data =  ;
+                     ^
+The command 'arm-none-eabi-gcc.exe' failed with exit code '1'.
+--------------- Build Failed: 10/01/2018 14:47:45 ---------------

@@ -1,0 +1,3443 @@
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.SS_Fall_Handler,"ax",%progbits
+  20              		.align	1
+  21              		.global	SS_Fall_Handler
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	SS_Fall_Handler, %function
+  25              	SS_Fall_Handler:
+  26              	.LFB63:
+  27              		.file 1 "main.c"
+   1:main.c        **** /*******************************************************************************
+   2:main.c        **** * File Name: main.c
+   3:main.c        **** *
+   4:main.c        **** * Version: 1.10
+   5:main.c        **** *
+   6:main.c        **** * Description:
+   7:main.c        **** *  This is source code for example project of the SPI Master component.
+   8:main.c        **** *  Parameters used:
+   9:main.c        **** *   Mode                CPHA == 0, CPOL == 0                
+  10:main.c        **** *   Data lines          MOSI+MISO
+  11:main.c        **** *   Shift direction     MSB First
+  12:main.c        **** *   DataBits:           8 
+  13:main.c        **** *   Bit Rate            1 Mbps
+  14:main.c        **** *   Clock source        External 
+  15:main.c        **** *
+  16:main.c        **** *  SPI communication test using DMA. 8 bytes are transmitted
+  17:main.c        **** *  between SPI Master and SPI Slave.
+  18:main.c        **** *  Received data are displayed on LCD. 
+  19:main.c        **** *
+  20:main.c        **** ********************************************************************************
+  21:main.c        **** * Copyright 2012-2015, Cypress Semiconductor Corporation. All rights reserved.
+  22:main.c        **** * This software is owned by Cypress Semiconductor Corporation and is protected
+  23:main.c        **** * by and subject to worldwide patent and copyright laws and treaties.
+  24:main.c        **** * Therefore, you may use this software only as provided in the license agreement
+  25:main.c        **** * accompanying the software package from which you obtained this software.
+  26:main.c        **** * CYPRESS AND ITS SUPPLIERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+  27:main.c        **** * WITH REGARD TO THIS SOFTWARE, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT,
+  28:main.c        **** * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+  29:main.c        **** *******************************************************************************/
+  30:main.c        **** #include <project.h>
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 2
+
+
+  31:main.c        **** 
+  32:main.c        **** 
+  33:main.c        **** uint16 WriteSignalGen(uint8, uint16);
+  34:main.c        **** uint16 ReadEncoderValue(uint8);
+  35:main.c        **** uint16  RPi_Command;
+  36:main.c        **** uint16  RPi_Data;
+  37:main.c        **** uint16 enc_a_Position;
+  38:main.c        **** uint16 enc_b_Position;
+  39:main.c        **** uint16 enc_c_Position;
+  40:main.c        **** uint16 pwm_a_command;
+  41:main.c        **** uint16 pwm_b_command;
+  42:main.c        **** uint16 pwm_a_new_command;
+  43:main.c        **** uint16 pwm_b_new_command;
+  44:main.c        **** 
+  45:main.c        **** #define idle_state            ((uint8) (0x00u))
+  46:main.c        **** #define read_encoder_state    ((uint8) (0x01u))
+  47:main.c        **** #define write_funcGen1_state  ((uint8) (0x02u))
+  48:main.c        **** #define write_funcGen2_state  ((uint8) (0x03u))
+  49:main.c        **** #define write_Amp_state       ((uint8) (0x04u))
+  50:main.c        **** #define write_pwm_a_state     ((uint8) (0x05u))
+  51:main.c        **** #define write_pwm_b_state     ((uint8) (0x06u))
+  52:main.c        **** 
+  53:main.c        **** 
+  54:main.c        **** uint8 read_counter;
+  55:main.c        **** uint8  PSOC_state;
+  56:main.c        **** uint8 i2cAddress;
+  57:main.c        **** uint8 i2cData;
+  58:main.c        **** 
+  59:main.c        **** CY_ISR(SS_Fall_Handler)
+  60:main.c        **** {
+  28              		.loc 1 60 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  61:main.c        ****     /*  load the encoder position data into the transmit data registers*/
+  62:main.c        **** 
+  63:main.c        ****     isr_SS_Fall_ClearPending();
+  36              		.loc 1 63 0
+  37 0002 FFF7FEFF 		bl	isr_SS_Fall_ClearPending
+  38              	.LVL0:
+  64:main.c        ****    if (PSOC_state == idle_state) {
+  39              		.loc 1 64 0
+  40 0006 0F4B     		ldr	r3, .L10
+  41 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  42 000a 0BB9     		cbnz	r3, .L2
+  65:main.c        ****        SPIS_WriteTxDataZero(0x0001);
+  43              		.loc 1 65 0
+  44 000c 0120     		movs	r0, #1
+  45 000e 14E0     		b	.L8
+  46              	.L2:
+  66:main.c        ****    } else if (PSOC_state == write_funcGen1_state) {
+  47              		.loc 1 66 0
+  48 0010 022B     		cmp	r3, #2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 3
+
+
+  49 0012 01D1     		bne	.L3
+  67:main.c        ****        SPIS_WriteTxDataZero(0x0020 );
+  50              		.loc 1 67 0
+  51 0014 2020     		movs	r0, #32
+  52 0016 10E0     		b	.L8
+  53              	.L3:
+  68:main.c        ****    } else if (PSOC_state == write_funcGen2_state) {
+  54              		.loc 1 68 0
+  55 0018 032B     		cmp	r3, #3
+  56 001a 01D1     		bne	.L4
+  69:main.c        ****        SPIS_WriteTxDataZero(0x0040 );
+  57              		.loc 1 69 0
+  58 001c 4020     		movs	r0, #64
+  59 001e 0CE0     		b	.L8
+  60              	.L4:
+  70:main.c        ****    }  else if (PSOC_state == write_Amp_state) {
+  61              		.loc 1 70 0
+  62 0020 042B     		cmp	r3, #4
+  63 0022 01D1     		bne	.L5
+  71:main.c        ****        SPIS_WriteTxDataZero(0x0080 );
+  64              		.loc 1 71 0
+  65 0024 8020     		movs	r0, #128
+  66 0026 08E0     		b	.L8
+  67              	.L5:
+  72:main.c        ****    }    else if (PSOC_state == write_pwm_a_state) {
+  68              		.loc 1 72 0
+  69 0028 052B     		cmp	r3, #5
+  70 002a 02D1     		bne	.L6
+  73:main.c        ****        SPIS_WriteTxDataZero(0x0100 );
+  71              		.loc 1 73 0
+  72 002c 4FF48070 		mov	r0, #256
+  73 0030 03E0     		b	.L8
+  74              	.L6:
+  74:main.c        ****    } else if (PSOC_state == write_pwm_b_state) {
+  75              		.loc 1 74 0
+  76 0032 062B     		cmp	r3, #6
+  77 0034 05D1     		bne	.L1
+  75:main.c        ****        SPIS_WriteTxDataZero(0x0200 );
+  78              		.loc 1 75 0
+  79 0036 4FF40070 		mov	r0, #512
+  80              	.L8:
+  76:main.c        ****    }
+  77:main.c        **** }
+  81              		.loc 1 77 0
+  82 003a BDE80840 		pop	{r3, lr}
+  83              		.cfi_remember_state
+  84              		.cfi_restore 14
+  85              		.cfi_restore 3
+  86              		.cfi_def_cfa_offset 0
+  75:main.c        ****        SPIS_WriteTxDataZero(0x0200 );
+  87              		.loc 1 75 0
+  88 003e FFF7FEBF 		b	SPIS_WriteTxDataZero
+  89              	.LVL1:
+  90              	.L1:
+  91              		.cfi_restore_state
+  92 0042 08BD     		pop	{r3, pc}
+  93              	.L11:
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 4
+
+
+  94              		.align	2
+  95              	.L10:
+  96 0044 00000000 		.word	PSOC_state
+  97              		.cfi_endproc
+  98              	.LFE63:
+  99              		.size	SS_Fall_Handler, .-SS_Fall_Handler
+ 100              		.section	.text.WriteSignalGen,"ax",%progbits
+ 101              		.align	1
+ 102              		.global	WriteSignalGen
+ 103              		.thumb
+ 104              		.thumb_func
+ 105              		.type	WriteSignalGen, %function
+ 106              	WriteSignalGen:
+ 107              	.LFB66:
+  78:main.c        **** 
+  79:main.c        **** CY_ISR(SS_Rise_Handler)
+  80:main.c        **** {
+  81:main.c        ****     if (PSOC_state == idle_state)
+  82:main.c        ****     {
+  83:main.c        ****         RPi_Command = SPIS_ReadRxData();
+  84:main.c        ****         read_counter = 0u;
+  85:main.c        ****     } else {
+  86:main.c        ****         RPi_Data =  SPIS_ReadRxData();
+  87:main.c        ****     }
+  88:main.c        ****     
+  89:main.c        **** /*    Routine to write to sig gen over SPI or Power Amp Gain over I2C */
+  90:main.c        ****     
+  91:main.c        ****     if (PSOC_state == idle_state)  {
+  92:main.c        ****         if (RPi_Command == 0x0010)  {          
+  93:main.c        ****            PSOC_state = read_encoder_state;
+  94:main.c        ****            SPIS_WriteTxDataZero(enc_a_Position);
+  95:main.c        ****            SPIS_WriteTxData(enc_b_Position);
+  96:main.c        ****            SPIS_WriteTxData(enc_c_Position);
+  97:main.c        ****            read_counter = 0u; 
+  98:main.c        ****         } else if (RPi_Command == 0x0020)  {
+  99:main.c        ****            PSOC_state = write_funcGen1_state;
+ 100:main.c        ****         } else if (RPi_Command == 0x0040)  {
+ 101:main.c        ****            PSOC_state = write_funcGen2_state;
+ 102:main.c        ****         }  else if (RPi_Command == 0x0080)  {
+ 103:main.c        ****            PSOC_state = write_Amp_state;
+ 104:main.c        ****         }  else if (RPi_Command == 0x0100)  {
+ 105:main.c        ****            PSOC_state = write_pwm_a_state;
+ 106:main.c        ****         }  else if (RPi_Command == 0x0200)  {
+ 107:main.c        ****            PSOC_state = write_pwm_b_state;
+ 108:main.c        ****         }
+ 109:main.c        ****     } else  if  ( PSOC_state == read_encoder_state) {      
+ 110:main.c        ****         if (read_counter < 2u) {
+ 111:main.c        ****             read_counter +=1;
+ 112:main.c        ****         } else  {
+ 113:main.c        ****             PSOC_state = idle_state;
+ 114:main.c        ****             read_counter = 0u;
+ 115:main.c        ****         }
+ 116:main.c        ****     } else if ( PSOC_state == write_funcGen1_state) {
+ 117:main.c        ****         WriteSignalGen(0u, RPi_Data); 
+ 118:main.c        ****         PSOC_state = idle_state;
+ 119:main.c        ****     } else if ( PSOC_state == write_funcGen2_state) {
+ 120:main.c        ****         WriteSignalGen(1u, RPi_Data); 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 5
+
+
+ 121:main.c        ****         PSOC_state = idle_state;
+ 122:main.c        ****     } else if ( PSOC_state == write_Amp_state) {
+ 123:main.c        ****         i2cAddress = ((uint8) (RPi_Data >>8));
+ 124:main.c        ****         i2cData = ((uint8) (RPi_Data & 0x00ff));
+ 125:main.c        ****         I2C_1_MasterSendStart(i2cAddress,0);
+ 126:main.c        ****         I2C_1_MasterWriteByte(i2cData);I2C_1_MasterSendStop();
+ 127:main.c        ****         PSOC_state = idle_state;       
+ 128:main.c        ****      } else if ( PSOC_state == write_pwm_a_state) {
+ 129:main.c        ****         pwm_a_new_command = RPi_Data;
+ 130:main.c        ****        /* PWM_1_WriteCompare(pwm_a_command);  */
+ 131:main.c        ****         PSOC_state = idle_state;  
+ 132:main.c        ****     } else if ( PSOC_state == write_pwm_b_state) {
+ 133:main.c        ****         pwm_b_new_command = RPi_Data;
+ 134:main.c        ****      /*   PWM_2_WriteCompare(pwm_b_command);   */
+ 135:main.c        ****         PSOC_state = idle_state;         
+ 136:main.c        ****      } else {
+ 137:main.c        ****          PSOC_state = idle_state;
+ 138:main.c        ****     }
+ 139:main.c        **** 
+ 140:main.c        ****     SPIS_ReadRxStatus();
+ 141:main.c        ****     SPIS_ClearRxBuffer();
+ 142:main.c        ****     isr_SS_Rise_ClearPending();
+ 143:main.c        ****    
+ 144:main.c        **** }
+ 145:main.c        **** 
+ 146:main.c        **** 
+ 147:main.c        **** /* The txBuffer size is equal (BUFFER_SIZE-1) because for SPI Mode where CPHA == 0 and
+ 148:main.c        **** * CPOL == 0 one byte writes directly in SPI TX FIFO using SPIS_WriteTxDataZero() API.
+ 149:main.c        **** */
+ 150:main.c        **** 
+ 151:main.c        **** uint16 rxBuffer [4];
+ 152:main.c        **** 
+ 153:main.c        ****  uint8 temp1;
+ 154:main.c        ****  uint8 temp2;
+ 155:main.c        **** 
+ 156:main.c        **** 
+ 157:main.c        **** uint8 i;
+ 158:main.c        **** uint16 shutdown_count;
+ 159:main.c        **** 
+ 160:main.c        **** /*******************************************************************************
+ 161:main.c        **** * Function Name: main
+ 162:main.c        **** ********************************************************************************
+ 163:main.c        **** *******************************************************************************/
+ 164:main.c        **** int main()
+ 165:main.c        **** {   
+ 166:main.c        ****     RpiInterrupts_Write(3u);  // 9.25.18 - New location, trying to force the interrupts high as ear
+ 167:main.c        ****     Comp_1_Start();
+ 168:main.c        ****     CyDelay(2000u);
+ 169:main.c        ****     /* Enable Battery Backup circuit and interface circuits between RPi and PSOC  */
+ 170:main.c        ****     EnableBattery_Write(1u);
+ 171:main.c        ****     Control_Reg_SS_Write(0u);
+ 172:main.c        ****     Control_Reg_LED_Write(0u);
+ 173:main.c        ****     //RpiInterrupts_Write(3u);     // 9.25.18 - Original location, moving this to the start of this
+ 174:main.c        ****     Clock_1_Start();
+ 175:main.c        ****  
+ 176:main.c        ****     SPIM_1_Start();
+ 177:main.c        ****     SPIM_1_ClearFIFO();
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 6
+
+
+ 178:main.c        ****     SPIM_1_ClearRxBuffer();
+ 179:main.c        ****     SPIM_1_ClearTxBuffer();   
+ 180:main.c        ****     
+ 181:main.c        ****     SPIM_SigGen_Start();
+ 182:main.c        ****     SPIM_SigGen_ClearFIFO();
+ 183:main.c        ****     SPIM_SigGen_ClearRxBuffer();
+ 184:main.c        ****     SPIM_SigGen_ClearTxBuffer();    
+ 185:main.c        **** 
+ 186:main.c        ****     SPIS_Start();
+ 187:main.c        ****     SPIS_WriteTxDataZero(0x00u);
+ 188:main.c        ****  
+ 189:main.c        ****     PWM_1_Start();
+ 190:main.c        ****     PWM_2_Start();
+ 191:main.c        ****     
+ 192:main.c        ****     I2C_1_Start();   
+ 193:main.c        ****     
+ 194:main.c        ****     PSOC_state = idle_state;
+ 195:main.c        ****      read_counter = 0u;
+ 196:main.c        ****       
+ 197:main.c        ****     CyGlobalIntEnable; 
+ 198:main.c        ****     isr_SS_Fall_StartEx(SS_Fall_Handler );
+ 199:main.c        ****     isr_SS_Rise_StartEx( SS_Rise_Handler );
+ 200:main.c        ****  
+ 201:main.c        ****     RPi_Command = 0x000f;
+ 202:main.c        ****   
+ 203:main.c        ****     shutdown_count = 0;
+ 204:main.c        **** 
+ 205:main.c        ****     while (1)  {
+ 206:main.c        ****         
+ 207:main.c        ****      /* read the encoder values  */     
+ 208:main.c        ****       enc_a_Position = ReadEncoderValue(0u);    
+ 209:main.c        ****       enc_b_Position = ReadEncoderValue(1u);        
+ 210:main.c        ****       enc_c_Position = ReadEncoderValue(2u);
+ 211:main.c        ****       
+ 212:main.c        ****     /* This code monitors the main power input.  A local backup batter supply prevents  */
+ 213:main.c        ****     /* power from being removed from the raspberry pi before it has been properly shutdown   */
+ 214:main.c        ****     /* Monitor the presence of the main power input */    
+ 215:main.c        ****     /*  If power has been removed for more than 5000 times through this loop -  -  about 20 seconds
+ 216:main.c        ****     /*  Interrupt the Raspberry Pi telling it to shut itself down  */
+ 217:main.c        ****     /*  allow 20 sec for the Pi to shut down then turn off back up power. */
+ 218:main.c        ****       CyDelayUs(1400u);
+ 219:main.c        **** 
+ 220:main.c        ****     
+ 221:main.c        ****     /* implenemt slew rate for changes in servo position*/
+ 222:main.c        ****     if (pwm_a_new_command > pwm_a_command ) {
+ 223:main.c        ****         if ((pwm_a_new_command - pwm_a_command) > 50) {
+ 224:main.c        ****             pwm_a_command +=50;
+ 225:main.c        ****         } else {
+ 226:main.c        ****             pwm_a_command = pwm_a_new_command;
+ 227:main.c        ****         }
+ 228:main.c        ****     } else {
+ 229:main.c        ****         if ((pwm_a_command - pwm_a_new_command) > 50)  {
+ 230:main.c        ****             pwm_a_command -=50;
+ 231:main.c        ****         } else {
+ 232:main.c        ****              pwm_a_command = pwm_a_new_command;
+ 233:main.c        ****         }
+ 234:main.c        ****     }
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 7
+
+
+ 235:main.c        **** 
+ 236:main.c        ****     
+ 237:main.c        ****      if (pwm_b_new_command > pwm_b_command ) {
+ 238:main.c        ****         if ((pwm_b_new_command - pwm_b_command) > 50) {
+ 239:main.c        ****             pwm_b_command +=50;
+ 240:main.c        ****         } else {
+ 241:main.c        ****             pwm_b_command = pwm_b_new_command;
+ 242:main.c        ****         }
+ 243:main.c        ****     } else {
+ 244:main.c        ****         if ((pwm_b_command - pwm_b_new_command) > 50)  {
+ 245:main.c        ****             pwm_b_command -=50;
+ 246:main.c        ****         } else {
+ 247:main.c        ****              pwm_b_command = pwm_b_new_command;
+ 248:main.c        ****         }
+ 249:main.c        ****     }
+ 250:main.c        ****     
+ 251:main.c        ****     PWM_1_WriteCompare(pwm_a_command);
+ 252:main.c        ****     PWM_2_WriteCompare(pwm_b_command);
+ 253:main.c        ****     
+ 254:main.c        ****     
+ 255:main.c        ****       if (Status_Reg_1_Read() == 1u) {
+ 256:main.c        ****         shutdown_count +=1;
+ 257:main.c        **** //        if (shutdown_count == 2000u) {        //9.25.18 - The while loop executes in about 2ms to
+ 258:main.c        ****                                                 //          2ms * 2000 = 4 seconds, not 20 seconds 
+ 259:main.c        ****                                                 //          Changing to 10000 to get 20 seconds.
+ 260:main.c        ****         if (shutdown_count == 2000u) {      
+ 261:main.c        ****             CyGlobalIntDisable; 
+ 262:main.c        ****              Control_Reg_LED_Write(1u);
+ 263:main.c        ****             /* tell Pi to shut down */ 
+ 264:main.c        ****            RpiInterrupts_Write(0u);
+ 265:main.c        ****            CyDelay(20000u);
+ 266:main.c        ****         /* Wait 60 seconds then turn off back up power */
+ 267:main.c        ****            EnableBattery_Write(2u);
+ 268:main.c        ****            CyDelay(2000u);
+ 269:main.c        ****         }
+ 270:main.c        ****       } else {
+ 271:main.c        ****          shutdown_count =0u;
+ 272:main.c        ****       }
+ 273:main.c        **** 
+ 274:main.c        ****     }
+ 275:main.c        ****     
+ 276:main.c        **** }
+ 277:main.c        **** 
+ 278:main.c        **** uint16 WriteSignalGen(uint8 ChannelNumber, uint16 CommandWord)
+ 279:main.c        **** {
+ 108              		.loc 1 279 0
+ 109              		.cfi_startproc
+ 110              		@ args = 0, pretend = 0, frame = 0
+ 111              		@ frame_needed = 0, uses_anonymous_args = 0
+ 112              	.LVL2:
+ 113 0000 10B5     		push	{r4, lr}
+ 114              		.cfi_def_cfa_offset 8
+ 115              		.cfi_offset 4, -8
+ 116              		.cfi_offset 14, -4
+ 117              		.loc 1 279 0
+ 118 0002 0C46     		mov	r4, r1
+ 280:main.c        ****     uint16 result;
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 8
+
+
+ 281:main.c        ****     Control_Reg_SS_SigGen_Write(ChannelNumber);
+ 119              		.loc 1 281 0
+ 120 0004 FFF7FEFF 		bl	Control_Reg_SS_SigGen_Write
+ 121              	.LVL3:
+ 282:main.c        ****     SPIM_SigGen_ClearFIFO();
+ 122              		.loc 1 282 0
+ 123 0008 FFF7FEFF 		bl	SPIM_SigGen_ClearFIFO
+ 124              	.LVL4:
+ 283:main.c        ****     SPIM_SigGen_WriteTxData(CommandWord);
+ 125              		.loc 1 283 0
+ 126 000c 2046     		mov	r0, r4
+ 127 000e FFF7FEFF 		bl	SPIM_SigGen_WriteTxData
+ 128              	.LVL5:
+ 284:main.c        ****     while (!(SPIM_SigGen_STS_SPI_DONE));
+ 285:main.c        ****     result = 0u;
+ 286:main.c        ****     return(result);
+ 287:main.c        ****    
+ 288:main.c        **** }
+ 129              		.loc 1 288 0
+ 130 0012 0020     		movs	r0, #0
+ 131 0014 10BD     		pop	{r4, pc}
+ 132              		.cfi_endproc
+ 133              	.LFE66:
+ 134              		.size	WriteSignalGen, .-WriteSignalGen
+ 135              		.section	.text.SS_Rise_Handler,"ax",%progbits
+ 136              		.align	1
+ 137              		.global	SS_Rise_Handler
+ 138              		.thumb
+ 139              		.thumb_func
+ 140              		.type	SS_Rise_Handler, %function
+ 141              	SS_Rise_Handler:
+ 142              	.LFB64:
+  80:main.c        ****     if (PSOC_state == idle_state)
+ 143              		.loc 1 80 0
+ 144              		.cfi_startproc
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 0, uses_anonymous_args = 0
+ 147 0000 38B5     		push	{r3, r4, r5, lr}
+ 148              		.cfi_def_cfa_offset 16
+ 149              		.cfi_offset 3, -16
+ 150              		.cfi_offset 4, -12
+ 151              		.cfi_offset 5, -8
+ 152              		.cfi_offset 14, -4
+  81:main.c        ****     {
+ 153              		.loc 1 81 0
+ 154 0002 3F4B     		ldr	r3, .L34
+ 155 0004 1C78     		ldrb	r4, [r3]	@ zero_extendqisi2
+ 156 0006 1D46     		mov	r5, r3
+ 157 0008 34B9     		cbnz	r4, .L14
+  83:main.c        ****         read_counter = 0u;
+ 158              		.loc 1 83 0
+ 159 000a FFF7FEFF 		bl	SPIS_ReadRxData
+ 160              	.LVL6:
+ 161 000e 3D4B     		ldr	r3, .L34+4
+ 162 0010 1880     		strh	r0, [r3]	@ movhi
+  84:main.c        ****     } else {
+ 163              		.loc 1 84 0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 9
+
+
+ 164 0012 3D4B     		ldr	r3, .L34+8
+ 165 0014 1C70     		strb	r4, [r3]
+ 166 0016 03E0     		b	.L15
+ 167              	.L14:
+  86:main.c        ****     }
+ 168              		.loc 1 86 0
+ 169 0018 FFF7FEFF 		bl	SPIS_ReadRxData
+ 170              	.LVL7:
+ 171 001c 3B4B     		ldr	r3, .L34+12
+ 172 001e 1880     		strh	r0, [r3]	@ movhi
+ 173              	.L15:
+  91:main.c        ****         if (RPi_Command == 0x0010)  {          
+ 174              		.loc 1 91 0
+ 175 0020 2D78     		ldrb	r5, [r5]	@ zero_extendqisi2
+ 176 0022 374C     		ldr	r4, .L34
+ 177 0024 55BB     		cbnz	r5, .L16
+  92:main.c        ****            PSOC_state = read_encoder_state;
+ 178              		.loc 1 92 0
+ 179 0026 374B     		ldr	r3, .L34+4
+ 180 0028 1B88     		ldrh	r3, [r3]
+ 181 002a 102B     		cmp	r3, #16
+ 182 002c 10D1     		bne	.L17
+  93:main.c        ****            SPIS_WriteTxDataZero(enc_a_Position);
+ 183              		.loc 1 93 0
+ 184 002e 0123     		movs	r3, #1
+ 185 0030 2370     		strb	r3, [r4]
+  94:main.c        ****            SPIS_WriteTxData(enc_b_Position);
+ 186              		.loc 1 94 0
+ 187 0032 374B     		ldr	r3, .L34+16
+ 188 0034 1888     		ldrh	r0, [r3]
+ 189 0036 FFF7FEFF 		bl	SPIS_WriteTxDataZero
+ 190              	.LVL8:
+  95:main.c        ****            SPIS_WriteTxData(enc_c_Position);
+ 191              		.loc 1 95 0
+ 192 003a 364B     		ldr	r3, .L34+20
+ 193 003c 1888     		ldrh	r0, [r3]
+ 194 003e FFF7FEFF 		bl	SPIS_WriteTxData
+ 195              	.LVL9:
+  96:main.c        ****            read_counter = 0u; 
+ 196              		.loc 1 96 0
+ 197 0042 354B     		ldr	r3, .L34+24
+ 198 0044 1888     		ldrh	r0, [r3]
+ 199 0046 FFF7FEFF 		bl	SPIS_WriteTxData
+ 200              	.LVL10:
+  97:main.c        ****         } else if (RPi_Command == 0x0020)  {
+ 201              		.loc 1 97 0
+ 202 004a 2F4B     		ldr	r3, .L34+8
+ 203 004c 1D70     		strb	r5, [r3]
+ 204 004e 4EE0     		b	.L18
+ 205              	.L17:
+  98:main.c        ****            PSOC_state = write_funcGen1_state;
+ 206              		.loc 1 98 0
+ 207 0050 202B     		cmp	r3, #32
+ 208 0052 01D1     		bne	.L19
+  99:main.c        ****         } else if (RPi_Command == 0x0040)  {
+ 209              		.loc 1 99 0
+ 210 0054 0223     		movs	r3, #2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 10
+
+
+ 211 0056 49E0     		b	.L31
+ 212              	.L19:
+ 100:main.c        ****            PSOC_state = write_funcGen2_state;
+ 213              		.loc 1 100 0
+ 214 0058 402B     		cmp	r3, #64
+ 215 005a 01D1     		bne	.L20
+ 101:main.c        ****         }  else if (RPi_Command == 0x0080)  {
+ 216              		.loc 1 101 0
+ 217 005c 0323     		movs	r3, #3
+ 218 005e 45E0     		b	.L31
+ 219              	.L20:
+ 102:main.c        ****            PSOC_state = write_Amp_state;
+ 220              		.loc 1 102 0
+ 221 0060 802B     		cmp	r3, #128
+ 222 0062 01D1     		bne	.L21
+ 103:main.c        ****         }  else if (RPi_Command == 0x0100)  {
+ 223              		.loc 1 103 0
+ 224 0064 0423     		movs	r3, #4
+ 225 0066 41E0     		b	.L31
+ 226              	.L21:
+ 104:main.c        ****            PSOC_state = write_pwm_a_state;
+ 227              		.loc 1 104 0
+ 228 0068 B3F5807F 		cmp	r3, #256
+ 229 006c 01D1     		bne	.L22
+ 105:main.c        ****         }  else if (RPi_Command == 0x0200)  {
+ 230              		.loc 1 105 0
+ 231 006e 0523     		movs	r3, #5
+ 232 0070 3CE0     		b	.L31
+ 233              	.L22:
+ 106:main.c        ****            PSOC_state = write_pwm_b_state;
+ 234              		.loc 1 106 0
+ 235 0072 B3F5007F 		cmp	r3, #512
+ 236 0076 3AD1     		bne	.L18
+ 107:main.c        ****         }
+ 237              		.loc 1 107 0
+ 238 0078 0623     		movs	r3, #6
+ 239 007a 37E0     		b	.L31
+ 240              	.L16:
+ 109:main.c        ****         if (read_counter < 2u) {
+ 241              		.loc 1 109 0
+ 242 007c 012D     		cmp	r5, #1
+ 243 007e 08D1     		bne	.L23
+ 110:main.c        ****             read_counter +=1;
+ 244              		.loc 1 110 0
+ 245 0080 214A     		ldr	r2, .L34+8
+ 246 0082 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 247 0084 012B     		cmp	r3, #1
+ 113:main.c        ****             read_counter = 0u;
+ 248              		.loc 1 113 0
+ 249 0086 8ABF     		itet	hi
+ 250 0088 0023     		movhi	r3, #0
+ 111:main.c        ****         } else  {
+ 251              		.loc 1 111 0
+ 252 008a 0133     		addls	r3, r3, #1
+ 113:main.c        ****             read_counter = 0u;
+ 253              		.loc 1 113 0
+ 254 008c 2370     		strbhi	r3, [r4]
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 11
+
+
+ 114:main.c        ****         }
+ 255              		.loc 1 114 0
+ 256 008e 1370     		strb	r3, [r2]
+ 257 0090 2DE0     		b	.L18
+ 258              	.L23:
+ 116:main.c        ****         WriteSignalGen(0u, RPi_Data); 
+ 259              		.loc 1 116 0
+ 260 0092 022D     		cmp	r5, #2
+ 261 0094 03D1     		bne	.L25
+ 117:main.c        ****         PSOC_state = idle_state;
+ 262              		.loc 1 117 0
+ 263 0096 1D4B     		ldr	r3, .L34+12
+ 264 0098 0020     		movs	r0, #0
+ 265 009a 1988     		ldrh	r1, [r3]
+ 266 009c 04E0     		b	.L32
+ 267              	.L25:
+ 119:main.c        ****         WriteSignalGen(1u, RPi_Data); 
+ 268              		.loc 1 119 0
+ 269 009e 032D     		cmp	r5, #3
+ 270 00a0 05D1     		bne	.L26
+ 120:main.c        ****         PSOC_state = idle_state;
+ 271              		.loc 1 120 0
+ 272 00a2 1A4B     		ldr	r3, .L34+12
+ 273 00a4 0120     		movs	r0, #1
+ 274 00a6 1988     		ldrh	r1, [r3]
+ 275              	.L32:
+ 276 00a8 FFF7FEFF 		bl	WriteSignalGen
+ 277              	.LVL11:
+ 278 00ac 1DE0     		b	.L29
+ 279              	.L26:
+ 122:main.c        ****         i2cAddress = ((uint8) (RPi_Data >>8));
+ 280              		.loc 1 122 0
+ 281 00ae 042D     		cmp	r5, #4
+ 282 00b0 0FD1     		bne	.L27
+ 123:main.c        ****         i2cData = ((uint8) (RPi_Data & 0x00ff));
+ 283              		.loc 1 123 0
+ 284 00b2 164B     		ldr	r3, .L34+12
+ 285 00b4 194A     		ldr	r2, .L34+28
+ 286 00b6 1B88     		ldrh	r3, [r3]
+ 124:main.c        ****         I2C_1_MasterSendStart(i2cAddress,0);
+ 287              		.loc 1 124 0
+ 288 00b8 194D     		ldr	r5, .L34+32
+ 123:main.c        ****         i2cData = ((uint8) (RPi_Data & 0x00ff));
+ 289              		.loc 1 123 0
+ 290 00ba 180A     		lsrs	r0, r3, #8
+ 125:main.c        ****         I2C_1_MasterWriteByte(i2cData);I2C_1_MasterSendStop();
+ 291              		.loc 1 125 0
+ 292 00bc 0021     		movs	r1, #0
+ 123:main.c        ****         i2cData = ((uint8) (RPi_Data & 0x00ff));
+ 293              		.loc 1 123 0
+ 294 00be 1070     		strb	r0, [r2]
+ 124:main.c        ****         I2C_1_MasterSendStart(i2cAddress,0);
+ 295              		.loc 1 124 0
+ 296 00c0 2B70     		strb	r3, [r5]
+ 125:main.c        ****         I2C_1_MasterWriteByte(i2cData);I2C_1_MasterSendStop();
+ 297              		.loc 1 125 0
+ 298 00c2 FFF7FEFF 		bl	I2C_1_MasterSendStart
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 12
+
+
+ 299              	.LVL12:
+ 126:main.c        ****         PSOC_state = idle_state;       
+ 300              		.loc 1 126 0
+ 301 00c6 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 302 00c8 FFF7FEFF 		bl	I2C_1_MasterWriteByte
+ 303              	.LVL13:
+ 304 00cc FFF7FEFF 		bl	I2C_1_MasterSendStop
+ 305              	.LVL14:
+ 306 00d0 0BE0     		b	.L29
+ 307              	.L27:
+ 128:main.c        ****         pwm_a_new_command = RPi_Data;
+ 308              		.loc 1 128 0
+ 309 00d2 052D     		cmp	r5, #5
+ 310 00d4 03D1     		bne	.L28
+ 129:main.c        ****        /* PWM_1_WriteCompare(pwm_a_command);  */
+ 311              		.loc 1 129 0
+ 312 00d6 0D4B     		ldr	r3, .L34+12
+ 313 00d8 1A88     		ldrh	r2, [r3]
+ 314 00da 124B     		ldr	r3, .L34+36
+ 315 00dc 04E0     		b	.L33
+ 316              	.L28:
+ 132:main.c        ****         pwm_b_new_command = RPi_Data;
+ 317              		.loc 1 132 0
+ 318 00de 062D     		cmp	r5, #6
+ 319 00e0 03D1     		bne	.L29
+ 133:main.c        ****      /*   PWM_2_WriteCompare(pwm_b_command);   */
+ 320              		.loc 1 133 0
+ 321 00e2 0A4B     		ldr	r3, .L34+12
+ 322 00e4 1A88     		ldrh	r2, [r3]
+ 323 00e6 104B     		ldr	r3, .L34+40
+ 324              	.L33:
+ 325 00e8 1A80     		strh	r2, [r3]	@ movhi
+ 326              	.L29:
+ 137:main.c        ****     }
+ 327              		.loc 1 137 0
+ 328 00ea 0023     		movs	r3, #0
+ 329              	.L31:
+ 330 00ec 2370     		strb	r3, [r4]
+ 331              	.L18:
+ 140:main.c        ****     SPIS_ClearRxBuffer();
+ 332              		.loc 1 140 0
+ 333 00ee FFF7FEFF 		bl	SPIS_ReadRxStatus
+ 334              	.LVL15:
+ 141:main.c        ****     isr_SS_Rise_ClearPending();
+ 335              		.loc 1 141 0
+ 336 00f2 FFF7FEFF 		bl	SPIS_ClearRxBuffer
+ 337              	.LVL16:
+ 144:main.c        **** 
+ 338              		.loc 1 144 0
+ 339 00f6 BDE83840 		pop	{r3, r4, r5, lr}
+ 340              		.cfi_restore 14
+ 341              		.cfi_restore 5
+ 342              		.cfi_restore 4
+ 343              		.cfi_restore 3
+ 344              		.cfi_def_cfa_offset 0
+ 142:main.c        ****    
+ 345              		.loc 1 142 0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 13
+
+
+ 346 00fa FFF7FEBF 		b	isr_SS_Rise_ClearPending
+ 347              	.LVL17:
+ 348              	.L35:
+ 349 00fe 00BF     		.align	2
+ 350              	.L34:
+ 351 0100 00000000 		.word	PSOC_state
+ 352 0104 00000000 		.word	RPi_Command
+ 353 0108 00000000 		.word	read_counter
+ 354 010c 00000000 		.word	RPi_Data
+ 355 0110 00000000 		.word	enc_a_Position
+ 356 0114 00000000 		.word	enc_b_Position
+ 357 0118 00000000 		.word	enc_c_Position
+ 358 011c 00000000 		.word	i2cAddress
+ 359 0120 00000000 		.word	i2cData
+ 360 0124 00000000 		.word	pwm_a_new_command
+ 361 0128 00000000 		.word	pwm_b_new_command
+ 362              		.cfi_endproc
+ 363              	.LFE64:
+ 364              		.size	SS_Rise_Handler, .-SS_Rise_Handler
+ 365              		.section	.text.ReadEncoderValue,"ax",%progbits
+ 366              		.align	1
+ 367              		.global	ReadEncoderValue
+ 368              		.thumb
+ 369              		.thumb_func
+ 370              		.type	ReadEncoderValue, %function
+ 371              	ReadEncoderValue:
+ 372              	.LFB67:
+ 289:main.c        **** 
+ 290:main.c        **** 
+ 291:main.c        **** uint16 ReadEncoderValue(uint8 encoderNumber)
+ 292:main.c        **** {
+ 373              		.loc 1 292 0
+ 374              		.cfi_startproc
+ 375              		@ args = 0, pretend = 0, frame = 0
+ 376              		@ frame_needed = 0, uses_anonymous_args = 0
+ 377              	.LVL18:
+ 378 0000 38B5     		push	{r3, r4, r5, lr}
+ 379              		.cfi_def_cfa_offset 16
+ 380              		.cfi_offset 3, -16
+ 381              		.cfi_offset 4, -12
+ 382              		.cfi_offset 5, -8
+ 383              		.cfi_offset 14, -4
+ 293:main.c        ****     uint16 result;
+ 294:main.c        ****     uint8 ii;
+ 295:main.c        ****        
+ 296:main.c        ****       Control_Reg_SS_Write(encoderNumber);
+ 384              		.loc 1 296 0
+ 385 0002 FFF7FEFF 		bl	Control_Reg_SS_Write
+ 386              	.LVL19:
+ 297:main.c        ****       SPIM_1_ClearFIFO();
+ 387              		.loc 1 297 0
+ 388 0006 FFF7FEFF 		bl	SPIM_1_ClearFIFO
+ 389              	.LVL20:
+ 298:main.c        ****       SPIM_1_WriteTxData(0x10);       
+ 390              		.loc 1 298 0
+ 391 000a 1020     		movs	r0, #16
+ 392 000c FFF7FEFF 		bl	SPIM_1_WriteTxData
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 14
+
+
+ 393              	.LVL21:
+ 394              	.L37:
+ 299:main.c        ****       /*  wait for transmit of first data is finished  */
+ 300:main.c        ****       while(!(SPIM_1_ReadTxStatus() & SPIM_1_STS_SPI_DONE));   
+ 395              		.loc 1 300 0 discriminator 1
+ 396 0010 FFF7FEFF 		bl	SPIM_1_ReadTxStatus
+ 397              	.LVL22:
+ 398 0014 C007     		lsls	r0, r0, #31
+ 399 0016 FBD5     		bpl	.L37
+ 301:main.c        ****       CyDelayUs(20u);
+ 400              		.loc 1 301 0
+ 401 0018 1420     		movs	r0, #20
+ 402 001a FFF7FEFF 		bl	CyDelayUs
+ 403              	.LVL23:
+ 302:main.c        ****       ii=0;
+ 303:main.c        ****       while ((SPIM_1_ReadByte() != 0x10) & (ii<6)) {
+ 404              		.loc 1 303 0
+ 405 001e 0024     		movs	r4, #0
+ 406              	.LVL24:
+ 407              	.L38:
+ 408 0020 FFF7FEFF 		bl	SPIM_1_ReadRxData
+ 409              	.LVL25:
+ 410 0024 1028     		cmp	r0, #16
+ 411 0026 E5B2     		uxtb	r5, r4
+ 412              	.LVL26:
+ 413 0028 0DD0     		beq	.L46
+ 414 002a 052D     		cmp	r5, #5
+ 415 002c 0BD8     		bhi	.L46
+ 304:main.c        ****           CyDelayUs(20u);
+ 416              		.loc 1 304 0
+ 417 002e 1420     		movs	r0, #20
+ 418 0030 FFF7FEFF 		bl	CyDelayUs
+ 419              	.LVL27:
+ 305:main.c        ****           SPIM_1_WriteTxData(0x00);  
+ 420              		.loc 1 305 0
+ 421 0034 0020     		movs	r0, #0
+ 422 0036 FFF7FEFF 		bl	SPIM_1_WriteTxData
+ 423              	.LVL28:
+ 424              	.L39:
+ 306:main.c        ****           while(!(SPIM_1_ReadTxStatus() & SPIM_1_STS_SPI_DONE));
+ 425              		.loc 1 306 0 discriminator 1
+ 426 003a FFF7FEFF 		bl	SPIM_1_ReadTxStatus
+ 427              	.LVL29:
+ 428 003e C107     		lsls	r1, r0, #31
+ 429 0040 FBD5     		bpl	.L39
+ 430              	.LVL30:
+ 431 0042 0134     		adds	r4, r4, #1
+ 432              	.LVL31:
+ 433 0044 ECE7     		b	.L38
+ 434              	.LVL32:
+ 435              	.L46:
+ 307:main.c        ****           ii+=1;
+ 308:main.c        ****       }  
+ 309:main.c        ****      /*  if ii > 6  means encoder did not respond -- possibly not hooked up*/
+ 310:main.c        ****       if (ii<6) {
+ 436              		.loc 1 310 0
+ 437 0046 052D     		cmp	r5, #5
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 15
+
+
+ 438 0048 1FD8     		bhi	.L42
+ 439              	.LVL33:
+ 440              	.LBB4:
+ 441              	.LBB5:
+ 311:main.c        ****          CyDelayUs(20u);
+ 442              		.loc 1 311 0
+ 443 004a 1420     		movs	r0, #20
+ 444 004c FFF7FEFF 		bl	CyDelayUs
+ 445              	.LVL34:
+ 312:main.c        ****          SPIM_1_WriteTxData(0x00);  
+ 446              		.loc 1 312 0
+ 447 0050 0020     		movs	r0, #0
+ 448 0052 FFF7FEFF 		bl	SPIM_1_WriteTxData
+ 449              	.LVL35:
+ 450              	.L43:
+ 313:main.c        ****          while(!(SPIM_1_ReadTxStatus() & SPIM_1_STS_SPI_DONE));
+ 451              		.loc 1 313 0
+ 452 0056 FFF7FEFF 		bl	SPIM_1_ReadTxStatus
+ 453              	.LVL36:
+ 454 005a C207     		lsls	r2, r0, #31
+ 455 005c FBD5     		bpl	.L43
+ 314:main.c        ****          result = SPIM_1_ReadByte()*256;    
+ 456              		.loc 1 314 0
+ 457 005e FFF7FEFF 		bl	SPIM_1_ReadRxData
+ 458              	.LVL37:
+ 459 0062 0002     		lsls	r0, r0, #8
+ 460 0064 84B2     		uxth	r4, r0
+ 461              	.LVL38:
+ 315:main.c        ****          CyDelayUs(20u);
+ 462              		.loc 1 315 0
+ 463 0066 1420     		movs	r0, #20
+ 464 0068 FFF7FEFF 		bl	CyDelayUs
+ 465              	.LVL39:
+ 316:main.c        ****          SPIM_1_WriteTxData(0x00);  
+ 466              		.loc 1 316 0
+ 467 006c 0020     		movs	r0, #0
+ 468 006e FFF7FEFF 		bl	SPIM_1_WriteTxData
+ 469              	.LVL40:
+ 470              	.L44:
+ 317:main.c        ****          while(!(SPIM_1_ReadTxStatus() & SPIM_1_STS_SPI_DONE));
+ 471              		.loc 1 317 0
+ 472 0072 FFF7FEFF 		bl	SPIM_1_ReadTxStatus
+ 473              	.LVL41:
+ 474 0076 C307     		lsls	r3, r0, #31
+ 475 0078 FBD5     		bpl	.L44
+ 318:main.c        ****          result += SPIM_1_ReadByte();          
+ 476              		.loc 1 318 0
+ 477 007a FFF7FEFF 		bl	SPIM_1_ReadRxData
+ 478              	.LVL42:
+ 479 007e 2044     		add	r0, r0, r4
+ 480 0080 84B2     		uxth	r4, r0
+ 481              	.LVL43:
+ 319:main.c        ****          CyDelayUs(40u);
+ 482              		.loc 1 319 0
+ 483 0082 2820     		movs	r0, #40
+ 484 0084 FFF7FEFF 		bl	CyDelayUs
+ 485              	.LVL44:
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 16
+
+
+ 486 0088 04E0     		b	.L45
+ 487              	.L42:
+ 488              	.LVL45:
+ 489              	.LBE5:
+ 490              	.LBE4:
+ 320:main.c        ****       } else {
+ 321:main.c        ****          /*  note encoder word is 12 bits long.  0xF000 represents an invalid code  */
+ 322:main.c        ****          result = 0xF000;
+ 323:main.c        ****         CyDelayUs(40u);
+ 491              		.loc 1 323 0
+ 492 008a 2820     		movs	r0, #40
+ 493 008c FFF7FEFF 		bl	CyDelayUs
+ 494              	.LVL46:
+ 322:main.c        ****         CyDelayUs(40u);
+ 495              		.loc 1 322 0
+ 496 0090 4FF47044 		mov	r4, #61440
+ 497              	.LVL47:
+ 498              	.L45:
+ 324:main.c        ****       }    
+ 325:main.c        ****     return(result);
+ 326:main.c        **** }
+ 499              		.loc 1 326 0
+ 500 0094 2046     		mov	r0, r4
+ 501 0096 38BD     		pop	{r3, r4, r5, pc}
+ 502              		.cfi_endproc
+ 503              	.LFE67:
+ 504              		.size	ReadEncoderValue, .-ReadEncoderValue
+ 505              		.section	.text.startup.main,"ax",%progbits
+ 506              		.align	1
+ 507              		.global	main
+ 508              		.thumb
+ 509              		.thumb_func
+ 510              		.type	main, %function
+ 511              	main:
+ 512              	.LFB65:
+ 165:main.c        ****     RpiInterrupts_Write(3u);  // 9.25.18 - New location, trying to force the interrupts high as ear
+ 513              		.loc 1 165 0
+ 514              		.cfi_startproc
+ 515              		@ Volatile: function does not return.
+ 516              		@ args = 0, pretend = 0, frame = 0
+ 517              		@ frame_needed = 0, uses_anonymous_args = 0
+ 518 0000 80B5     		push	{r7, lr}
+ 519              		.cfi_def_cfa_offset 8
+ 520              		.cfi_offset 7, -8
+ 521              		.cfi_offset 14, -4
+ 166:main.c        ****     Comp_1_Start();
+ 522              		.loc 1 166 0
+ 523 0002 0320     		movs	r0, #3
+ 524 0004 FFF7FEFF 		bl	RpiInterrupts_Write
+ 525              	.LVL48:
+ 167:main.c        ****     CyDelay(2000u);
+ 526              		.loc 1 167 0
+ 527 0008 FFF7FEFF 		bl	Comp_1_Start
+ 528              	.LVL49:
+ 168:main.c        ****     /* Enable Battery Backup circuit and interface circuits between RPi and PSOC  */
+ 529              		.loc 1 168 0
+ 530 000c 4FF4FA60 		mov	r0, #2000
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 17
+
+
+ 531 0010 FFF7FEFF 		bl	CyDelay
+ 532              	.LVL50:
+ 170:main.c        ****     Control_Reg_SS_Write(0u);
+ 533              		.loc 1 170 0
+ 534 0014 0120     		movs	r0, #1
+ 535 0016 FFF7FEFF 		bl	EnableBattery_Write
+ 536              	.LVL51:
+ 171:main.c        ****     Control_Reg_LED_Write(0u);
+ 537              		.loc 1 171 0
+ 538 001a 0020     		movs	r0, #0
+ 539 001c FFF7FEFF 		bl	Control_Reg_SS_Write
+ 540              	.LVL52:
+ 172:main.c        ****     //RpiInterrupts_Write(3u);     // 9.25.18 - Original location, moving this to the start of this
+ 541              		.loc 1 172 0
+ 542 0020 0020     		movs	r0, #0
+ 543 0022 FFF7FEFF 		bl	Control_Reg_LED_Write
+ 544              	.LVL53:
+ 174:main.c        ****  
+ 545              		.loc 1 174 0
+ 546 0026 FFF7FEFF 		bl	Clock_1_Start
+ 547              	.LVL54:
+ 176:main.c        ****     SPIM_1_ClearFIFO();
+ 548              		.loc 1 176 0
+ 549 002a FFF7FEFF 		bl	SPIM_1_Start
+ 550              	.LVL55:
+ 177:main.c        ****     SPIM_1_ClearRxBuffer();
+ 551              		.loc 1 177 0
+ 552 002e FFF7FEFF 		bl	SPIM_1_ClearFIFO
+ 553              	.LVL56:
+ 178:main.c        ****     SPIM_1_ClearTxBuffer();   
+ 554              		.loc 1 178 0
+ 555 0032 FFF7FEFF 		bl	SPIM_1_ClearRxBuffer
+ 556              	.LVL57:
+ 179:main.c        ****     
+ 557              		.loc 1 179 0
+ 558 0036 FFF7FEFF 		bl	SPIM_1_ClearTxBuffer
+ 559              	.LVL58:
+ 181:main.c        ****     SPIM_SigGen_ClearFIFO();
+ 560              		.loc 1 181 0
+ 561 003a FFF7FEFF 		bl	SPIM_SigGen_Start
+ 562              	.LVL59:
+ 182:main.c        ****     SPIM_SigGen_ClearRxBuffer();
+ 563              		.loc 1 182 0
+ 564 003e FFF7FEFF 		bl	SPIM_SigGen_ClearFIFO
+ 565              	.LVL60:
+ 183:main.c        ****     SPIM_SigGen_ClearTxBuffer();    
+ 566              		.loc 1 183 0
+ 567 0042 FFF7FEFF 		bl	SPIM_SigGen_ClearRxBuffer
+ 568              	.LVL61:
+ 184:main.c        **** 
+ 569              		.loc 1 184 0
+ 570 0046 FFF7FEFF 		bl	SPIM_SigGen_ClearTxBuffer
+ 571              	.LVL62:
+ 186:main.c        ****     SPIS_WriteTxDataZero(0x00u);
+ 572              		.loc 1 186 0
+ 573 004a FFF7FEFF 		bl	SPIS_Start
+ 574              	.LVL63:
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 18
+
+
+ 187:main.c        ****  
+ 575              		.loc 1 187 0
+ 576 004e 0020     		movs	r0, #0
+ 577 0050 FFF7FEFF 		bl	SPIS_WriteTxDataZero
+ 578              	.LVL64:
+ 189:main.c        ****     PWM_2_Start();
+ 579              		.loc 1 189 0
+ 580 0054 FFF7FEFF 		bl	PWM_1_Start
+ 581              	.LVL65:
+ 190:main.c        ****     
+ 582              		.loc 1 190 0
+ 583 0058 FFF7FEFF 		bl	PWM_2_Start
+ 584              	.LVL66:
+ 192:main.c        ****     
+ 585              		.loc 1 192 0
+ 586 005c FFF7FEFF 		bl	I2C_1_Start
+ 587              	.LVL67:
+ 194:main.c        ****      read_counter = 0u;
+ 588              		.loc 1 194 0
+ 589 0060 384B     		ldr	r3, .L72
+ 590 0062 0025     		movs	r5, #0
+ 591 0064 1D70     		strb	r5, [r3]
+ 195:main.c        ****       
+ 592              		.loc 1 195 0
+ 593 0066 384B     		ldr	r3, .L72+4
+ 594 0068 1D70     		strb	r5, [r3]
+ 197:main.c        ****     isr_SS_Fall_StartEx(SS_Fall_Handler );
+ 595              		.loc 1 197 0
+ 596              		.syntax unified
+ 597              	@ 197 "main.c" 1
+ 598 006a 62B6     		CPSIE   i
+ 599              	@ 0 "" 2
+ 222:main.c        ****         if ((pwm_a_new_command - pwm_a_command) > 50) {
+ 600              		.loc 1 222 0
+ 601              		.thumb
+ 602              		.syntax unified
+ 603 006c DFF80481 		ldr	r8, .L72+48
+ 198:main.c        ****     isr_SS_Rise_StartEx( SS_Rise_Handler );
+ 604              		.loc 1 198 0
+ 605 0070 3648     		ldr	r0, .L72+8
+ 606 0072 4646     		mov	r6, r8
+ 607 0074 FFF7FEFF 		bl	isr_SS_Fall_StartEx
+ 608              	.LVL68:
+ 203:main.c        **** 
+ 609              		.loc 1 203 0
+ 610 0078 354C     		ldr	r4, .L72+12
+ 199:main.c        ****  
+ 611              		.loc 1 199 0
+ 612 007a 3648     		ldr	r0, .L72+16
+ 613 007c FFF7FEFF 		bl	isr_SS_Rise_StartEx
+ 614              	.LVL69:
+ 201:main.c        ****   
+ 615              		.loc 1 201 0
+ 616 0080 354B     		ldr	r3, .L72+20
+ 617 0082 0F22     		movs	r2, #15
+ 203:main.c        **** 
+ 618              		.loc 1 203 0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 19
+
+
+ 619 0084 2580     		strh	r5, [r4]	@ movhi
+ 208:main.c        ****       enc_b_Position = ReadEncoderValue(1u);        
+ 620              		.loc 1 208 0
+ 621 0086 354D     		ldr	r5, .L72+24
+ 201:main.c        ****   
+ 622              		.loc 1 201 0
+ 623 0088 1A80     		strh	r2, [r3]	@ movhi
+ 624              	.L59:
+ 208:main.c        ****       enc_b_Position = ReadEncoderValue(1u);        
+ 625              		.loc 1 208 0
+ 626 008a 0020     		movs	r0, #0
+ 627 008c FFF7FEFF 		bl	ReadEncoderValue
+ 628              	.LVL70:
+ 629 0090 2880     		strh	r0, [r5]	@ movhi
+ 209:main.c        ****       enc_c_Position = ReadEncoderValue(2u);
+ 630              		.loc 1 209 0
+ 631 0092 0120     		movs	r0, #1
+ 632 0094 FFF7FEFF 		bl	ReadEncoderValue
+ 633              	.LVL71:
+ 634 0098 314B     		ldr	r3, .L72+28
+ 635 009a 1880     		strh	r0, [r3]	@ movhi
+ 210:main.c        ****       
+ 636              		.loc 1 210 0
+ 637 009c 0220     		movs	r0, #2
+ 638 009e FFF7FEFF 		bl	ReadEncoderValue
+ 639              	.LVL72:
+ 640 00a2 304B     		ldr	r3, .L72+32
+ 641 00a4 1880     		strh	r0, [r3]	@ movhi
+ 218:main.c        **** 
+ 642              		.loc 1 218 0
+ 643 00a6 4FF4AF60 		mov	r0, #1400
+ 644 00aa FFF7FEFF 		bl	CyDelayUs
+ 645              	.LVL73:
+ 222:main.c        ****         if ((pwm_a_new_command - pwm_a_command) > 50) {
+ 646              		.loc 1 222 0
+ 647 00ae 2E4B     		ldr	r3, .L72+36
+ 648 00b0 1A88     		ldrh	r2, [r3]
+ 649 00b2 B8F80030 		ldrh	r3, [r8]
+ 650 00b6 9A42     		cmp	r2, r3
+ 651 00b8 04D9     		bls	.L60
+ 223:main.c        ****             pwm_a_command +=50;
+ 652              		.loc 1 223 0
+ 653 00ba D11A     		subs	r1, r2, r3
+ 654 00bc 3229     		cmp	r1, #50
+ 655 00be 08DD     		ble	.L63
+ 224:main.c        ****         } else {
+ 656              		.loc 1 224 0
+ 657 00c0 3233     		adds	r3, r3, #50
+ 658 00c2 03E0     		b	.L70
+ 659              	.L60:
+ 229:main.c        ****             pwm_a_command -=50;
+ 660              		.loc 1 229 0
+ 661 00c4 991A     		subs	r1, r3, r2
+ 662 00c6 3229     		cmp	r1, #50
+ 663 00c8 03DD     		ble	.L63
+ 230:main.c        ****         } else {
+ 664              		.loc 1 230 0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 20
+
+
+ 665 00ca 323B     		subs	r3, r3, #50
+ 666              	.L70:
+ 667 00cc A8F80030 		strh	r3, [r8]	@ movhi
+ 668 00d0 01E0     		b	.L62
+ 669              	.L63:
+ 232:main.c        ****         }
+ 670              		.loc 1 232 0
+ 671 00d2 A8F80020 		strh	r2, [r8]	@ movhi
+ 672              	.L62:
+ 237:main.c        ****         if ((pwm_b_new_command - pwm_b_command) > 50) {
+ 673              		.loc 1 237 0
+ 674 00d6 254B     		ldr	r3, .L72+40
+ 675 00d8 254F     		ldr	r7, .L72+44
+ 676 00da 1A88     		ldrh	r2, [r3]
+ 677 00dc 3B88     		ldrh	r3, [r7]
+ 678 00de 9A42     		cmp	r2, r3
+ 679 00e0 04D9     		bls	.L64
+ 238:main.c        ****             pwm_b_command +=50;
+ 680              		.loc 1 238 0
+ 681 00e2 D11A     		subs	r1, r2, r3
+ 682 00e4 3229     		cmp	r1, #50
+ 683 00e6 07DD     		ble	.L67
+ 239:main.c        ****         } else {
+ 684              		.loc 1 239 0
+ 685 00e8 3233     		adds	r3, r3, #50
+ 686 00ea 03E0     		b	.L71
+ 687              	.L64:
+ 244:main.c        ****             pwm_b_command -=50;
+ 688              		.loc 1 244 0
+ 689 00ec 991A     		subs	r1, r3, r2
+ 690 00ee 3229     		cmp	r1, #50
+ 691 00f0 02DD     		ble	.L67
+ 245:main.c        ****         } else {
+ 692              		.loc 1 245 0
+ 693 00f2 323B     		subs	r3, r3, #50
+ 694              	.L71:
+ 695 00f4 3B80     		strh	r3, [r7]	@ movhi
+ 696 00f6 00E0     		b	.L66
+ 697              	.L67:
+ 247:main.c        ****         }
+ 698              		.loc 1 247 0
+ 699 00f8 3A80     		strh	r2, [r7]	@ movhi
+ 700              	.L66:
+ 251:main.c        ****     PWM_2_WriteCompare(pwm_b_command);
+ 701              		.loc 1 251 0
+ 702 00fa 3088     		ldrh	r0, [r6]
+ 703 00fc FFF7FEFF 		bl	PWM_1_WriteCompare
+ 704              	.LVL74:
+ 252:main.c        ****     
+ 705              		.loc 1 252 0
+ 706 0100 3888     		ldrh	r0, [r7]
+ 707 0102 FFF7FEFF 		bl	PWM_2_WriteCompare
+ 708              	.LVL75:
+ 255:main.c        ****         shutdown_count +=1;
+ 709              		.loc 1 255 0
+ 710 0106 FFF7FEFF 		bl	Status_Reg_1_Read
+ 711              	.LVL76:
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 21
+
+
+ 712 010a 0128     		cmp	r0, #1
+ 713 010c 17D1     		bne	.L68
+ 256:main.c        **** //        if (shutdown_count == 2000u) {        //9.25.18 - The while loop executes in about 2ms to
+ 714              		.loc 1 256 0
+ 715 010e 2788     		ldrh	r7, [r4]
+ 716 0110 0137     		adds	r7, r7, #1
+ 717 0112 BFB2     		uxth	r7, r7
+ 260:main.c        ****             CyGlobalIntDisable; 
+ 718              		.loc 1 260 0
+ 719 0114 B7F5FA6F 		cmp	r7, #2000
+ 256:main.c        **** //        if (shutdown_count == 2000u) {        //9.25.18 - The while loop executes in about 2ms to
+ 720              		.loc 1 256 0
+ 721 0118 2780     		strh	r7, [r4]	@ movhi
+ 260:main.c        ****             CyGlobalIntDisable; 
+ 722              		.loc 1 260 0
+ 723 011a B6D1     		bne	.L59
+ 261:main.c        ****              Control_Reg_LED_Write(1u);
+ 724              		.loc 1 261 0
+ 725              		.syntax unified
+ 726              	@ 261 "main.c" 1
+ 727 011c 72B6     		CPSID   i
+ 728              	@ 0 "" 2
+ 262:main.c        ****             /* tell Pi to shut down */ 
+ 729              		.loc 1 262 0
+ 730              		.thumb
+ 731              		.syntax unified
+ 732 011e FFF7FEFF 		bl	Control_Reg_LED_Write
+ 733              	.LVL77:
+ 264:main.c        ****            CyDelay(20000u);
+ 734              		.loc 1 264 0
+ 735 0122 0020     		movs	r0, #0
+ 736 0124 FFF7FEFF 		bl	RpiInterrupts_Write
+ 737              	.LVL78:
+ 265:main.c        ****         /* Wait 60 seconds then turn off back up power */
+ 738              		.loc 1 265 0
+ 739 0128 44F62060 		movw	r0, #20000
+ 740 012c FFF7FEFF 		bl	CyDelay
+ 741              	.LVL79:
+ 267:main.c        ****            CyDelay(2000u);
+ 742              		.loc 1 267 0
+ 743 0130 0220     		movs	r0, #2
+ 744 0132 FFF7FEFF 		bl	EnableBattery_Write
+ 745              	.LVL80:
+ 268:main.c        ****         }
+ 746              		.loc 1 268 0
+ 747 0136 3846     		mov	r0, r7
+ 748 0138 FFF7FEFF 		bl	CyDelay
+ 749              	.LVL81:
+ 750 013c A5E7     		b	.L59
+ 751              	.L68:
+ 271:main.c        ****       }
+ 752              		.loc 1 271 0
+ 753 013e 0023     		movs	r3, #0
+ 754 0140 2380     		strh	r3, [r4]	@ movhi
+ 755 0142 A2E7     		b	.L59
+ 756              	.L73:
+ 757              		.align	2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 22
+
+
+ 758              	.L72:
+ 759 0144 00000000 		.word	PSOC_state
+ 760 0148 00000000 		.word	read_counter
+ 761 014c 00000000 		.word	SS_Fall_Handler
+ 762 0150 00000000 		.word	shutdown_count
+ 763 0154 00000000 		.word	SS_Rise_Handler
+ 764 0158 00000000 		.word	RPi_Command
+ 765 015c 00000000 		.word	enc_a_Position
+ 766 0160 00000000 		.word	enc_b_Position
+ 767 0164 00000000 		.word	enc_c_Position
+ 768 0168 00000000 		.word	pwm_a_new_command
+ 769 016c 00000000 		.word	pwm_b_new_command
+ 770 0170 00000000 		.word	pwm_b_command
+ 771 0174 00000000 		.word	pwm_a_command
+ 772              		.cfi_endproc
+ 773              	.LFE65:
+ 774              		.size	main, .-main
+ 775              		.comm	shutdown_count,2,2
+ 776              		.comm	i,1,1
+ 777              		.comm	temp2,1,1
+ 778              		.comm	temp1,1,1
+ 779              		.comm	rxBuffer,8,2
+ 780              		.comm	i2cData,1,1
+ 781              		.comm	i2cAddress,1,1
+ 782              		.comm	PSOC_state,1,1
+ 783              		.comm	read_counter,1,1
+ 784              		.comm	pwm_b_new_command,2,2
+ 785              		.comm	pwm_a_new_command,2,2
+ 786              		.comm	pwm_b_command,2,2
+ 787              		.comm	pwm_a_command,2,2
+ 788              		.comm	enc_c_Position,2,2
+ 789              		.comm	enc_b_Position,2,2
+ 790              		.comm	enc_a_Position,2,2
+ 791              		.comm	RPi_Data,2,2
+ 792              		.comm	RPi_Command,2,2
+ 793              		.text
+ 794              	.Letext0:
+ 795              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 796              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 797              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 798              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 799              		.file 6 "Generated_Source\\PSoC5/isr_SS_Fall.h"
+ 800              		.file 7 "Generated_Source\\PSoC5/SPIS.h"
+ 801              		.file 8 "Generated_Source\\PSoC5/Control_Reg_SS_SigGen.h"
+ 802              		.file 9 "Generated_Source\\PSoC5/SPIM_SigGen.h"
+ 803              		.file 10 "Generated_Source\\PSoC5/I2C_1.h"
+ 804              		.file 11 "Generated_Source\\PSoC5/isr_SS_Rise.h"
+ 805              		.file 12 "Generated_Source\\PSoC5/CyLib.h"
+ 806              		.file 13 "Generated_Source\\PSoC5/SPIM_1.h"
+ 807              		.file 14 "Generated_Source\\PSoC5/Control_Reg_SS.h"
+ 808              		.file 15 "Generated_Source\\PSoC5/RpiInterrupts.h"
+ 809              		.file 16 "Generated_Source\\PSoC5/Comp_1.h"
+ 810              		.file 17 "Generated_Source\\PSoC5/EnableBattery.h"
+ 811              		.file 18 "Generated_Source\\PSoC5/Control_Reg_LED.h"
+ 812              		.file 19 "Generated_Source\\PSoC5/Clock_1.h"
+ 813              		.file 20 "Generated_Source\\PSoC5/PWM_1.h"
+ 814              		.file 21 "Generated_Source\\PSoC5/PWM_2.h"
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 23
+
+
+ 815              		.file 22 "Generated_Source\\PSoC5/Status_Reg_1.h"
+ 816              		.section	.debug_info,"",%progbits
+ 817              	.Ldebug_info0:
+ 818 0000 6F080000 		.4byte	0x86f
+ 819 0004 0400     		.2byte	0x4
+ 820 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 821 000a 04       		.byte	0x4
+ 822 000b 01       		.uleb128 0x1
+ 823 000c B5020000 		.4byte	.LASF83
+ 824 0010 0C       		.byte	0xc
+ 825 0011 0D040000 		.4byte	.LASF84
+ 826 0015 A7040000 		.4byte	.LASF85
+ 827 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 828 001d 00000000 		.4byte	0
+ 829 0021 00000000 		.4byte	.Ldebug_line0
+ 830 0025 02       		.uleb128 0x2
+ 831 0026 01       		.byte	0x1
+ 832 0027 06       		.byte	0x6
+ 833 0028 5D020000 		.4byte	.LASF0
+ 834 002c 02       		.uleb128 0x2
+ 835 002d 01       		.byte	0x1
+ 836 002e 08       		.byte	0x8
+ 837 002f 4F020000 		.4byte	.LASF1
+ 838 0033 02       		.uleb128 0x2
+ 839 0034 02       		.byte	0x2
+ 840 0035 05       		.byte	0x5
+ 841 0036 69000000 		.4byte	.LASF2
+ 842 003a 02       		.uleb128 0x2
+ 843 003b 02       		.byte	0x2
+ 844 003c 07       		.byte	0x7
+ 845 003d 8A030000 		.4byte	.LASF3
+ 846 0041 03       		.uleb128 0x3
+ 847 0042 88040000 		.4byte	.LASF9
+ 848 0046 02       		.byte	0x2
+ 849 0047 3F       		.byte	0x3f
+ 850 0048 4C000000 		.4byte	0x4c
+ 851 004c 02       		.uleb128 0x2
+ 852 004d 04       		.byte	0x4
+ 853 004e 05       		.byte	0x5
+ 854 004f A5010000 		.4byte	.LASF4
+ 855 0053 02       		.uleb128 0x2
+ 856 0054 04       		.byte	0x4
+ 857 0055 07       		.byte	0x7
+ 858 0056 14040000 		.4byte	.LASF5
+ 859 005a 02       		.uleb128 0x2
+ 860 005b 08       		.byte	0x8
+ 861 005c 05       		.byte	0x5
+ 862 005d 83010000 		.4byte	.LASF6
+ 863 0061 02       		.uleb128 0x2
+ 864 0062 08       		.byte	0x8
+ 865 0063 07       		.byte	0x7
+ 866 0064 69020000 		.4byte	.LASF7
+ 867 0068 04       		.uleb128 0x4
+ 868 0069 04       		.byte	0x4
+ 869 006a 05       		.byte	0x5
+ 870 006b 696E7400 		.ascii	"int\000"
+ 871 006f 02       		.uleb128 0x2
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 24
+
+
+ 872 0070 04       		.byte	0x4
+ 873 0071 07       		.byte	0x7
+ 874 0072 80020000 		.4byte	.LASF8
+ 875 0076 03       		.uleb128 0x3
+ 876 0077 73030000 		.4byte	.LASF10
+ 877 007b 03       		.byte	0x3
+ 878 007c 2C       		.byte	0x2c
+ 879 007d 41000000 		.4byte	0x41
+ 880 0081 05       		.uleb128 0x5
+ 881 0082 CB030000 		.4byte	.LASF11
+ 882 0086 04       		.byte	0x4
+ 883 0087 E401     		.2byte	0x1e4
+ 884 0089 2C000000 		.4byte	0x2c
+ 885 008d 05       		.uleb128 0x5
+ 886 008e 2D010000 		.4byte	.LASF12
+ 887 0092 04       		.byte	0x4
+ 888 0093 E501     		.2byte	0x1e5
+ 889 0095 3A000000 		.4byte	0x3a
+ 890 0099 02       		.uleb128 0x2
+ 891 009a 04       		.byte	0x4
+ 892 009b 04       		.byte	0x4
+ 893 009c 63010000 		.4byte	.LASF13
+ 894 00a0 02       		.uleb128 0x2
+ 895 00a1 08       		.byte	0x8
+ 896 00a2 04       		.byte	0x4
+ 897 00a3 38040000 		.4byte	.LASF14
+ 898 00a7 02       		.uleb128 0x2
+ 899 00a8 01       		.byte	0x1
+ 900 00a9 08       		.byte	0x8
+ 901 00aa 6E030000 		.4byte	.LASF15
+ 902 00ae 02       		.uleb128 0x2
+ 903 00af 08       		.byte	0x8
+ 904 00b0 04       		.byte	0x4
+ 905 00b1 2B020000 		.4byte	.LASF16
+ 906 00b5 02       		.uleb128 0x2
+ 907 00b6 04       		.byte	0x4
+ 908 00b7 07       		.byte	0x7
+ 909 00b8 88000000 		.4byte	.LASF17
+ 910 00bc 06       		.uleb128 0x6
+ 911 00bd 3F040000 		.4byte	.LASF86
+ 912 00c1 01       		.byte	0x1
+ 913 00c2 2301     		.2byte	0x123
+ 914 00c4 8D000000 		.4byte	0x8d
+ 915 00c8 01       		.byte	0x1
+ 916 00c9 F1000000 		.4byte	0xf1
+ 917 00cd 07       		.uleb128 0x7
+ 918 00ce A7020000 		.4byte	.LASF87
+ 919 00d2 01       		.byte	0x1
+ 920 00d3 2301     		.2byte	0x123
+ 921 00d5 81000000 		.4byte	0x81
+ 922 00d9 08       		.uleb128 0x8
+ 923 00da 16000000 		.4byte	.LASF18
+ 924 00de 01       		.byte	0x1
+ 925 00df 2501     		.2byte	0x125
+ 926 00e1 8D000000 		.4byte	0x8d
+ 927 00e5 09       		.uleb128 0x9
+ 928 00e6 696900   		.ascii	"ii\000"
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 25
+
+
+ 929 00e9 01       		.byte	0x1
+ 930 00ea 2601     		.2byte	0x126
+ 931 00ec 81000000 		.4byte	0x81
+ 932 00f0 00       		.byte	0
+ 933 00f1 0A       		.uleb128 0xa
+ 934 00f2 7E050000 		.4byte	.LASF21
+ 935 00f6 01       		.byte	0x1
+ 936 00f7 3B       		.byte	0x3b
+ 937 00f8 00000000 		.4byte	.LFB63
+ 938 00fc 48000000 		.4byte	.LFE63-.LFB63
+ 939 0100 01       		.uleb128 0x1
+ 940 0101 9C       		.byte	0x9c
+ 941 0102 19010000 		.4byte	0x119
+ 942 0106 0B       		.uleb128 0xb
+ 943 0107 06000000 		.4byte	.LVL0
+ 944 010b BA060000 		.4byte	0x6ba
+ 945 010f 0C       		.uleb128 0xc
+ 946 0110 42000000 		.4byte	.LVL1
+ 947 0114 C5060000 		.4byte	0x6c5
+ 948 0118 00       		.byte	0
+ 949 0119 0D       		.uleb128 0xd
+ 950 011a 7B030000 		.4byte	.LASF23
+ 951 011e 01       		.byte	0x1
+ 952 011f 1601     		.2byte	0x116
+ 953 0121 8D000000 		.4byte	0x8d
+ 954 0125 00000000 		.4byte	.LFB66
+ 955 0129 16000000 		.4byte	.LFE66-.LFB66
+ 956 012d 01       		.uleb128 0x1
+ 957 012e 9C       		.byte	0x9c
+ 958 012f 83010000 		.4byte	0x183
+ 959 0133 0E       		.uleb128 0xe
+ 960 0134 37020000 		.4byte	.LASF19
+ 961 0138 01       		.byte	0x1
+ 962 0139 1601     		.2byte	0x116
+ 963 013b 81000000 		.4byte	0x81
+ 964 013f 00000000 		.4byte	.LLST0
+ 965 0143 0E       		.uleb128 0xe
+ 966 0144 4F030000 		.4byte	.LASF20
+ 967 0148 01       		.byte	0x1
+ 968 0149 1601     		.2byte	0x116
+ 969 014b 8D000000 		.4byte	0x8d
+ 970 014f 21000000 		.4byte	.LLST1
+ 971 0153 0F       		.uleb128 0xf
+ 972 0154 16000000 		.4byte	.LASF18
+ 973 0158 01       		.byte	0x1
+ 974 0159 1801     		.2byte	0x118
+ 975 015b 8D000000 		.4byte	0x8d
+ 976 015f 00       		.byte	0
+ 977 0160 0B       		.uleb128 0xb
+ 978 0161 08000000 		.4byte	.LVL3
+ 979 0165 D0060000 		.4byte	0x6d0
+ 980 0169 0B       		.uleb128 0xb
+ 981 016a 0C000000 		.4byte	.LVL4
+ 982 016e DB060000 		.4byte	0x6db
+ 983 0172 10       		.uleb128 0x10
+ 984 0173 12000000 		.4byte	.LVL5
+ 985 0177 E6060000 		.4byte	0x6e6
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 26
+
+
+ 986 017b 11       		.uleb128 0x11
+ 987 017c 01       		.uleb128 0x1
+ 988 017d 50       		.byte	0x50
+ 989 017e 02       		.uleb128 0x2
+ 990 017f 74       		.byte	0x74
+ 991 0180 00       		.sleb128 0
+ 992 0181 00       		.byte	0
+ 993 0182 00       		.byte	0
+ 994 0183 0A       		.uleb128 0xa
+ 995 0184 DB000000 		.4byte	.LASF22
+ 996 0188 01       		.byte	0x1
+ 997 0189 4F       		.byte	0x4f
+ 998 018a 00000000 		.4byte	.LFB64
+ 999 018e 2C010000 		.4byte	.LFE64-.LFB64
+ 1000 0192 01       		.uleb128 0x1
+ 1001 0193 9C       		.byte	0x9c
+ 1002 0194 0F020000 		.4byte	0x20f
+ 1003 0198 0B       		.uleb128 0xb
+ 1004 0199 0E000000 		.4byte	.LVL6
+ 1005 019d F1060000 		.4byte	0x6f1
+ 1006 01a1 0B       		.uleb128 0xb
+ 1007 01a2 1C000000 		.4byte	.LVL7
+ 1008 01a6 F1060000 		.4byte	0x6f1
+ 1009 01aa 0B       		.uleb128 0xb
+ 1010 01ab 3A000000 		.4byte	.LVL8
+ 1011 01af C5060000 		.4byte	0x6c5
+ 1012 01b3 0B       		.uleb128 0xb
+ 1013 01b4 42000000 		.4byte	.LVL9
+ 1014 01b8 FC060000 		.4byte	0x6fc
+ 1015 01bc 0B       		.uleb128 0xb
+ 1016 01bd 4A000000 		.4byte	.LVL10
+ 1017 01c1 FC060000 		.4byte	0x6fc
+ 1018 01c5 0B       		.uleb128 0xb
+ 1019 01c6 AC000000 		.4byte	.LVL11
+ 1020 01ca 19010000 		.4byte	0x119
+ 1021 01ce 12       		.uleb128 0x12
+ 1022 01cf C6000000 		.4byte	.LVL12
+ 1023 01d3 07070000 		.4byte	0x707
+ 1024 01d7 E1010000 		.4byte	0x1e1
+ 1025 01db 11       		.uleb128 0x11
+ 1026 01dc 01       		.uleb128 0x1
+ 1027 01dd 51       		.byte	0x51
+ 1028 01de 01       		.uleb128 0x1
+ 1029 01df 30       		.byte	0x30
+ 1030 01e0 00       		.byte	0
+ 1031 01e1 0B       		.uleb128 0xb
+ 1032 01e2 CC000000 		.4byte	.LVL13
+ 1033 01e6 12070000 		.4byte	0x712
+ 1034 01ea 0B       		.uleb128 0xb
+ 1035 01eb D0000000 		.4byte	.LVL14
+ 1036 01ef 1D070000 		.4byte	0x71d
+ 1037 01f3 0B       		.uleb128 0xb
+ 1038 01f4 F2000000 		.4byte	.LVL15
+ 1039 01f8 28070000 		.4byte	0x728
+ 1040 01fc 0B       		.uleb128 0xb
+ 1041 01fd F6000000 		.4byte	.LVL16
+ 1042 0201 33070000 		.4byte	0x733
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 27
+
+
+ 1043 0205 0C       		.uleb128 0xc
+ 1044 0206 FE000000 		.4byte	.LVL17
+ 1045 020a 3E070000 		.4byte	0x73e
+ 1046 020e 00       		.byte	0
+ 1047 020f 13       		.uleb128 0x13
+ 1048 0210 BC000000 		.4byte	0xbc
+ 1049 0214 00000000 		.4byte	.LFB67
+ 1050 0218 98000000 		.4byte	.LFE67-.LFB67
+ 1051 021c 01       		.uleb128 0x1
+ 1052 021d 9C       		.byte	0x9c
+ 1053 021e 72030000 		.4byte	0x372
+ 1054 0222 14       		.uleb128 0x14
+ 1055 0223 CD000000 		.4byte	0xcd
+ 1056 0227 42000000 		.4byte	.LLST2
+ 1057 022b 15       		.uleb128 0x15
+ 1058 022c D9000000 		.4byte	0xd9
+ 1059 0230 63000000 		.4byte	.LLST3
+ 1060 0234 15       		.uleb128 0x15
+ 1061 0235 E5000000 		.4byte	0xe5
+ 1062 0239 84000000 		.4byte	.LLST4
+ 1063 023d 16       		.uleb128 0x16
+ 1064 023e 4A000000 		.4byte	.LBB4
+ 1065 0242 40000000 		.4byte	.LBE4-.LBB4
+ 1066 0246 E8020000 		.4byte	0x2e8
+ 1067 024a 17       		.uleb128 0x17
+ 1068 024b CD000000 		.4byte	0xcd
+ 1069 024f 18       		.uleb128 0x18
+ 1070 0250 4A000000 		.4byte	.LBB5
+ 1071 0254 40000000 		.4byte	.LBE5-.LBB5
+ 1072 0258 15       		.uleb128 0x15
+ 1073 0259 D9000000 		.4byte	0xd9
+ 1074 025d C8000000 		.4byte	.LLST5
+ 1075 0261 19       		.uleb128 0x19
+ 1076 0262 E5000000 		.4byte	0xe5
+ 1077 0266 12       		.uleb128 0x12
+ 1078 0267 50000000 		.4byte	.LVL34
+ 1079 026b 49070000 		.4byte	0x749
+ 1080 026f 79020000 		.4byte	0x279
+ 1081 0273 11       		.uleb128 0x11
+ 1082 0274 01       		.uleb128 0x1
+ 1083 0275 50       		.byte	0x50
+ 1084 0276 01       		.uleb128 0x1
+ 1085 0277 44       		.byte	0x44
+ 1086 0278 00       		.byte	0
+ 1087 0279 12       		.uleb128 0x12
+ 1088 027a 56000000 		.4byte	.LVL35
+ 1089 027e 54070000 		.4byte	0x754
+ 1090 0282 8C020000 		.4byte	0x28c
+ 1091 0286 11       		.uleb128 0x11
+ 1092 0287 01       		.uleb128 0x1
+ 1093 0288 50       		.byte	0x50
+ 1094 0289 01       		.uleb128 0x1
+ 1095 028a 30       		.byte	0x30
+ 1096 028b 00       		.byte	0
+ 1097 028c 0B       		.uleb128 0xb
+ 1098 028d 5A000000 		.4byte	.LVL36
+ 1099 0291 5F070000 		.4byte	0x75f
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 28
+
+
+ 1100 0295 0B       		.uleb128 0xb
+ 1101 0296 62000000 		.4byte	.LVL37
+ 1102 029a 6A070000 		.4byte	0x76a
+ 1103 029e 12       		.uleb128 0x12
+ 1104 029f 6C000000 		.4byte	.LVL39
+ 1105 02a3 49070000 		.4byte	0x749
+ 1106 02a7 B1020000 		.4byte	0x2b1
+ 1107 02ab 11       		.uleb128 0x11
+ 1108 02ac 01       		.uleb128 0x1
+ 1109 02ad 50       		.byte	0x50
+ 1110 02ae 01       		.uleb128 0x1
+ 1111 02af 44       		.byte	0x44
+ 1112 02b0 00       		.byte	0
+ 1113 02b1 12       		.uleb128 0x12
+ 1114 02b2 72000000 		.4byte	.LVL40
+ 1115 02b6 54070000 		.4byte	0x754
+ 1116 02ba C4020000 		.4byte	0x2c4
+ 1117 02be 11       		.uleb128 0x11
+ 1118 02bf 01       		.uleb128 0x1
+ 1119 02c0 50       		.byte	0x50
+ 1120 02c1 01       		.uleb128 0x1
+ 1121 02c2 30       		.byte	0x30
+ 1122 02c3 00       		.byte	0
+ 1123 02c4 0B       		.uleb128 0xb
+ 1124 02c5 76000000 		.4byte	.LVL41
+ 1125 02c9 5F070000 		.4byte	0x75f
+ 1126 02cd 0B       		.uleb128 0xb
+ 1127 02ce 7E000000 		.4byte	.LVL42
+ 1128 02d2 6A070000 		.4byte	0x76a
+ 1129 02d6 10       		.uleb128 0x10
+ 1130 02d7 88000000 		.4byte	.LVL44
+ 1131 02db 49070000 		.4byte	0x749
+ 1132 02df 11       		.uleb128 0x11
+ 1133 02e0 01       		.uleb128 0x1
+ 1134 02e1 50       		.byte	0x50
+ 1135 02e2 02       		.uleb128 0x2
+ 1136 02e3 08       		.byte	0x8
+ 1137 02e4 28       		.byte	0x28
+ 1138 02e5 00       		.byte	0
+ 1139 02e6 00       		.byte	0
+ 1140 02e7 00       		.byte	0
+ 1141 02e8 0B       		.uleb128 0xb
+ 1142 02e9 06000000 		.4byte	.LVL19
+ 1143 02ed 75070000 		.4byte	0x775
+ 1144 02f1 0B       		.uleb128 0xb
+ 1145 02f2 0A000000 		.4byte	.LVL20
+ 1146 02f6 80070000 		.4byte	0x780
+ 1147 02fa 12       		.uleb128 0x12
+ 1148 02fb 10000000 		.4byte	.LVL21
+ 1149 02ff 54070000 		.4byte	0x754
+ 1150 0303 0D030000 		.4byte	0x30d
+ 1151 0307 11       		.uleb128 0x11
+ 1152 0308 01       		.uleb128 0x1
+ 1153 0309 50       		.byte	0x50
+ 1154 030a 01       		.uleb128 0x1
+ 1155 030b 40       		.byte	0x40
+ 1156 030c 00       		.byte	0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 29
+
+
+ 1157 030d 0B       		.uleb128 0xb
+ 1158 030e 14000000 		.4byte	.LVL22
+ 1159 0312 5F070000 		.4byte	0x75f
+ 1160 0316 12       		.uleb128 0x12
+ 1161 0317 1E000000 		.4byte	.LVL23
+ 1162 031b 49070000 		.4byte	0x749
+ 1163 031f 29030000 		.4byte	0x329
+ 1164 0323 11       		.uleb128 0x11
+ 1165 0324 01       		.uleb128 0x1
+ 1166 0325 50       		.byte	0x50
+ 1167 0326 01       		.uleb128 0x1
+ 1168 0327 44       		.byte	0x44
+ 1169 0328 00       		.byte	0
+ 1170 0329 0B       		.uleb128 0xb
+ 1171 032a 24000000 		.4byte	.LVL25
+ 1172 032e 6A070000 		.4byte	0x76a
+ 1173 0332 12       		.uleb128 0x12
+ 1174 0333 34000000 		.4byte	.LVL27
+ 1175 0337 49070000 		.4byte	0x749
+ 1176 033b 45030000 		.4byte	0x345
+ 1177 033f 11       		.uleb128 0x11
+ 1178 0340 01       		.uleb128 0x1
+ 1179 0341 50       		.byte	0x50
+ 1180 0342 01       		.uleb128 0x1
+ 1181 0343 44       		.byte	0x44
+ 1182 0344 00       		.byte	0
+ 1183 0345 12       		.uleb128 0x12
+ 1184 0346 3A000000 		.4byte	.LVL28
+ 1185 034a 54070000 		.4byte	0x754
+ 1186 034e 58030000 		.4byte	0x358
+ 1187 0352 11       		.uleb128 0x11
+ 1188 0353 01       		.uleb128 0x1
+ 1189 0354 50       		.byte	0x50
+ 1190 0355 01       		.uleb128 0x1
+ 1191 0356 30       		.byte	0x30
+ 1192 0357 00       		.byte	0
+ 1193 0358 0B       		.uleb128 0xb
+ 1194 0359 3E000000 		.4byte	.LVL29
+ 1195 035d 5F070000 		.4byte	0x75f
+ 1196 0361 10       		.uleb128 0x10
+ 1197 0362 90000000 		.4byte	.LVL46
+ 1198 0366 49070000 		.4byte	0x749
+ 1199 036a 11       		.uleb128 0x11
+ 1200 036b 01       		.uleb128 0x1
+ 1201 036c 50       		.byte	0x50
+ 1202 036d 02       		.uleb128 0x2
+ 1203 036e 08       		.byte	0x8
+ 1204 036f 28       		.byte	0x28
+ 1205 0370 00       		.byte	0
+ 1206 0371 00       		.byte	0
+ 1207 0372 1A       		.uleb128 0x1a
+ 1208 0373 00010000 		.4byte	.LASF24
+ 1209 0377 01       		.byte	0x1
+ 1210 0378 A4       		.byte	0xa4
+ 1211 0379 68000000 		.4byte	0x68
+ 1212 037d 00000000 		.4byte	.LFB65
+ 1213 0381 78010000 		.4byte	.LFE65-.LFB65
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 30
+
+
+ 1214 0385 01       		.uleb128 0x1
+ 1215 0386 9C       		.byte	0x9c
+ 1216 0387 69050000 		.4byte	0x569
+ 1217 038b 12       		.uleb128 0x12
+ 1218 038c 08000000 		.4byte	.LVL48
+ 1219 0390 8B070000 		.4byte	0x78b
+ 1220 0394 9E030000 		.4byte	0x39e
+ 1221 0398 11       		.uleb128 0x11
+ 1222 0399 01       		.uleb128 0x1
+ 1223 039a 50       		.byte	0x50
+ 1224 039b 01       		.uleb128 0x1
+ 1225 039c 33       		.byte	0x33
+ 1226 039d 00       		.byte	0
+ 1227 039e 0B       		.uleb128 0xb
+ 1228 039f 0C000000 		.4byte	.LVL49
+ 1229 03a3 96070000 		.4byte	0x796
+ 1230 03a7 12       		.uleb128 0x12
+ 1231 03a8 14000000 		.4byte	.LVL50
+ 1232 03ac A1070000 		.4byte	0x7a1
+ 1233 03b0 BC030000 		.4byte	0x3bc
+ 1234 03b4 11       		.uleb128 0x11
+ 1235 03b5 01       		.uleb128 0x1
+ 1236 03b6 50       		.byte	0x50
+ 1237 03b7 03       		.uleb128 0x3
+ 1238 03b8 0A       		.byte	0xa
+ 1239 03b9 D007     		.2byte	0x7d0
+ 1240 03bb 00       		.byte	0
+ 1241 03bc 12       		.uleb128 0x12
+ 1242 03bd 1A000000 		.4byte	.LVL51
+ 1243 03c1 AC070000 		.4byte	0x7ac
+ 1244 03c5 CF030000 		.4byte	0x3cf
+ 1245 03c9 11       		.uleb128 0x11
+ 1246 03ca 01       		.uleb128 0x1
+ 1247 03cb 50       		.byte	0x50
+ 1248 03cc 01       		.uleb128 0x1
+ 1249 03cd 31       		.byte	0x31
+ 1250 03ce 00       		.byte	0
+ 1251 03cf 12       		.uleb128 0x12
+ 1252 03d0 20000000 		.4byte	.LVL52
+ 1253 03d4 75070000 		.4byte	0x775
+ 1254 03d8 E2030000 		.4byte	0x3e2
+ 1255 03dc 11       		.uleb128 0x11
+ 1256 03dd 01       		.uleb128 0x1
+ 1257 03de 50       		.byte	0x50
+ 1258 03df 01       		.uleb128 0x1
+ 1259 03e0 30       		.byte	0x30
+ 1260 03e1 00       		.byte	0
+ 1261 03e2 12       		.uleb128 0x12
+ 1262 03e3 26000000 		.4byte	.LVL53
+ 1263 03e7 B7070000 		.4byte	0x7b7
+ 1264 03eb F5030000 		.4byte	0x3f5
+ 1265 03ef 11       		.uleb128 0x11
+ 1266 03f0 01       		.uleb128 0x1
+ 1267 03f1 50       		.byte	0x50
+ 1268 03f2 01       		.uleb128 0x1
+ 1269 03f3 30       		.byte	0x30
+ 1270 03f4 00       		.byte	0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 31
+
+
+ 1271 03f5 0B       		.uleb128 0xb
+ 1272 03f6 2A000000 		.4byte	.LVL54
+ 1273 03fa C2070000 		.4byte	0x7c2
+ 1274 03fe 0B       		.uleb128 0xb
+ 1275 03ff 2E000000 		.4byte	.LVL55
+ 1276 0403 CD070000 		.4byte	0x7cd
+ 1277 0407 0B       		.uleb128 0xb
+ 1278 0408 32000000 		.4byte	.LVL56
+ 1279 040c 80070000 		.4byte	0x780
+ 1280 0410 0B       		.uleb128 0xb
+ 1281 0411 36000000 		.4byte	.LVL57
+ 1282 0415 D8070000 		.4byte	0x7d8
+ 1283 0419 0B       		.uleb128 0xb
+ 1284 041a 3A000000 		.4byte	.LVL58
+ 1285 041e E3070000 		.4byte	0x7e3
+ 1286 0422 0B       		.uleb128 0xb
+ 1287 0423 3E000000 		.4byte	.LVL59
+ 1288 0427 EE070000 		.4byte	0x7ee
+ 1289 042b 0B       		.uleb128 0xb
+ 1290 042c 42000000 		.4byte	.LVL60
+ 1291 0430 DB060000 		.4byte	0x6db
+ 1292 0434 0B       		.uleb128 0xb
+ 1293 0435 46000000 		.4byte	.LVL61
+ 1294 0439 F9070000 		.4byte	0x7f9
+ 1295 043d 0B       		.uleb128 0xb
+ 1296 043e 4A000000 		.4byte	.LVL62
+ 1297 0442 04080000 		.4byte	0x804
+ 1298 0446 0B       		.uleb128 0xb
+ 1299 0447 4E000000 		.4byte	.LVL63
+ 1300 044b 0F080000 		.4byte	0x80f
+ 1301 044f 12       		.uleb128 0x12
+ 1302 0450 54000000 		.4byte	.LVL64
+ 1303 0454 C5060000 		.4byte	0x6c5
+ 1304 0458 62040000 		.4byte	0x462
+ 1305 045c 11       		.uleb128 0x11
+ 1306 045d 01       		.uleb128 0x1
+ 1307 045e 50       		.byte	0x50
+ 1308 045f 01       		.uleb128 0x1
+ 1309 0460 30       		.byte	0x30
+ 1310 0461 00       		.byte	0
+ 1311 0462 0B       		.uleb128 0xb
+ 1312 0463 58000000 		.4byte	.LVL65
+ 1313 0467 1A080000 		.4byte	0x81a
+ 1314 046b 0B       		.uleb128 0xb
+ 1315 046c 5C000000 		.4byte	.LVL66
+ 1316 0470 25080000 		.4byte	0x825
+ 1317 0474 0B       		.uleb128 0xb
+ 1318 0475 60000000 		.4byte	.LVL67
+ 1319 0479 30080000 		.4byte	0x830
+ 1320 047d 12       		.uleb128 0x12
+ 1321 047e 78000000 		.4byte	.LVL68
+ 1322 0482 3B080000 		.4byte	0x83b
+ 1323 0486 94040000 		.4byte	0x494
+ 1324 048a 11       		.uleb128 0x11
+ 1325 048b 01       		.uleb128 0x1
+ 1326 048c 50       		.byte	0x50
+ 1327 048d 05       		.uleb128 0x5
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 32
+
+
+ 1328 048e 03       		.byte	0x3
+ 1329 048f 00000000 		.4byte	SS_Fall_Handler
+ 1330 0493 00       		.byte	0
+ 1331 0494 12       		.uleb128 0x12
+ 1332 0495 80000000 		.4byte	.LVL69
+ 1333 0499 46080000 		.4byte	0x846
+ 1334 049d AB040000 		.4byte	0x4ab
+ 1335 04a1 11       		.uleb128 0x11
+ 1336 04a2 01       		.uleb128 0x1
+ 1337 04a3 50       		.byte	0x50
+ 1338 04a4 05       		.uleb128 0x5
+ 1339 04a5 03       		.byte	0x3
+ 1340 04a6 00000000 		.4byte	SS_Rise_Handler
+ 1341 04aa 00       		.byte	0
+ 1342 04ab 12       		.uleb128 0x12
+ 1343 04ac 90000000 		.4byte	.LVL70
+ 1344 04b0 BC000000 		.4byte	0xbc
+ 1345 04b4 BE040000 		.4byte	0x4be
+ 1346 04b8 11       		.uleb128 0x11
+ 1347 04b9 01       		.uleb128 0x1
+ 1348 04ba 50       		.byte	0x50
+ 1349 04bb 01       		.uleb128 0x1
+ 1350 04bc 30       		.byte	0x30
+ 1351 04bd 00       		.byte	0
+ 1352 04be 12       		.uleb128 0x12
+ 1353 04bf 98000000 		.4byte	.LVL71
+ 1354 04c3 BC000000 		.4byte	0xbc
+ 1355 04c7 D1040000 		.4byte	0x4d1
+ 1356 04cb 11       		.uleb128 0x11
+ 1357 04cc 01       		.uleb128 0x1
+ 1358 04cd 50       		.byte	0x50
+ 1359 04ce 01       		.uleb128 0x1
+ 1360 04cf 31       		.byte	0x31
+ 1361 04d0 00       		.byte	0
+ 1362 04d1 12       		.uleb128 0x12
+ 1363 04d2 A2000000 		.4byte	.LVL72
+ 1364 04d6 BC000000 		.4byte	0xbc
+ 1365 04da E4040000 		.4byte	0x4e4
+ 1366 04de 11       		.uleb128 0x11
+ 1367 04df 01       		.uleb128 0x1
+ 1368 04e0 50       		.byte	0x50
+ 1369 04e1 01       		.uleb128 0x1
+ 1370 04e2 32       		.byte	0x32
+ 1371 04e3 00       		.byte	0
+ 1372 04e4 12       		.uleb128 0x12
+ 1373 04e5 AE000000 		.4byte	.LVL73
+ 1374 04e9 49070000 		.4byte	0x749
+ 1375 04ed F9040000 		.4byte	0x4f9
+ 1376 04f1 11       		.uleb128 0x11
+ 1377 04f2 01       		.uleb128 0x1
+ 1378 04f3 50       		.byte	0x50
+ 1379 04f4 03       		.uleb128 0x3
+ 1380 04f5 0A       		.byte	0xa
+ 1381 04f6 7805     		.2byte	0x578
+ 1382 04f8 00       		.byte	0
+ 1383 04f9 0B       		.uleb128 0xb
+ 1384 04fa 00010000 		.4byte	.LVL74
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 33
+
+
+ 1385 04fe 51080000 		.4byte	0x851
+ 1386 0502 0B       		.uleb128 0xb
+ 1387 0503 06010000 		.4byte	.LVL75
+ 1388 0507 5C080000 		.4byte	0x85c
+ 1389 050b 0B       		.uleb128 0xb
+ 1390 050c 0A010000 		.4byte	.LVL76
+ 1391 0510 67080000 		.4byte	0x867
+ 1392 0514 0B       		.uleb128 0xb
+ 1393 0515 22010000 		.4byte	.LVL77
+ 1394 0519 B7070000 		.4byte	0x7b7
+ 1395 051d 12       		.uleb128 0x12
+ 1396 051e 28010000 		.4byte	.LVL78
+ 1397 0522 8B070000 		.4byte	0x78b
+ 1398 0526 30050000 		.4byte	0x530
+ 1399 052a 11       		.uleb128 0x11
+ 1400 052b 01       		.uleb128 0x1
+ 1401 052c 50       		.byte	0x50
+ 1402 052d 01       		.uleb128 0x1
+ 1403 052e 30       		.byte	0x30
+ 1404 052f 00       		.byte	0
+ 1405 0530 12       		.uleb128 0x12
+ 1406 0531 30010000 		.4byte	.LVL79
+ 1407 0535 A1070000 		.4byte	0x7a1
+ 1408 0539 45050000 		.4byte	0x545
+ 1409 053d 11       		.uleb128 0x11
+ 1410 053e 01       		.uleb128 0x1
+ 1411 053f 50       		.byte	0x50
+ 1412 0540 03       		.uleb128 0x3
+ 1413 0541 0A       		.byte	0xa
+ 1414 0542 204E     		.2byte	0x4e20
+ 1415 0544 00       		.byte	0
+ 1416 0545 12       		.uleb128 0x12
+ 1417 0546 36010000 		.4byte	.LVL80
+ 1418 054a AC070000 		.4byte	0x7ac
+ 1419 054e 58050000 		.4byte	0x558
+ 1420 0552 11       		.uleb128 0x11
+ 1421 0553 01       		.uleb128 0x1
+ 1422 0554 50       		.byte	0x50
+ 1423 0555 01       		.uleb128 0x1
+ 1424 0556 32       		.byte	0x32
+ 1425 0557 00       		.byte	0
+ 1426 0558 10       		.uleb128 0x10
+ 1427 0559 3C010000 		.4byte	.LVL81
+ 1428 055d A1070000 		.4byte	0x7a1
+ 1429 0561 11       		.uleb128 0x11
+ 1430 0562 01       		.uleb128 0x1
+ 1431 0563 50       		.byte	0x50
+ 1432 0564 02       		.uleb128 0x2
+ 1433 0565 77       		.byte	0x77
+ 1434 0566 00       		.sleb128 0
+ 1435 0567 00       		.byte	0
+ 1436 0568 00       		.byte	0
+ 1437 0569 1B       		.uleb128 0x1b
+ 1438 056a 69050000 		.4byte	.LASF25
+ 1439 056e 05       		.byte	0x5
+ 1440 056f 1207     		.2byte	0x712
+ 1441 0571 75050000 		.4byte	0x575
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 34
+
+
+ 1442 0575 1C       		.uleb128 0x1c
+ 1443 0576 76000000 		.4byte	0x76
+ 1444 057a 1D       		.uleb128 0x1d
+ 1445 057b AE010000 		.4byte	.LASF26
+ 1446 057f 01       		.byte	0x1
+ 1447 0580 23       		.byte	0x23
+ 1448 0581 8D000000 		.4byte	0x8d
+ 1449 0585 05       		.uleb128 0x5
+ 1450 0586 03       		.byte	0x3
+ 1451 0587 00000000 		.4byte	RPi_Command
+ 1452 058b 1D       		.uleb128 0x1d
+ 1453 058c 7A010000 		.4byte	.LASF27
+ 1454 0590 01       		.byte	0x1
+ 1455 0591 24       		.byte	0x24
+ 1456 0592 8D000000 		.4byte	0x8d
+ 1457 0596 05       		.uleb128 0x5
+ 1458 0597 03       		.byte	0x3
+ 1459 0598 00000000 		.4byte	RPi_Data
+ 1460 059c 1D       		.uleb128 0x1d
+ 1461 059d 1C020000 		.4byte	.LASF28
+ 1462 05a1 01       		.byte	0x1
+ 1463 05a2 25       		.byte	0x25
+ 1464 05a3 8D000000 		.4byte	0x8d
+ 1465 05a7 05       		.uleb128 0x5
+ 1466 05a8 03       		.byte	0x3
+ 1467 05a9 00000000 		.4byte	enc_a_Position
+ 1468 05ad 1D       		.uleb128 0x1d
+ 1469 05ae E8010000 		.4byte	.LASF29
+ 1470 05b2 01       		.byte	0x1
+ 1471 05b3 26       		.byte	0x26
+ 1472 05b4 8D000000 		.4byte	0x8d
+ 1473 05b8 05       		.uleb128 0x5
+ 1474 05b9 03       		.byte	0x3
+ 1475 05ba 00000000 		.4byte	enc_b_Position
+ 1476 05be 1D       		.uleb128 0x1d
+ 1477 05bf BA050000 		.4byte	.LASF30
+ 1478 05c3 01       		.byte	0x1
+ 1479 05c4 27       		.byte	0x27
+ 1480 05c5 8D000000 		.4byte	0x8d
+ 1481 05c9 05       		.uleb128 0x5
+ 1482 05ca 03       		.byte	0x3
+ 1483 05cb 00000000 		.4byte	enc_c_Position
+ 1484 05cf 1D       		.uleb128 0x1d
+ 1485 05d0 50040000 		.4byte	.LASF31
+ 1486 05d4 01       		.byte	0x1
+ 1487 05d5 28       		.byte	0x28
+ 1488 05d6 8D000000 		.4byte	0x8d
+ 1489 05da 05       		.uleb128 0x5
+ 1490 05db 03       		.byte	0x3
+ 1491 05dc 00000000 		.4byte	pwm_a_command
+ 1492 05e0 1D       		.uleb128 0x1d
+ 1493 05e1 FF040000 		.4byte	.LASF32
+ 1494 05e5 01       		.byte	0x1
+ 1495 05e6 29       		.byte	0x29
+ 1496 05e7 8D000000 		.4byte	0x8d
+ 1497 05eb 05       		.uleb128 0x5
+ 1498 05ec 03       		.byte	0x3
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 35
+
+
+ 1499 05ed 00000000 		.4byte	pwm_b_command
+ 1500 05f1 1D       		.uleb128 0x1d
+ 1501 05f2 1B010000 		.4byte	.LASF33
+ 1502 05f6 01       		.byte	0x1
+ 1503 05f7 2A       		.byte	0x2a
+ 1504 05f8 8D000000 		.4byte	0x8d
+ 1505 05fc 05       		.uleb128 0x5
+ 1506 05fd 03       		.byte	0x3
+ 1507 05fe 00000000 		.4byte	pwm_a_new_command
+ 1508 0602 1D       		.uleb128 0x1d
+ 1509 0603 0A020000 		.4byte	.LASF34
+ 1510 0607 01       		.byte	0x1
+ 1511 0608 2B       		.byte	0x2b
+ 1512 0609 8D000000 		.4byte	0x8d
+ 1513 060d 05       		.uleb128 0x5
+ 1514 060e 03       		.byte	0x3
+ 1515 060f 00000000 		.4byte	pwm_b_new_command
+ 1516 0613 1D       		.uleb128 0x1d
+ 1517 0614 73000000 		.4byte	.LASF35
+ 1518 0618 01       		.byte	0x1
+ 1519 0619 36       		.byte	0x36
+ 1520 061a 81000000 		.4byte	0x81
+ 1521 061e 05       		.uleb128 0x5
+ 1522 061f 03       		.byte	0x3
+ 1523 0620 00000000 		.4byte	read_counter
+ 1524 0624 1D       		.uleb128 0x1d
+ 1525 0625 34010000 		.4byte	.LASF36
+ 1526 0629 01       		.byte	0x1
+ 1527 062a 37       		.byte	0x37
+ 1528 062b 81000000 		.4byte	0x81
+ 1529 062f 05       		.uleb128 0x5
+ 1530 0630 03       		.byte	0x3
+ 1531 0631 00000000 		.4byte	PSOC_state
+ 1532 0635 1D       		.uleb128 0x1d
+ 1533 0636 CC010000 		.4byte	.LASF37
+ 1534 063a 01       		.byte	0x1
+ 1535 063b 38       		.byte	0x38
+ 1536 063c 81000000 		.4byte	0x81
+ 1537 0640 05       		.uleb128 0x5
+ 1538 0641 03       		.byte	0x3
+ 1539 0642 00000000 		.4byte	i2cAddress
+ 1540 0646 1D       		.uleb128 0x1d
+ 1541 0647 80000000 		.4byte	.LASF38
+ 1542 064b 01       		.byte	0x1
+ 1543 064c 39       		.byte	0x39
+ 1544 064d 81000000 		.4byte	0x81
+ 1545 0651 05       		.uleb128 0x5
+ 1546 0652 03       		.byte	0x3
+ 1547 0653 00000000 		.4byte	i2cData
+ 1548 0657 1E       		.uleb128 0x1e
+ 1549 0658 8D000000 		.4byte	0x8d
+ 1550 065c 67060000 		.4byte	0x667
+ 1551 0660 1F       		.uleb128 0x1f
+ 1552 0661 B5000000 		.4byte	0xb5
+ 1553 0665 03       		.byte	0x3
+ 1554 0666 00       		.byte	0
+ 1555 0667 1D       		.uleb128 0x1d
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 36
+
+
+ 1556 0668 60000000 		.4byte	.LASF39
+ 1557 066c 01       		.byte	0x1
+ 1558 066d 97       		.byte	0x97
+ 1559 066e 57060000 		.4byte	0x657
+ 1560 0672 05       		.uleb128 0x5
+ 1561 0673 03       		.byte	0x3
+ 1562 0674 00000000 		.4byte	rxBuffer
+ 1563 0678 1D       		.uleb128 0x1d
+ 1564 0679 1D050000 		.4byte	.LASF40
+ 1565 067d 01       		.byte	0x1
+ 1566 067e 99       		.byte	0x99
+ 1567 067f 81000000 		.4byte	0x81
+ 1568 0683 05       		.uleb128 0x5
+ 1569 0684 03       		.byte	0x3
+ 1570 0685 00000000 		.4byte	temp1
+ 1571 0689 1D       		.uleb128 0x1d
+ 1572 068a 3F010000 		.4byte	.LASF41
+ 1573 068e 01       		.byte	0x1
+ 1574 068f 9A       		.byte	0x9a
+ 1575 0690 81000000 		.4byte	0x81
+ 1576 0694 05       		.uleb128 0x5
+ 1577 0695 03       		.byte	0x3
+ 1578 0696 00000000 		.4byte	temp2
+ 1579 069a 20       		.uleb128 0x20
+ 1580 069b 6900     		.ascii	"i\000"
+ 1581 069d 01       		.byte	0x1
+ 1582 069e 9D       		.byte	0x9d
+ 1583 069f 81000000 		.4byte	0x81
+ 1584 06a3 05       		.uleb128 0x5
+ 1585 06a4 03       		.byte	0x3
+ 1586 06a5 00000000 		.4byte	i
+ 1587 06a9 1D       		.uleb128 0x1d
+ 1588 06aa FE030000 		.4byte	.LASF42
+ 1589 06ae 01       		.byte	0x1
+ 1590 06af 9E       		.byte	0x9e
+ 1591 06b0 8D000000 		.4byte	0x8d
+ 1592 06b4 05       		.uleb128 0x5
+ 1593 06b5 03       		.byte	0x3
+ 1594 06b6 00000000 		.4byte	shutdown_count
+ 1595 06ba 21       		.uleb128 0x21
+ 1596 06bb 8E050000 		.4byte	.LASF43
+ 1597 06bf 8E050000 		.4byte	.LASF43
+ 1598 06c3 06       		.byte	0x6
+ 1599 06c4 28       		.byte	0x28
+ 1600 06c5 21       		.uleb128 0x21
+ 1601 06c6 3F000000 		.4byte	.LASF44
+ 1602 06ca 3F000000 		.4byte	.LASF44
+ 1603 06ce 07       		.byte	0x7
+ 1604 06cf 53       		.byte	0x53
+ 1605 06d0 21       		.uleb128 0x21
+ 1606 06d1 AF030000 		.4byte	.LASF45
+ 1607 06d5 AF030000 		.4byte	.LASF45
+ 1608 06d9 08       		.byte	0x8
+ 1609 06da 2F       		.byte	0x2f
+ 1610 06db 21       		.uleb128 0x21
+ 1611 06dc C9050000 		.4byte	.LASF46
+ 1612 06e0 C9050000 		.4byte	.LASF46
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 37
+
+
+ 1613 06e4 09       		.byte	0x9
+ 1614 06e5 66       		.byte	0x66
+ 1615 06e6 21       		.uleb128 0x21
+ 1616 06e7 E7040000 		.4byte	.LASF47
+ 1617 06eb E7040000 		.4byte	.LASF47
+ 1618 06ef 09       		.byte	0x9
+ 1619 06f0 5E       		.byte	0x5e
+ 1620 06f1 21       		.uleb128 0x21
+ 1621 06f2 0D050000 		.4byte	.LASF48
+ 1622 06f6 0D050000 		.4byte	.LASF48
+ 1623 06fa 07       		.byte	0x7
+ 1624 06fb 57       		.byte	0x57
+ 1625 06fc 21       		.uleb128 0x21
+ 1626 06fd 69010000 		.4byte	.LASF49
+ 1627 0701 69010000 		.4byte	.LASF49
+ 1628 0705 07       		.byte	0x7
+ 1629 0706 50       		.byte	0x50
+ 1630 0707 21       		.uleb128 0x21
+ 1631 0708 72040000 		.4byte	.LASF50
+ 1632 070c 72040000 		.4byte	.LASF50
+ 1633 0710 0A       		.byte	0xa
+ 1634 0711 B1       		.byte	0xb1
+ 1635 0712 21       		.uleb128 0x21
+ 1636 0713 05010000 		.4byte	.LASF51
+ 1637 0717 05010000 		.4byte	.LASF51
+ 1638 071b 0A       		.byte	0xa
+ 1639 071c B6       		.byte	0xb6
+ 1640 071d 21       		.uleb128 0x21
+ 1641 071e EB000000 		.4byte	.LASF52
+ 1642 0722 EB000000 		.4byte	.LASF52
+ 1643 0726 0A       		.byte	0xa
+ 1644 0727 B5       		.byte	0xb5
+ 1645 0728 21       		.uleb128 0x21
+ 1646 0729 26040000 		.4byte	.LASF53
+ 1647 072d 26040000 		.4byte	.LASF53
+ 1648 0731 07       		.byte	0x7
+ 1649 0732 4F       		.byte	0x4f
+ 1650 0733 21       		.uleb128 0x21
+ 1651 0734 A7050000 		.4byte	.LASF54
+ 1652 0738 A7050000 		.4byte	.LASF54
+ 1653 073c 07       		.byte	0x7
+ 1654 073d 5A       		.byte	0x5a
+ 1655 073e 21       		.uleb128 0x21
+ 1656 073f D1030000 		.4byte	.LASF55
+ 1657 0743 D1030000 		.4byte	.LASF55
+ 1658 0747 0B       		.byte	0xb
+ 1659 0748 28       		.byte	0x28
+ 1660 0749 21       		.uleb128 0x21
+ 1661 074a 45020000 		.4byte	.LASF56
+ 1662 074e 45020000 		.4byte	.LASF56
+ 1663 0752 0C       		.byte	0xc
+ 1664 0753 77       		.byte	0x77
+ 1665 0754 21       		.uleb128 0x21
+ 1666 0755 F7010000 		.4byte	.LASF57
+ 1667 0759 F7010000 		.4byte	.LASF57
+ 1668 075d 0D       		.byte	0xd
+ 1669 075e 5E       		.byte	0x5e
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 38
+
+
+ 1670 075f 21       		.uleb128 0x21
+ 1671 0760 BB000000 		.4byte	.LASF58
+ 1672 0764 BB000000 		.4byte	.LASF58
+ 1673 0768 0D       		.byte	0xd
+ 1674 0769 5C       		.byte	0x5c
+ 1675 076a 21       		.uleb128 0x21
+ 1676 076b 9D030000 		.4byte	.LASF59
+ 1677 076f 9D030000 		.4byte	.LASF59
+ 1678 0773 0D       		.byte	0xd
+ 1679 0774 60       		.byte	0x60
+ 1680 0775 21       		.uleb128 0x21
+ 1681 0776 92040000 		.4byte	.LASF60
+ 1682 077a 92040000 		.4byte	.LASF60
+ 1683 077e 0E       		.byte	0xe
+ 1684 077f 2F       		.byte	0x2f
+ 1685 0780 21       		.uleb128 0x21
+ 1686 0781 D7010000 		.4byte	.LASF61
+ 1687 0785 D7010000 		.4byte	.LASF61
+ 1688 0789 0D       		.byte	0xd
+ 1689 078a 66       		.byte	0x66
+ 1690 078b 21       		.uleb128 0x21
+ 1691 078c 5E040000 		.4byte	.LASF62
+ 1692 0790 5E040000 		.4byte	.LASF62
+ 1693 0794 0F       		.byte	0xf
+ 1694 0795 2F       		.byte	0x2f
+ 1695 0796 21       		.uleb128 0x21
+ 1696 0797 3D050000 		.4byte	.LASF63
+ 1697 079b 3D050000 		.4byte	.LASF63
+ 1698 079f 10       		.byte	0x10
+ 1699 07a0 3F       		.byte	0x3f
+ 1700 07a1 21       		.uleb128 0x21
+ 1701 07a2 76050000 		.4byte	.LASF64
+ 1702 07a6 76050000 		.4byte	.LASF64
+ 1703 07aa 0C       		.byte	0xc
+ 1704 07ab 76       		.byte	0x76
+ 1705 07ac 21       		.uleb128 0x21
+ 1706 07ad EA030000 		.4byte	.LASF65
+ 1707 07b1 EA030000 		.4byte	.LASF65
+ 1708 07b5 11       		.byte	0x11
+ 1709 07b6 2F       		.byte	0x2f
+ 1710 07b7 21       		.uleb128 0x21
+ 1711 07b8 00000000 		.4byte	.LASF66
+ 1712 07bc 00000000 		.4byte	.LASF66
+ 1713 07c0 12       		.byte	0x12
+ 1714 07c1 2F       		.byte	0x2f
+ 1715 07c2 21       		.uleb128 0x21
+ 1716 07c3 1D000000 		.4byte	.LASF67
+ 1717 07c7 1D000000 		.4byte	.LASF67
+ 1718 07cb 13       		.byte	0x13
+ 1719 07cc 27       		.byte	0x27
+ 1720 07cd 21       		.uleb128 0x21
+ 1721 07ce 4A050000 		.4byte	.LASF68
+ 1722 07d2 4A050000 		.4byte	.LASF68
+ 1723 07d6 0D       		.byte	0xd
+ 1724 07d7 4D       		.byte	0x4d
+ 1725 07d8 21       		.uleb128 0x21
+ 1726 07d9 A6000000 		.4byte	.LASF69
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 39
+
+
+ 1727 07dd A6000000 		.4byte	.LASF69
+ 1728 07e1 0D       		.byte	0xd
+ 1729 07e2 64       		.byte	0x64
+ 1730 07e3 21       		.uleb128 0x21
+ 1731 07e4 91000000 		.4byte	.LASF70
+ 1732 07e8 91000000 		.4byte	.LASF70
+ 1733 07ec 0D       		.byte	0xd
+ 1734 07ed 65       		.byte	0x65
+ 1735 07ee 21       		.uleb128 0x21
+ 1736 07ef 57050000 		.4byte	.LASF71
+ 1737 07f3 57050000 		.4byte	.LASF71
+ 1738 07f7 09       		.byte	0x9
+ 1739 07f8 4D       		.byte	0x4d
+ 1740 07f9 21       		.uleb128 0x21
+ 1741 07fa 23050000 		.4byte	.LASF72
+ 1742 07fe 23050000 		.4byte	.LASF72
+ 1743 0802 09       		.byte	0x9
+ 1744 0803 64       		.byte	0x64
+ 1745 0804 21       		.uleb128 0x21
+ 1746 0805 8D020000 		.4byte	.LASF73
+ 1747 0809 8D020000 		.4byte	.LASF73
+ 1748 080d 09       		.byte	0x9
+ 1749 080e 65       		.byte	0x65
+ 1750 080f 21       		.uleb128 0x21
+ 1751 0810 45010000 		.4byte	.LASF74
+ 1752 0814 45010000 		.4byte	.LASF74
+ 1753 0818 07       		.byte	0x7
+ 1754 0819 46       		.byte	0x46
+ 1755 081a 21       		.uleb128 0x21
+ 1756 081b 54000000 		.4byte	.LASF75
+ 1757 081f 54000000 		.4byte	.LASF75
+ 1758 0823 14       		.byte	0x14
+ 1759 0824 92       		.byte	0x92
+ 1760 0825 21       		.uleb128 0x21
+ 1761 0826 43030000 		.4byte	.LASF76
+ 1762 082a 43030000 		.4byte	.LASF76
+ 1763 082e 15       		.byte	0x15
+ 1764 082f 92       		.byte	0x92
+ 1765 0830 21       		.uleb128 0x21
+ 1766 0831 CF000000 		.4byte	.LASF77
+ 1767 0835 CF000000 		.4byte	.LASF77
+ 1768 0839 0A       		.byte	0xa
+ 1769 083a 93       		.byte	0x93
+ 1770 083b 21       		.uleb128 0x21
+ 1771 083c 91010000 		.4byte	.LASF78
+ 1772 0840 91010000 		.4byte	.LASF78
+ 1773 0844 06       		.byte	0x6
+ 1774 0845 18       		.byte	0x18
+ 1775 0846 21       		.uleb128 0x21
+ 1776 0847 2B000000 		.4byte	.LASF79
+ 1777 084b 2B000000 		.4byte	.LASF79
+ 1778 084f 0B       		.byte	0xb
+ 1779 0850 18       		.byte	0x18
+ 1780 0851 21       		.uleb128 0x21
+ 1781 0852 5B030000 		.4byte	.LASF80
+ 1782 0856 5B030000 		.4byte	.LASF80
+ 1783 085a 14       		.byte	0x14
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 40
+
+
+ 1784 085b C3       		.byte	0xc3
+ 1785 085c 21       		.uleb128 0x21
+ 1786 085d 50010000 		.4byte	.LASF81
+ 1787 0861 50010000 		.4byte	.LASF81
+ 1788 0865 15       		.byte	0x15
+ 1789 0866 C3       		.byte	0xc3
+ 1790 0867 21       		.uleb128 0x21
+ 1791 0868 BA010000 		.4byte	.LASF82
+ 1792 086c BA010000 		.4byte	.LASF82
+ 1793 0870 16       		.byte	0x16
+ 1794 0871 30       		.byte	0x30
+ 1795 0872 00       		.byte	0
+ 1796              		.section	.debug_abbrev,"",%progbits
+ 1797              	.Ldebug_abbrev0:
+ 1798 0000 01       		.uleb128 0x1
+ 1799 0001 11       		.uleb128 0x11
+ 1800 0002 01       		.byte	0x1
+ 1801 0003 25       		.uleb128 0x25
+ 1802 0004 0E       		.uleb128 0xe
+ 1803 0005 13       		.uleb128 0x13
+ 1804 0006 0B       		.uleb128 0xb
+ 1805 0007 03       		.uleb128 0x3
+ 1806 0008 0E       		.uleb128 0xe
+ 1807 0009 1B       		.uleb128 0x1b
+ 1808 000a 0E       		.uleb128 0xe
+ 1809 000b 55       		.uleb128 0x55
+ 1810 000c 17       		.uleb128 0x17
+ 1811 000d 11       		.uleb128 0x11
+ 1812 000e 01       		.uleb128 0x1
+ 1813 000f 10       		.uleb128 0x10
+ 1814 0010 17       		.uleb128 0x17
+ 1815 0011 00       		.byte	0
+ 1816 0012 00       		.byte	0
+ 1817 0013 02       		.uleb128 0x2
+ 1818 0014 24       		.uleb128 0x24
+ 1819 0015 00       		.byte	0
+ 1820 0016 0B       		.uleb128 0xb
+ 1821 0017 0B       		.uleb128 0xb
+ 1822 0018 3E       		.uleb128 0x3e
+ 1823 0019 0B       		.uleb128 0xb
+ 1824 001a 03       		.uleb128 0x3
+ 1825 001b 0E       		.uleb128 0xe
+ 1826 001c 00       		.byte	0
+ 1827 001d 00       		.byte	0
+ 1828 001e 03       		.uleb128 0x3
+ 1829 001f 16       		.uleb128 0x16
+ 1830 0020 00       		.byte	0
+ 1831 0021 03       		.uleb128 0x3
+ 1832 0022 0E       		.uleb128 0xe
+ 1833 0023 3A       		.uleb128 0x3a
+ 1834 0024 0B       		.uleb128 0xb
+ 1835 0025 3B       		.uleb128 0x3b
+ 1836 0026 0B       		.uleb128 0xb
+ 1837 0027 49       		.uleb128 0x49
+ 1838 0028 13       		.uleb128 0x13
+ 1839 0029 00       		.byte	0
+ 1840 002a 00       		.byte	0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 41
+
+
+ 1841 002b 04       		.uleb128 0x4
+ 1842 002c 24       		.uleb128 0x24
+ 1843 002d 00       		.byte	0
+ 1844 002e 0B       		.uleb128 0xb
+ 1845 002f 0B       		.uleb128 0xb
+ 1846 0030 3E       		.uleb128 0x3e
+ 1847 0031 0B       		.uleb128 0xb
+ 1848 0032 03       		.uleb128 0x3
+ 1849 0033 08       		.uleb128 0x8
+ 1850 0034 00       		.byte	0
+ 1851 0035 00       		.byte	0
+ 1852 0036 05       		.uleb128 0x5
+ 1853 0037 16       		.uleb128 0x16
+ 1854 0038 00       		.byte	0
+ 1855 0039 03       		.uleb128 0x3
+ 1856 003a 0E       		.uleb128 0xe
+ 1857 003b 3A       		.uleb128 0x3a
+ 1858 003c 0B       		.uleb128 0xb
+ 1859 003d 3B       		.uleb128 0x3b
+ 1860 003e 05       		.uleb128 0x5
+ 1861 003f 49       		.uleb128 0x49
+ 1862 0040 13       		.uleb128 0x13
+ 1863 0041 00       		.byte	0
+ 1864 0042 00       		.byte	0
+ 1865 0043 06       		.uleb128 0x6
+ 1866 0044 2E       		.uleb128 0x2e
+ 1867 0045 01       		.byte	0x1
+ 1868 0046 3F       		.uleb128 0x3f
+ 1869 0047 19       		.uleb128 0x19
+ 1870 0048 03       		.uleb128 0x3
+ 1871 0049 0E       		.uleb128 0xe
+ 1872 004a 3A       		.uleb128 0x3a
+ 1873 004b 0B       		.uleb128 0xb
+ 1874 004c 3B       		.uleb128 0x3b
+ 1875 004d 05       		.uleb128 0x5
+ 1876 004e 27       		.uleb128 0x27
+ 1877 004f 19       		.uleb128 0x19
+ 1878 0050 49       		.uleb128 0x49
+ 1879 0051 13       		.uleb128 0x13
+ 1880 0052 20       		.uleb128 0x20
+ 1881 0053 0B       		.uleb128 0xb
+ 1882 0054 01       		.uleb128 0x1
+ 1883 0055 13       		.uleb128 0x13
+ 1884 0056 00       		.byte	0
+ 1885 0057 00       		.byte	0
+ 1886 0058 07       		.uleb128 0x7
+ 1887 0059 05       		.uleb128 0x5
+ 1888 005a 00       		.byte	0
+ 1889 005b 03       		.uleb128 0x3
+ 1890 005c 0E       		.uleb128 0xe
+ 1891 005d 3A       		.uleb128 0x3a
+ 1892 005e 0B       		.uleb128 0xb
+ 1893 005f 3B       		.uleb128 0x3b
+ 1894 0060 05       		.uleb128 0x5
+ 1895 0061 49       		.uleb128 0x49
+ 1896 0062 13       		.uleb128 0x13
+ 1897 0063 00       		.byte	0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 42
+
+
+ 1898 0064 00       		.byte	0
+ 1899 0065 08       		.uleb128 0x8
+ 1900 0066 34       		.uleb128 0x34
+ 1901 0067 00       		.byte	0
+ 1902 0068 03       		.uleb128 0x3
+ 1903 0069 0E       		.uleb128 0xe
+ 1904 006a 3A       		.uleb128 0x3a
+ 1905 006b 0B       		.uleb128 0xb
+ 1906 006c 3B       		.uleb128 0x3b
+ 1907 006d 05       		.uleb128 0x5
+ 1908 006e 49       		.uleb128 0x49
+ 1909 006f 13       		.uleb128 0x13
+ 1910 0070 00       		.byte	0
+ 1911 0071 00       		.byte	0
+ 1912 0072 09       		.uleb128 0x9
+ 1913 0073 34       		.uleb128 0x34
+ 1914 0074 00       		.byte	0
+ 1915 0075 03       		.uleb128 0x3
+ 1916 0076 08       		.uleb128 0x8
+ 1917 0077 3A       		.uleb128 0x3a
+ 1918 0078 0B       		.uleb128 0xb
+ 1919 0079 3B       		.uleb128 0x3b
+ 1920 007a 05       		.uleb128 0x5
+ 1921 007b 49       		.uleb128 0x49
+ 1922 007c 13       		.uleb128 0x13
+ 1923 007d 00       		.byte	0
+ 1924 007e 00       		.byte	0
+ 1925 007f 0A       		.uleb128 0xa
+ 1926 0080 2E       		.uleb128 0x2e
+ 1927 0081 01       		.byte	0x1
+ 1928 0082 3F       		.uleb128 0x3f
+ 1929 0083 19       		.uleb128 0x19
+ 1930 0084 03       		.uleb128 0x3
+ 1931 0085 0E       		.uleb128 0xe
+ 1932 0086 3A       		.uleb128 0x3a
+ 1933 0087 0B       		.uleb128 0xb
+ 1934 0088 3B       		.uleb128 0x3b
+ 1935 0089 0B       		.uleb128 0xb
+ 1936 008a 27       		.uleb128 0x27
+ 1937 008b 19       		.uleb128 0x19
+ 1938 008c 11       		.uleb128 0x11
+ 1939 008d 01       		.uleb128 0x1
+ 1940 008e 12       		.uleb128 0x12
+ 1941 008f 06       		.uleb128 0x6
+ 1942 0090 40       		.uleb128 0x40
+ 1943 0091 18       		.uleb128 0x18
+ 1944 0092 9742     		.uleb128 0x2117
+ 1945 0094 19       		.uleb128 0x19
+ 1946 0095 01       		.uleb128 0x1
+ 1947 0096 13       		.uleb128 0x13
+ 1948 0097 00       		.byte	0
+ 1949 0098 00       		.byte	0
+ 1950 0099 0B       		.uleb128 0xb
+ 1951 009a 898201   		.uleb128 0x4109
+ 1952 009d 00       		.byte	0
+ 1953 009e 11       		.uleb128 0x11
+ 1954 009f 01       		.uleb128 0x1
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 43
+
+
+ 1955 00a0 31       		.uleb128 0x31
+ 1956 00a1 13       		.uleb128 0x13
+ 1957 00a2 00       		.byte	0
+ 1958 00a3 00       		.byte	0
+ 1959 00a4 0C       		.uleb128 0xc
+ 1960 00a5 898201   		.uleb128 0x4109
+ 1961 00a8 00       		.byte	0
+ 1962 00a9 11       		.uleb128 0x11
+ 1963 00aa 01       		.uleb128 0x1
+ 1964 00ab 9542     		.uleb128 0x2115
+ 1965 00ad 19       		.uleb128 0x19
+ 1966 00ae 31       		.uleb128 0x31
+ 1967 00af 13       		.uleb128 0x13
+ 1968 00b0 00       		.byte	0
+ 1969 00b1 00       		.byte	0
+ 1970 00b2 0D       		.uleb128 0xd
+ 1971 00b3 2E       		.uleb128 0x2e
+ 1972 00b4 01       		.byte	0x1
+ 1973 00b5 3F       		.uleb128 0x3f
+ 1974 00b6 19       		.uleb128 0x19
+ 1975 00b7 03       		.uleb128 0x3
+ 1976 00b8 0E       		.uleb128 0xe
+ 1977 00b9 3A       		.uleb128 0x3a
+ 1978 00ba 0B       		.uleb128 0xb
+ 1979 00bb 3B       		.uleb128 0x3b
+ 1980 00bc 05       		.uleb128 0x5
+ 1981 00bd 27       		.uleb128 0x27
+ 1982 00be 19       		.uleb128 0x19
+ 1983 00bf 49       		.uleb128 0x49
+ 1984 00c0 13       		.uleb128 0x13
+ 1985 00c1 11       		.uleb128 0x11
+ 1986 00c2 01       		.uleb128 0x1
+ 1987 00c3 12       		.uleb128 0x12
+ 1988 00c4 06       		.uleb128 0x6
+ 1989 00c5 40       		.uleb128 0x40
+ 1990 00c6 18       		.uleb128 0x18
+ 1991 00c7 9742     		.uleb128 0x2117
+ 1992 00c9 19       		.uleb128 0x19
+ 1993 00ca 01       		.uleb128 0x1
+ 1994 00cb 13       		.uleb128 0x13
+ 1995 00cc 00       		.byte	0
+ 1996 00cd 00       		.byte	0
+ 1997 00ce 0E       		.uleb128 0xe
+ 1998 00cf 05       		.uleb128 0x5
+ 1999 00d0 00       		.byte	0
+ 2000 00d1 03       		.uleb128 0x3
+ 2001 00d2 0E       		.uleb128 0xe
+ 2002 00d3 3A       		.uleb128 0x3a
+ 2003 00d4 0B       		.uleb128 0xb
+ 2004 00d5 3B       		.uleb128 0x3b
+ 2005 00d6 05       		.uleb128 0x5
+ 2006 00d7 49       		.uleb128 0x49
+ 2007 00d8 13       		.uleb128 0x13
+ 2008 00d9 02       		.uleb128 0x2
+ 2009 00da 17       		.uleb128 0x17
+ 2010 00db 00       		.byte	0
+ 2011 00dc 00       		.byte	0
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 44
+
+
+ 2012 00dd 0F       		.uleb128 0xf
+ 2013 00de 34       		.uleb128 0x34
+ 2014 00df 00       		.byte	0
+ 2015 00e0 03       		.uleb128 0x3
+ 2016 00e1 0E       		.uleb128 0xe
+ 2017 00e2 3A       		.uleb128 0x3a
+ 2018 00e3 0B       		.uleb128 0xb
+ 2019 00e4 3B       		.uleb128 0x3b
+ 2020 00e5 05       		.uleb128 0x5
+ 2021 00e6 49       		.uleb128 0x49
+ 2022 00e7 13       		.uleb128 0x13
+ 2023 00e8 1C       		.uleb128 0x1c
+ 2024 00e9 0B       		.uleb128 0xb
+ 2025 00ea 00       		.byte	0
+ 2026 00eb 00       		.byte	0
+ 2027 00ec 10       		.uleb128 0x10
+ 2028 00ed 898201   		.uleb128 0x4109
+ 2029 00f0 01       		.byte	0x1
+ 2030 00f1 11       		.uleb128 0x11
+ 2031 00f2 01       		.uleb128 0x1
+ 2032 00f3 31       		.uleb128 0x31
+ 2033 00f4 13       		.uleb128 0x13
+ 2034 00f5 00       		.byte	0
+ 2035 00f6 00       		.byte	0
+ 2036 00f7 11       		.uleb128 0x11
+ 2037 00f8 8A8201   		.uleb128 0x410a
+ 2038 00fb 00       		.byte	0
+ 2039 00fc 02       		.uleb128 0x2
+ 2040 00fd 18       		.uleb128 0x18
+ 2041 00fe 9142     		.uleb128 0x2111
+ 2042 0100 18       		.uleb128 0x18
+ 2043 0101 00       		.byte	0
+ 2044 0102 00       		.byte	0
+ 2045 0103 12       		.uleb128 0x12
+ 2046 0104 898201   		.uleb128 0x4109
+ 2047 0107 01       		.byte	0x1
+ 2048 0108 11       		.uleb128 0x11
+ 2049 0109 01       		.uleb128 0x1
+ 2050 010a 31       		.uleb128 0x31
+ 2051 010b 13       		.uleb128 0x13
+ 2052 010c 01       		.uleb128 0x1
+ 2053 010d 13       		.uleb128 0x13
+ 2054 010e 00       		.byte	0
+ 2055 010f 00       		.byte	0
+ 2056 0110 13       		.uleb128 0x13
+ 2057 0111 2E       		.uleb128 0x2e
+ 2058 0112 01       		.byte	0x1
+ 2059 0113 31       		.uleb128 0x31
+ 2060 0114 13       		.uleb128 0x13
+ 2061 0115 11       		.uleb128 0x11
+ 2062 0116 01       		.uleb128 0x1
+ 2063 0117 12       		.uleb128 0x12
+ 2064 0118 06       		.uleb128 0x6
+ 2065 0119 40       		.uleb128 0x40
+ 2066 011a 18       		.uleb128 0x18
+ 2067 011b 9742     		.uleb128 0x2117
+ 2068 011d 19       		.uleb128 0x19
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 45
+
+
+ 2069 011e 01       		.uleb128 0x1
+ 2070 011f 13       		.uleb128 0x13
+ 2071 0120 00       		.byte	0
+ 2072 0121 00       		.byte	0
+ 2073 0122 14       		.uleb128 0x14
+ 2074 0123 05       		.uleb128 0x5
+ 2075 0124 00       		.byte	0
+ 2076 0125 31       		.uleb128 0x31
+ 2077 0126 13       		.uleb128 0x13
+ 2078 0127 02       		.uleb128 0x2
+ 2079 0128 17       		.uleb128 0x17
+ 2080 0129 00       		.byte	0
+ 2081 012a 00       		.byte	0
+ 2082 012b 15       		.uleb128 0x15
+ 2083 012c 34       		.uleb128 0x34
+ 2084 012d 00       		.byte	0
+ 2085 012e 31       		.uleb128 0x31
+ 2086 012f 13       		.uleb128 0x13
+ 2087 0130 02       		.uleb128 0x2
+ 2088 0131 17       		.uleb128 0x17
+ 2089 0132 00       		.byte	0
+ 2090 0133 00       		.byte	0
+ 2091 0134 16       		.uleb128 0x16
+ 2092 0135 0B       		.uleb128 0xb
+ 2093 0136 01       		.byte	0x1
+ 2094 0137 11       		.uleb128 0x11
+ 2095 0138 01       		.uleb128 0x1
+ 2096 0139 12       		.uleb128 0x12
+ 2097 013a 06       		.uleb128 0x6
+ 2098 013b 01       		.uleb128 0x1
+ 2099 013c 13       		.uleb128 0x13
+ 2100 013d 00       		.byte	0
+ 2101 013e 00       		.byte	0
+ 2102 013f 17       		.uleb128 0x17
+ 2103 0140 05       		.uleb128 0x5
+ 2104 0141 00       		.byte	0
+ 2105 0142 31       		.uleb128 0x31
+ 2106 0143 13       		.uleb128 0x13
+ 2107 0144 00       		.byte	0
+ 2108 0145 00       		.byte	0
+ 2109 0146 18       		.uleb128 0x18
+ 2110 0147 0B       		.uleb128 0xb
+ 2111 0148 01       		.byte	0x1
+ 2112 0149 11       		.uleb128 0x11
+ 2113 014a 01       		.uleb128 0x1
+ 2114 014b 12       		.uleb128 0x12
+ 2115 014c 06       		.uleb128 0x6
+ 2116 014d 00       		.byte	0
+ 2117 014e 00       		.byte	0
+ 2118 014f 19       		.uleb128 0x19
+ 2119 0150 34       		.uleb128 0x34
+ 2120 0151 00       		.byte	0
+ 2121 0152 31       		.uleb128 0x31
+ 2122 0153 13       		.uleb128 0x13
+ 2123 0154 00       		.byte	0
+ 2124 0155 00       		.byte	0
+ 2125 0156 1A       		.uleb128 0x1a
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 46
+
+
+ 2126 0157 2E       		.uleb128 0x2e
+ 2127 0158 01       		.byte	0x1
+ 2128 0159 3F       		.uleb128 0x3f
+ 2129 015a 19       		.uleb128 0x19
+ 2130 015b 03       		.uleb128 0x3
+ 2131 015c 0E       		.uleb128 0xe
+ 2132 015d 3A       		.uleb128 0x3a
+ 2133 015e 0B       		.uleb128 0xb
+ 2134 015f 3B       		.uleb128 0x3b
+ 2135 0160 0B       		.uleb128 0xb
+ 2136 0161 49       		.uleb128 0x49
+ 2137 0162 13       		.uleb128 0x13
+ 2138 0163 8701     		.uleb128 0x87
+ 2139 0165 19       		.uleb128 0x19
+ 2140 0166 11       		.uleb128 0x11
+ 2141 0167 01       		.uleb128 0x1
+ 2142 0168 12       		.uleb128 0x12
+ 2143 0169 06       		.uleb128 0x6
+ 2144 016a 40       		.uleb128 0x40
+ 2145 016b 18       		.uleb128 0x18
+ 2146 016c 9742     		.uleb128 0x2117
+ 2147 016e 19       		.uleb128 0x19
+ 2148 016f 01       		.uleb128 0x1
+ 2149 0170 13       		.uleb128 0x13
+ 2150 0171 00       		.byte	0
+ 2151 0172 00       		.byte	0
+ 2152 0173 1B       		.uleb128 0x1b
+ 2153 0174 34       		.uleb128 0x34
+ 2154 0175 00       		.byte	0
+ 2155 0176 03       		.uleb128 0x3
+ 2156 0177 0E       		.uleb128 0xe
+ 2157 0178 3A       		.uleb128 0x3a
+ 2158 0179 0B       		.uleb128 0xb
+ 2159 017a 3B       		.uleb128 0x3b
+ 2160 017b 05       		.uleb128 0x5
+ 2161 017c 49       		.uleb128 0x49
+ 2162 017d 13       		.uleb128 0x13
+ 2163 017e 3F       		.uleb128 0x3f
+ 2164 017f 19       		.uleb128 0x19
+ 2165 0180 3C       		.uleb128 0x3c
+ 2166 0181 19       		.uleb128 0x19
+ 2167 0182 00       		.byte	0
+ 2168 0183 00       		.byte	0
+ 2169 0184 1C       		.uleb128 0x1c
+ 2170 0185 35       		.uleb128 0x35
+ 2171 0186 00       		.byte	0
+ 2172 0187 49       		.uleb128 0x49
+ 2173 0188 13       		.uleb128 0x13
+ 2174 0189 00       		.byte	0
+ 2175 018a 00       		.byte	0
+ 2176 018b 1D       		.uleb128 0x1d
+ 2177 018c 34       		.uleb128 0x34
+ 2178 018d 00       		.byte	0
+ 2179 018e 03       		.uleb128 0x3
+ 2180 018f 0E       		.uleb128 0xe
+ 2181 0190 3A       		.uleb128 0x3a
+ 2182 0191 0B       		.uleb128 0xb
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 47
+
+
+ 2183 0192 3B       		.uleb128 0x3b
+ 2184 0193 0B       		.uleb128 0xb
+ 2185 0194 49       		.uleb128 0x49
+ 2186 0195 13       		.uleb128 0x13
+ 2187 0196 3F       		.uleb128 0x3f
+ 2188 0197 19       		.uleb128 0x19
+ 2189 0198 02       		.uleb128 0x2
+ 2190 0199 18       		.uleb128 0x18
+ 2191 019a 00       		.byte	0
+ 2192 019b 00       		.byte	0
+ 2193 019c 1E       		.uleb128 0x1e
+ 2194 019d 01       		.uleb128 0x1
+ 2195 019e 01       		.byte	0x1
+ 2196 019f 49       		.uleb128 0x49
+ 2197 01a0 13       		.uleb128 0x13
+ 2198 01a1 01       		.uleb128 0x1
+ 2199 01a2 13       		.uleb128 0x13
+ 2200 01a3 00       		.byte	0
+ 2201 01a4 00       		.byte	0
+ 2202 01a5 1F       		.uleb128 0x1f
+ 2203 01a6 21       		.uleb128 0x21
+ 2204 01a7 00       		.byte	0
+ 2205 01a8 49       		.uleb128 0x49
+ 2206 01a9 13       		.uleb128 0x13
+ 2207 01aa 2F       		.uleb128 0x2f
+ 2208 01ab 0B       		.uleb128 0xb
+ 2209 01ac 00       		.byte	0
+ 2210 01ad 00       		.byte	0
+ 2211 01ae 20       		.uleb128 0x20
+ 2212 01af 34       		.uleb128 0x34
+ 2213 01b0 00       		.byte	0
+ 2214 01b1 03       		.uleb128 0x3
+ 2215 01b2 08       		.uleb128 0x8
+ 2216 01b3 3A       		.uleb128 0x3a
+ 2217 01b4 0B       		.uleb128 0xb
+ 2218 01b5 3B       		.uleb128 0x3b
+ 2219 01b6 0B       		.uleb128 0xb
+ 2220 01b7 49       		.uleb128 0x49
+ 2221 01b8 13       		.uleb128 0x13
+ 2222 01b9 3F       		.uleb128 0x3f
+ 2223 01ba 19       		.uleb128 0x19
+ 2224 01bb 02       		.uleb128 0x2
+ 2225 01bc 18       		.uleb128 0x18
+ 2226 01bd 00       		.byte	0
+ 2227 01be 00       		.byte	0
+ 2228 01bf 21       		.uleb128 0x21
+ 2229 01c0 2E       		.uleb128 0x2e
+ 2230 01c1 00       		.byte	0
+ 2231 01c2 3F       		.uleb128 0x3f
+ 2232 01c3 19       		.uleb128 0x19
+ 2233 01c4 3C       		.uleb128 0x3c
+ 2234 01c5 19       		.uleb128 0x19
+ 2235 01c6 6E       		.uleb128 0x6e
+ 2236 01c7 0E       		.uleb128 0xe
+ 2237 01c8 03       		.uleb128 0x3
+ 2238 01c9 0E       		.uleb128 0xe
+ 2239 01ca 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 48
+
+
+ 2240 01cb 0B       		.uleb128 0xb
+ 2241 01cc 3B       		.uleb128 0x3b
+ 2242 01cd 0B       		.uleb128 0xb
+ 2243 01ce 00       		.byte	0
+ 2244 01cf 00       		.byte	0
+ 2245 01d0 00       		.byte	0
+ 2246              		.section	.debug_loc,"",%progbits
+ 2247              	.Ldebug_loc0:
+ 2248              	.LLST0:
+ 2249 0000 00000000 		.4byte	.LVL2
+ 2250 0004 07000000 		.4byte	.LVL3-1
+ 2251 0008 0100     		.2byte	0x1
+ 2252 000a 50       		.byte	0x50
+ 2253 000b 07000000 		.4byte	.LVL3-1
+ 2254 000f 16000000 		.4byte	.LFE66
+ 2255 0013 0400     		.2byte	0x4
+ 2256 0015 F3       		.byte	0xf3
+ 2257 0016 01       		.uleb128 0x1
+ 2258 0017 50       		.byte	0x50
+ 2259 0018 9F       		.byte	0x9f
+ 2260 0019 00000000 		.4byte	0
+ 2261 001d 00000000 		.4byte	0
+ 2262              	.LLST1:
+ 2263 0021 00000000 		.4byte	.LVL2
+ 2264 0025 07000000 		.4byte	.LVL3-1
+ 2265 0029 0100     		.2byte	0x1
+ 2266 002b 51       		.byte	0x51
+ 2267 002c 07000000 		.4byte	.LVL3-1
+ 2268 0030 16000000 		.4byte	.LFE66
+ 2269 0034 0400     		.2byte	0x4
+ 2270 0036 F3       		.byte	0xf3
+ 2271 0037 01       		.uleb128 0x1
+ 2272 0038 51       		.byte	0x51
+ 2273 0039 9F       		.byte	0x9f
+ 2274 003a 00000000 		.4byte	0
+ 2275 003e 00000000 		.4byte	0
+ 2276              	.LLST2:
+ 2277 0042 00000000 		.4byte	.LVL18
+ 2278 0046 05000000 		.4byte	.LVL19-1
+ 2279 004a 0100     		.2byte	0x1
+ 2280 004c 50       		.byte	0x50
+ 2281 004d 05000000 		.4byte	.LVL19-1
+ 2282 0051 98000000 		.4byte	.LFE67
+ 2283 0055 0400     		.2byte	0x4
+ 2284 0057 F3       		.byte	0xf3
+ 2285 0058 01       		.uleb128 0x1
+ 2286 0059 50       		.byte	0x50
+ 2287 005a 9F       		.byte	0x9f
+ 2288 005b 00000000 		.4byte	0
+ 2289 005f 00000000 		.4byte	0
+ 2290              	.LLST3:
+ 2291 0063 8A000000 		.4byte	.LVL45
+ 2292 0067 94000000 		.4byte	.LVL47
+ 2293 006b 0400     		.2byte	0x4
+ 2294 006d 0B       		.byte	0xb
+ 2295 006e 00F0     		.2byte	0xf000
+ 2296 0070 9F       		.byte	0x9f
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 49
+
+
+ 2297 0071 94000000 		.4byte	.LVL47
+ 2298 0075 98000000 		.4byte	.LFE67
+ 2299 0079 0100     		.2byte	0x1
+ 2300 007b 54       		.byte	0x54
+ 2301 007c 00000000 		.4byte	0
+ 2302 0080 00000000 		.4byte	0
+ 2303              	.LLST4:
+ 2304 0084 1E000000 		.4byte	.LVL23
+ 2305 0088 20000000 		.4byte	.LVL24
+ 2306 008c 0200     		.2byte	0x2
+ 2307 008e 30       		.byte	0x30
+ 2308 008f 9F       		.byte	0x9f
+ 2309 0090 28000000 		.4byte	.LVL26
+ 2310 0094 42000000 		.4byte	.LVL30
+ 2311 0098 0100     		.2byte	0x1
+ 2312 009a 55       		.byte	0x55
+ 2313 009b 42000000 		.4byte	.LVL30
+ 2314 009f 44000000 		.4byte	.LVL31
+ 2315 00a3 0300     		.2byte	0x3
+ 2316 00a5 74       		.byte	0x74
+ 2317 00a6 01       		.sleb128 1
+ 2318 00a7 9F       		.byte	0x9f
+ 2319 00a8 44000000 		.4byte	.LVL31
+ 2320 00ac 46000000 		.4byte	.LVL32
+ 2321 00b0 0300     		.2byte	0x3
+ 2322 00b2 75       		.byte	0x75
+ 2323 00b3 01       		.sleb128 1
+ 2324 00b4 9F       		.byte	0x9f
+ 2325 00b5 46000000 		.4byte	.LVL32
+ 2326 00b9 98000000 		.4byte	.LFE67
+ 2327 00bd 0100     		.2byte	0x1
+ 2328 00bf 55       		.byte	0x55
+ 2329 00c0 00000000 		.4byte	0
+ 2330 00c4 00000000 		.4byte	0
+ 2331              	.LLST5:
+ 2332 00c8 66000000 		.4byte	.LVL38
+ 2333 00cc 88000000 		.4byte	.LVL44
+ 2334 00d0 0100     		.2byte	0x1
+ 2335 00d2 54       		.byte	0x54
+ 2336 00d3 00000000 		.4byte	0
+ 2337 00d7 00000000 		.4byte	0
+ 2338              		.section	.debug_aranges,"",%progbits
+ 2339 0000 3C000000 		.4byte	0x3c
+ 2340 0004 0200     		.2byte	0x2
+ 2341 0006 00000000 		.4byte	.Ldebug_info0
+ 2342 000a 04       		.byte	0x4
+ 2343 000b 00       		.byte	0
+ 2344 000c 0000     		.2byte	0
+ 2345 000e 0000     		.2byte	0
+ 2346 0010 00000000 		.4byte	.LFB63
+ 2347 0014 48000000 		.4byte	.LFE63-.LFB63
+ 2348 0018 00000000 		.4byte	.LFB66
+ 2349 001c 16000000 		.4byte	.LFE66-.LFB66
+ 2350 0020 00000000 		.4byte	.LFB64
+ 2351 0024 2C010000 		.4byte	.LFE64-.LFB64
+ 2352 0028 00000000 		.4byte	.LFB67
+ 2353 002c 98000000 		.4byte	.LFE67-.LFB67
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 50
+
+
+ 2354 0030 00000000 		.4byte	.LFB65
+ 2355 0034 78010000 		.4byte	.LFE65-.LFB65
+ 2356 0038 00000000 		.4byte	0
+ 2357 003c 00000000 		.4byte	0
+ 2358              		.section	.debug_ranges,"",%progbits
+ 2359              	.Ldebug_ranges0:
+ 2360 0000 00000000 		.4byte	.LFB63
+ 2361 0004 48000000 		.4byte	.LFE63
+ 2362 0008 00000000 		.4byte	.LFB66
+ 2363 000c 16000000 		.4byte	.LFE66
+ 2364 0010 00000000 		.4byte	.LFB64
+ 2365 0014 2C010000 		.4byte	.LFE64
+ 2366 0018 00000000 		.4byte	.LFB67
+ 2367 001c 98000000 		.4byte	.LFE67
+ 2368 0020 00000000 		.4byte	.LFB65
+ 2369 0024 78010000 		.4byte	.LFE65
+ 2370 0028 00000000 		.4byte	0
+ 2371 002c 00000000 		.4byte	0
+ 2372              		.section	.debug_line,"",%progbits
+ 2373              	.Ldebug_line0:
+ 2374 0000 51030000 		.section	.debug_str,"MS",%progbits,1
+ 2374      02005602 
+ 2374      00000201 
+ 2374      FB0E0D00 
+ 2374      01010101 
+ 2375              	.LASF66:
+ 2376 0000 436F6E74 		.ascii	"Control_Reg_LED_Write\000"
+ 2376      726F6C5F 
+ 2376      5265675F 
+ 2376      4C45445F 
+ 2376      57726974 
+ 2377              	.LASF18:
+ 2378 0016 72657375 		.ascii	"result\000"
+ 2378      6C7400
+ 2379              	.LASF67:
+ 2380 001d 436C6F63 		.ascii	"Clock_1_Start\000"
+ 2380      6B5F315F 
+ 2380      53746172 
+ 2380      7400
+ 2381              	.LASF79:
+ 2382 002b 6973725F 		.ascii	"isr_SS_Rise_StartEx\000"
+ 2382      53535F52 
+ 2382      6973655F 
+ 2382      53746172 
+ 2382      74457800 
+ 2383              	.LASF44:
+ 2384 003f 53504953 		.ascii	"SPIS_WriteTxDataZero\000"
+ 2384      5F577269 
+ 2384      74655478 
+ 2384      44617461 
+ 2384      5A65726F 
+ 2385              	.LASF75:
+ 2386 0054 50574D5F 		.ascii	"PWM_1_Start\000"
+ 2386      315F5374 
+ 2386      61727400 
+ 2387              	.LASF39:
+ 2388 0060 72784275 		.ascii	"rxBuffer\000"
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 51
+
+
+ 2388      66666572 
+ 2388      00
+ 2389              	.LASF2:
+ 2390 0069 73686F72 		.ascii	"short int\000"
+ 2390      7420696E 
+ 2390      7400
+ 2391              	.LASF35:
+ 2392 0073 72656164 		.ascii	"read_counter\000"
+ 2392      5F636F75 
+ 2392      6E746572 
+ 2392      00
+ 2393              	.LASF38:
+ 2394 0080 69326344 		.ascii	"i2cData\000"
+ 2394      61746100 
+ 2395              	.LASF17:
+ 2396 0088 73697A65 		.ascii	"sizetype\000"
+ 2396      74797065 
+ 2396      00
+ 2397              	.LASF70:
+ 2398 0091 5350494D 		.ascii	"SPIM_1_ClearTxBuffer\000"
+ 2398      5F315F43 
+ 2398      6C656172 
+ 2398      54784275 
+ 2398      66666572 
+ 2399              	.LASF69:
+ 2400 00a6 5350494D 		.ascii	"SPIM_1_ClearRxBuffer\000"
+ 2400      5F315F43 
+ 2400      6C656172 
+ 2400      52784275 
+ 2400      66666572 
+ 2401              	.LASF58:
+ 2402 00bb 5350494D 		.ascii	"SPIM_1_ReadTxStatus\000"
+ 2402      5F315F52 
+ 2402      65616454 
+ 2402      78537461 
+ 2402      74757300 
+ 2403              	.LASF77:
+ 2404 00cf 4932435F 		.ascii	"I2C_1_Start\000"
+ 2404      315F5374 
+ 2404      61727400 
+ 2405              	.LASF22:
+ 2406 00db 53535F52 		.ascii	"SS_Rise_Handler\000"
+ 2406      6973655F 
+ 2406      48616E64 
+ 2406      6C657200 
+ 2407              	.LASF52:
+ 2408 00eb 4932435F 		.ascii	"I2C_1_MasterSendStop\000"
+ 2408      315F4D61 
+ 2408      73746572 
+ 2408      53656E64 
+ 2408      53746F70 
+ 2409              	.LASF24:
+ 2410 0100 6D61696E 		.ascii	"main\000"
+ 2410      00
+ 2411              	.LASF51:
+ 2412 0105 4932435F 		.ascii	"I2C_1_MasterWriteByte\000"
+ 2412      315F4D61 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 52
+
+
+ 2412      73746572 
+ 2412      57726974 
+ 2412      65427974 
+ 2413              	.LASF33:
+ 2414 011b 70776D5F 		.ascii	"pwm_a_new_command\000"
+ 2414      615F6E65 
+ 2414      775F636F 
+ 2414      6D6D616E 
+ 2414      6400
+ 2415              	.LASF12:
+ 2416 012d 75696E74 		.ascii	"uint16\000"
+ 2416      313600
+ 2417              	.LASF36:
+ 2418 0134 50534F43 		.ascii	"PSOC_state\000"
+ 2418      5F737461 
+ 2418      746500
+ 2419              	.LASF41:
+ 2420 013f 74656D70 		.ascii	"temp2\000"
+ 2420      3200
+ 2421              	.LASF74:
+ 2422 0145 53504953 		.ascii	"SPIS_Start\000"
+ 2422      5F537461 
+ 2422      727400
+ 2423              	.LASF81:
+ 2424 0150 50574D5F 		.ascii	"PWM_2_WriteCompare\000"
+ 2424      325F5772 
+ 2424      69746543 
+ 2424      6F6D7061 
+ 2424      726500
+ 2425              	.LASF13:
+ 2426 0163 666C6F61 		.ascii	"float\000"
+ 2426      7400
+ 2427              	.LASF49:
+ 2428 0169 53504953 		.ascii	"SPIS_WriteTxData\000"
+ 2428      5F577269 
+ 2428      74655478 
+ 2428      44617461 
+ 2428      00
+ 2429              	.LASF27:
+ 2430 017a 5250695F 		.ascii	"RPi_Data\000"
+ 2430      44617461 
+ 2430      00
+ 2431              	.LASF6:
+ 2432 0183 6C6F6E67 		.ascii	"long long int\000"
+ 2432      206C6F6E 
+ 2432      6720696E 
+ 2432      7400
+ 2433              	.LASF78:
+ 2434 0191 6973725F 		.ascii	"isr_SS_Fall_StartEx\000"
+ 2434      53535F46 
+ 2434      616C6C5F 
+ 2434      53746172 
+ 2434      74457800 
+ 2435              	.LASF4:
+ 2436 01a5 6C6F6E67 		.ascii	"long int\000"
+ 2436      20696E74 
+ 2436      00
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 53
+
+
+ 2437              	.LASF26:
+ 2438 01ae 5250695F 		.ascii	"RPi_Command\000"
+ 2438      436F6D6D 
+ 2438      616E6400 
+ 2439              	.LASF82:
+ 2440 01ba 53746174 		.ascii	"Status_Reg_1_Read\000"
+ 2440      75735F52 
+ 2440      65675F31 
+ 2440      5F526561 
+ 2440      6400
+ 2441              	.LASF37:
+ 2442 01cc 69326341 		.ascii	"i2cAddress\000"
+ 2442      64647265 
+ 2442      737300
+ 2443              	.LASF61:
+ 2444 01d7 5350494D 		.ascii	"SPIM_1_ClearFIFO\000"
+ 2444      5F315F43 
+ 2444      6C656172 
+ 2444      4649464F 
+ 2444      00
+ 2445              	.LASF29:
+ 2446 01e8 656E635F 		.ascii	"enc_b_Position\000"
+ 2446      625F506F 
+ 2446      73697469 
+ 2446      6F6E00
+ 2447              	.LASF57:
+ 2448 01f7 5350494D 		.ascii	"SPIM_1_WriteTxData\000"
+ 2448      5F315F57 
+ 2448      72697465 
+ 2448      54784461 
+ 2448      746100
+ 2449              	.LASF34:
+ 2450 020a 70776D5F 		.ascii	"pwm_b_new_command\000"
+ 2450      625F6E65 
+ 2450      775F636F 
+ 2450      6D6D616E 
+ 2450      6400
+ 2451              	.LASF28:
+ 2452 021c 656E635F 		.ascii	"enc_a_Position\000"
+ 2452      615F506F 
+ 2452      73697469 
+ 2452      6F6E00
+ 2453              	.LASF16:
+ 2454 022b 6C6F6E67 		.ascii	"long double\000"
+ 2454      20646F75 
+ 2454      626C6500 
+ 2455              	.LASF19:
+ 2456 0237 4368616E 		.ascii	"ChannelNumber\000"
+ 2456      6E656C4E 
+ 2456      756D6265 
+ 2456      7200
+ 2457              	.LASF56:
+ 2458 0245 43794465 		.ascii	"CyDelayUs\000"
+ 2458      6C617955 
+ 2458      7300
+ 2459              	.LASF1:
+ 2460 024f 756E7369 		.ascii	"unsigned char\000"
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 54
+
+
+ 2460      676E6564 
+ 2460      20636861 
+ 2460      7200
+ 2461              	.LASF0:
+ 2462 025d 7369676E 		.ascii	"signed char\000"
+ 2462      65642063 
+ 2462      68617200 
+ 2463              	.LASF7:
+ 2464 0269 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2464      206C6F6E 
+ 2464      6720756E 
+ 2464      7369676E 
+ 2464      65642069 
+ 2465              	.LASF8:
+ 2466 0280 756E7369 		.ascii	"unsigned int\000"
+ 2466      676E6564 
+ 2466      20696E74 
+ 2466      00
+ 2467              	.LASF73:
+ 2468 028d 5350494D 		.ascii	"SPIM_SigGen_ClearTxBuffer\000"
+ 2468      5F536967 
+ 2468      47656E5F 
+ 2468      436C6561 
+ 2468      72547842 
+ 2469              	.LASF87:
+ 2470 02a7 656E636F 		.ascii	"encoderNumber\000"
+ 2470      6465724E 
+ 2470      756D6265 
+ 2470      7200
+ 2471              	.LASF83:
+ 2472 02b5 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2472      43313120 
+ 2472      352E342E 
+ 2472      31203230 
+ 2472      31363036 
+ 2473 02e8 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2473      20726576 
+ 2473      6973696F 
+ 2473      6E203233 
+ 2473      37373135 
+ 2474 031b 73202D66 		.ascii	"s -ffunction-sections -ffat-lto-objects\000"
+ 2474      66756E63 
+ 2474      74696F6E 
+ 2474      2D736563 
+ 2474      74696F6E 
+ 2475              	.LASF76:
+ 2476 0343 50574D5F 		.ascii	"PWM_2_Start\000"
+ 2476      325F5374 
+ 2476      61727400 
+ 2477              	.LASF20:
+ 2478 034f 436F6D6D 		.ascii	"CommandWord\000"
+ 2478      616E6457 
+ 2478      6F726400 
+ 2479              	.LASF80:
+ 2480 035b 50574D5F 		.ascii	"PWM_1_WriteCompare\000"
+ 2480      315F5772 
+ 2480      69746543 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 55
+
+
+ 2480      6F6D7061 
+ 2480      726500
+ 2481              	.LASF15:
+ 2482 036e 63686172 		.ascii	"char\000"
+ 2482      00
+ 2483              	.LASF10:
+ 2484 0373 696E7433 		.ascii	"int32_t\000"
+ 2484      325F7400 
+ 2485              	.LASF23:
+ 2486 037b 57726974 		.ascii	"WriteSignalGen\000"
+ 2486      65536967 
+ 2486      6E616C47 
+ 2486      656E00
+ 2487              	.LASF3:
+ 2488 038a 73686F72 		.ascii	"short unsigned int\000"
+ 2488      7420756E 
+ 2488      7369676E 
+ 2488      65642069 
+ 2488      6E7400
+ 2489              	.LASF59:
+ 2490 039d 5350494D 		.ascii	"SPIM_1_ReadRxData\000"
+ 2490      5F315F52 
+ 2490      65616452 
+ 2490      78446174 
+ 2490      6100
+ 2491              	.LASF45:
+ 2492 03af 436F6E74 		.ascii	"Control_Reg_SS_SigGen_Write\000"
+ 2492      726F6C5F 
+ 2492      5265675F 
+ 2492      53535F53 
+ 2492      69674765 
+ 2493              	.LASF11:
+ 2494 03cb 75696E74 		.ascii	"uint8\000"
+ 2494      3800
+ 2495              	.LASF55:
+ 2496 03d1 6973725F 		.ascii	"isr_SS_Rise_ClearPending\000"
+ 2496      53535F52 
+ 2496      6973655F 
+ 2496      436C6561 
+ 2496      7250656E 
+ 2497              	.LASF65:
+ 2498 03ea 456E6162 		.ascii	"EnableBattery_Write\000"
+ 2498      6C654261 
+ 2498      74746572 
+ 2498      795F5772 
+ 2498      69746500 
+ 2499              	.LASF42:
+ 2500 03fe 73687574 		.ascii	"shutdown_count\000"
+ 2500      646F776E 
+ 2500      5F636F75 
+ 2500      6E7400
+ 2501              	.LASF84:
+ 2502 040d 6D61696E 		.ascii	"main.c\000"
+ 2502      2E6300
+ 2503              	.LASF5:
+ 2504 0414 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2504      20756E73 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 56
+
+
+ 2504      69676E65 
+ 2504      6420696E 
+ 2504      7400
+ 2505              	.LASF53:
+ 2506 0426 53504953 		.ascii	"SPIS_ReadRxStatus\000"
+ 2506      5F526561 
+ 2506      64527853 
+ 2506      74617475 
+ 2506      7300
+ 2507              	.LASF14:
+ 2508 0438 646F7562 		.ascii	"double\000"
+ 2508      6C6500
+ 2509              	.LASF86:
+ 2510 043f 52656164 		.ascii	"ReadEncoderValue\000"
+ 2510      456E636F 
+ 2510      64657256 
+ 2510      616C7565 
+ 2510      00
+ 2511              	.LASF31:
+ 2512 0450 70776D5F 		.ascii	"pwm_a_command\000"
+ 2512      615F636F 
+ 2512      6D6D616E 
+ 2512      6400
+ 2513              	.LASF62:
+ 2514 045e 52706949 		.ascii	"RpiInterrupts_Write\000"
+ 2514      6E746572 
+ 2514      72757074 
+ 2514      735F5772 
+ 2514      69746500 
+ 2515              	.LASF50:
+ 2516 0472 4932435F 		.ascii	"I2C_1_MasterSendStart\000"
+ 2516      315F4D61 
+ 2516      73746572 
+ 2516      53656E64 
+ 2516      53746172 
+ 2517              	.LASF9:
+ 2518 0488 5F5F696E 		.ascii	"__int32_t\000"
+ 2518      7433325F 
+ 2518      7400
+ 2519              	.LASF60:
+ 2520 0492 436F6E74 		.ascii	"Control_Reg_SS_Write\000"
+ 2520      726F6C5F 
+ 2520      5265675F 
+ 2520      53535F57 
+ 2520      72697465 
+ 2521              	.LASF85:
+ 2522 04a7 433A5C55 		.ascii	"C:\\Users\\harlow2016\\Documents\\PSOC_Designs\\Rpi"
+ 2522      73657273 
+ 2522      5C686172 
+ 2522      6C6F7732 
+ 2522      3031365C 
+ 2523 04d5 4D49425C 		.ascii	"MIB\\Number3.cydsn\000"
+ 2523      4E756D62 
+ 2523      6572332E 
+ 2523      63796473 
+ 2523      6E00
+ 2524              	.LASF47:
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 57
+
+
+ 2525 04e7 5350494D 		.ascii	"SPIM_SigGen_WriteTxData\000"
+ 2525      5F536967 
+ 2525      47656E5F 
+ 2525      57726974 
+ 2525      65547844 
+ 2526              	.LASF32:
+ 2527 04ff 70776D5F 		.ascii	"pwm_b_command\000"
+ 2527      625F636F 
+ 2527      6D6D616E 
+ 2527      6400
+ 2528              	.LASF48:
+ 2529 050d 53504953 		.ascii	"SPIS_ReadRxData\000"
+ 2529      5F526561 
+ 2529      64527844 
+ 2529      61746100 
+ 2530              	.LASF40:
+ 2531 051d 74656D70 		.ascii	"temp1\000"
+ 2531      3100
+ 2532              	.LASF72:
+ 2533 0523 5350494D 		.ascii	"SPIM_SigGen_ClearRxBuffer\000"
+ 2533      5F536967 
+ 2533      47656E5F 
+ 2533      436C6561 
+ 2533      72527842 
+ 2534              	.LASF63:
+ 2535 053d 436F6D70 		.ascii	"Comp_1_Start\000"
+ 2535      5F315F53 
+ 2535      74617274 
+ 2535      00
+ 2536              	.LASF68:
+ 2537 054a 5350494D 		.ascii	"SPIM_1_Start\000"
+ 2537      5F315F53 
+ 2537      74617274 
+ 2537      00
+ 2538              	.LASF71:
+ 2539 0557 5350494D 		.ascii	"SPIM_SigGen_Start\000"
+ 2539      5F536967 
+ 2539      47656E5F 
+ 2539      53746172 
+ 2539      7400
+ 2540              	.LASF25:
+ 2541 0569 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2541      52784275 
+ 2541      66666572 
+ 2541      00
+ 2542              	.LASF64:
+ 2543 0576 43794465 		.ascii	"CyDelay\000"
+ 2543      6C617900 
+ 2544              	.LASF21:
+ 2545 057e 53535F46 		.ascii	"SS_Fall_Handler\000"
+ 2545      616C6C5F 
+ 2545      48616E64 
+ 2545      6C657200 
+ 2546              	.LASF43:
+ 2547 058e 6973725F 		.ascii	"isr_SS_Fall_ClearPending\000"
+ 2547      53535F46 
+ 2547      616C6C5F 
+ARM GAS  C:\Users\HARLOW~1\AppData\Local\Temp\ccmwrwZH.s 			page 58
+
+
+ 2547      436C6561 
+ 2547      7250656E 
+ 2548              	.LASF54:
+ 2549 05a7 53504953 		.ascii	"SPIS_ClearRxBuffer\000"
+ 2549      5F436C65 
+ 2549      61725278 
+ 2549      42756666 
+ 2549      657200
+ 2550              	.LASF30:
+ 2551 05ba 656E635F 		.ascii	"enc_c_Position\000"
+ 2551      635F506F 
+ 2551      73697469 
+ 2551      6F6E00
+ 2552              	.LASF46:
+ 2553 05c9 5350494D 		.ascii	"SPIM_SigGen_ClearFIFO\000"
+ 2553      5F536967 
+ 2553      47656E5F 
+ 2553      436C6561 
+ 2553      72464946 
+ 2554              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

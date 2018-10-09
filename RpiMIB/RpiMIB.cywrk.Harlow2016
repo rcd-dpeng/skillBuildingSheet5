@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CyXmlSerializer>
+<!--This file is machine generated and read. It is not intended to be edited by hand.-->
+<!--Due to this, there is no schema for this file.-->
+<CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21 type_name="CyDesigner.Common.ProjMgmt.Model.CyPrjMgmtWrkspcCustomData" version="4">
+<CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997 type_name="CyDesigner.Common.Base.CyCustomData" version="2">
+<userData>
+<dataGuid v="1b906a0f-a7b6-4e4d-a428-82f98b53cb35">
+<CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35 type_name="CyDesigner.Common.ProjMgmt.GUI.CyExplorerWindow+CyExplorerWindowState" version="3" SelectedTab="Source">
+<TreeKeys>
+<v>Source</v>
+<v>Components</v>
+<v>Output</v>
+</TreeKeys>
+<TreeStates>
+<<<<<<< HEAD
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+=======
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="RpiMIB\Number3\Source Files\main.c">
+>>>>>>> master
+<ExpandedNodeIds>
+<v>RpiMIB</v>
+<v>RpiMIB\Number3</v>
+<v>RpiMIB\Number3\TopDesign</v>
+<v>RpiMIB\Number3\Number3.cydwr</v>
+<v>RpiMIB\Number3\Number3.cydwr\Pins</v>
+<v>RpiMIB\Number3\Number3.cydwr\Analog</v>
+<v>RpiMIB\Number3\Number3.cydwr\Clocks</v>
+<v>RpiMIB\Number3\Number3.cydwr\Interrupts</v>
+<v>RpiMIB\Number3\Number3.cydwr\DMA</v>
+<v>RpiMIB\Number3\Number3.cydwr\System</v>
+<v>RpiMIB\Number3\Number3.cydwr\Directives</v>
+<v>RpiMIB\Number3\Number3.cydwr\Flash Security</v>
+<v>RpiMIB\Number3\Number3.cydwr\EEPROM</v>
+<v>RpiMIB\Number3\Header Files</v>
+<v>RpiMIB\Number3\Header Files\cyapicallbacks.h</v>
+<v>RpiMIB\Number3\Source Files</v>
+<v>RpiMIB\Number3\Source Files\main.c</v>
+<v>RpiMIB\Number3\Generated_Source</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5</v>
+<v>RpiMIB\Number3\SPIM_Example.pdf</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>RpiMIB</v>
+<v>RpiMIB\Number3</v>
+<v>RpiMIB\Number3\TopDesign</v>
+<v>RpiMIB\Number3\Number3.cydwr</v>
+<v>RpiMIB\Number3\Number3.cydwr\Pins</v>
+<v>RpiMIB\Number3\Number3.cydwr\Analog</v>
+<v>RpiMIB\Number3\Number3.cydwr\Clocks</v>
+<v>RpiMIB\Number3\Number3.cydwr\Interrupts</v>
+<v>RpiMIB\Number3\Number3.cydwr\DMA</v>
+<v>RpiMIB\Number3\Number3.cydwr\System</v>
+<v>RpiMIB\Number3\Number3.cydwr\Directives</v>
+<v>RpiMIB\Number3\Number3.cydwr\Flash Security</v>
+<v>RpiMIB\Number3\Number3.cydwr\EEPROM</v>
+<v>RpiMIB\Number3\Header Files</v>
+<v>RpiMIB\Number3\Header Files\cyapicallbacks.h</v>
+<v>RpiMIB\Number3\Source Files</v>
+<v>RpiMIB\Number3\Source Files\main.c</v>
+<v>RpiMIB\Number3\Generated_Source</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Clock_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Clock_2</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Comp_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Control_Reg_LED</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Control_Reg_SS</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Control_Reg_SS_SigGen</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_1a</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_1b</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_1c</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_2a</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_2b</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cs_2c</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\cy_boot</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Em_EEPROM_Dynamic</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\en_level_shift</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\enable_battery</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\EnableBattery</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\I2C_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\I2C_1_IntClock</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\isr_SS_Fall</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\isr_SS_Rise</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\MISO_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\MOSI_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\MOSI_2</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Pin_1</v>
+<<<<<<< HEAD
+=======
+<v>RpiMIB\Number3\Generated_Source\PSoC5\PWM_1</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\PWM_2</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\pwm_a</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\pwm_b</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\rpi_inta</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\rpi_intb</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Rpi_miso</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Rpi_mosi</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Rpi_sclk</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\Rpi_ss</v>
+<v>RpiMIB\Number3\Generated_Source\PSoC5\RpiInterrupts</v>
+>>>>>>> master
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>RpiMIB</v>
+<v>RpiMIB\Number3</v>
+<v>RpiMIB\Number3\TopDesign</v>
+<v>RpiMIB\Number3\TopDesign\TopDesign.cysch</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>RpiMIB</v>
+<v>RpiMIB\Number3</v>
+<v>RpiMIB\Number3\TopDesign</v>
+<v>RpiMIB\Number3\TopDesign\TopDesign.cysch</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>RpiMIB</v>
+<v>RpiMIB\Number3</v>
+<v>RpiMIB\Number3\CortexM3</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Comp_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Comp_1_PM.lst</v>
+<<<<<<< HEAD
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_LED.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_LED_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_SS.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_SS_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_SS_SigGen.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Control_Reg_SS_SigGen_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1c.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_2a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_2b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_2c.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cy_em_eeprom.lst</v>
+=======
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1c.lst</v>
+>>>>>>> master
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyBootAsmGnu.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyDmac.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyFlash.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyLib.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\en_level_shift.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\enable_battery.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\EnableBattery.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\EnableBattery_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_BOOT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_MASTER.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_SLAVE.lst</v>
+<<<<<<< HEAD
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_SS_Fall.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_SS_Rise.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MISO_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MOSI_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MOSI_2.lst</v>
+=======
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MISO_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MOSI_1.lst</v>
+>>>>>>> master
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Pin_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_2_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\pwm_a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\pwm_b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\rpi_inta.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\rpi_intb.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Rpi_miso.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Rpi_mosi.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Rpi_sclk.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Rpi_ss.lst</v>
+<<<<<<< HEAD
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\RpiInterrupts.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\RpiInterrupts_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SCL_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SCLK_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SCLK_2.lst</v>
+=======
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SCL_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SCLK_1.lst</v>
+>>>>>>> master
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SDA_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_1_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_1_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_1_PM.lst</v>
+<<<<<<< HEAD
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_SigGen.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_SigGen_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_SigGen_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_SigGen_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIS.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIS_BOOT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIS_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIS_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIS_PM.lst</v>
+=======
+>>>>>>> master
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Status_Reg_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Supply_monitor.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Number3.elf</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Number3.hex</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Number3.map</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Clock_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Clock_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Cm3Start.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Comp_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Comp_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Control_Reg_LED.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Control_Reg_LED_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Control_Reg_SS.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Control_Reg_SS_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Control_Reg_SS_SigGen.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Control_Reg_SS_SigGen_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cs_1a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cs_1b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cs_1c.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cs_2a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cs_2b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cs_2c.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cy_em_eeprom.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\CyBootAsmGnu.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\CyDmac.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cyfitter_cfg.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\CyFlash.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\CyLib.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cymetadata.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cyPm.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\CySpc.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\cyutils.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\en_level_shift.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\enable_battery.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\EnableBattery.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\EnableBattery_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\I2C_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\I2C_1_BOOT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\I2C_1_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\I2C_1_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\I2C_1_MASTER.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\I2C_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\I2C_1_SLAVE.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\isr_SS_Fall.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\isr_SS_Rise.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\main.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\MISO_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\MOSI_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\MOSI_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Pin_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\PWM_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\PWM_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\PWM_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\PWM_2_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\pwm_a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\pwm_b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\rpi_inta.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\rpi_intb.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Rpi_miso.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Rpi_mosi.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Rpi_sclk.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Rpi_ss.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\RpiInterrupts.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\RpiInterrupts_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SCL_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SCLK_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SCLK_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SDA_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIM_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIM_1_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIM_1_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIM_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIM_SigGen.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIM_SigGen_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIM_SigGen_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIM_SigGen_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIS.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIS_BOOT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIS_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIS_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\SPIS_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Status_Reg_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Listing Files\Supply_monitor.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Number3.elf</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Number3.hex</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Release\Number3.map</v>
+<v>RpiMIB\Number3\Number3.gpdsc</v>
+<v>RpiMIB\Number3\Number3.rpt</v>
+<v>RpiMIB\Number3\Number3_timing.html</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>RpiMIB</v>
+<v>RpiMIB\Number3</v>
+<<<<<<< HEAD
+=======
+<v>RpiMIB\Number3\CortexM3</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Clock_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Comp_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Comp_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cs_1c.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyBootAsmGnu.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyDmac.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyFlash.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CyLib.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\en_level_shift.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\enable_battery.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\EnableBattery.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\EnableBattery_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_BOOT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_INT.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_IntClock.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_MASTER.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\I2C_1_SLAVE.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MISO_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\MOSI_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Pin_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_1_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\PWM_2_PM.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\pwm_a.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\pwm_b.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\rpi_inta.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\rpi_intb.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Rpi_miso.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Rpi_mosi.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Rpi_sclk.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\Rpi_ss.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SCL_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SCLK_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SDA_2.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_1.lst</v>
+<v>RpiMIB\Number3\CortexM3\ARM_GCC_541\Debug\Listing Files\SPIM_1_INT.lst</v>
+>>>>>>> master
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStates>
+<TreeKeysV2>
+<v>Datasheet</v>
+</TreeKeysV2>
+<TreeStatesV2>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>RpiMIB</v>
+<v>RpiMIB\Number3</v>
+<v>RpiMIB\Number3\PSoC 5LP Architecture TRM</v>
+<v>RpiMIB\Number3\CY8C58LP Family Datasheet</v>
+<v>RpiMIB\Number3\System Reference Guides</v>
+<<<<<<< HEAD
+<v>RpiMIB\Number3\System Reference Guides\cy_boot_v5_70</v>
+<v>RpiMIB\Number3\Comp_v2_0.pdf</v>
+<v>RpiMIB\Number3\cy_clock_v2_20</v>
+<v>RpiMIB\Number3\cy_clock_v2_20\cy_clock_v2_20.pdf</v>
+<v>RpiMIB\Number3\cy_constant_v1_0</v>
+<v>RpiMIB\Number3\cy_constant_v1_0\cy_constant_v1_0.pdf</v>
+<v>RpiMIB\Number3\cy_isr_v1_70</v>
+<v>RpiMIB\Number3\cy_isr_v1_70\cy_isr_v1_70.pdf</v>
+<v>RpiMIB\Number3\cy_pins_v2_20</v>
+<v>RpiMIB\Number3\cy_pins_v2_20\cy_pins_v2_20.pdf</v>
+<v>RpiMIB\Number3\cy_sync_v1_0.pdf</v>
+<v>RpiMIB\Number3\cy_vref_v1_70.pdf</v>
+<v>RpiMIB\Number3\CyControlReg_v1_80</v>
+<v>RpiMIB\Number3\CyControlReg_v1_80\CyControlReg_v1_80.pdf</v>
+<v>RpiMIB\Number3\CyStatusReg_v1_90.pdf</v>
+<v>RpiMIB\Number3\demux_v1_10</v>
+<v>RpiMIB\Number3\demux_v1_10\demux_v1_10.pdf</v>
+<v>RpiMIB\Number3\GlitchFilter_v2_0.pdf</v>
+<v>RpiMIB\Number3\I2C_v3_50.pdf</v>
+<v>RpiMIB\Number3\not_v1_0</v>
+<v>RpiMIB\Number3\not_v1_0\not_v1_0.pdf</v>
+<v>RpiMIB\Number3\PWM_v3_30</v>
+<v>RpiMIB\Number3\PWM_v3_30\PWM_v3_30.pdf</v>
+<v>RpiMIB\Number3\SPI_Master_v2_50</v>
+<v>RpiMIB\Number3\SPI_Master_v2_50\SPI_Master_v2_50.pdf</v>
+<v>RpiMIB\Number3\SPI_Slave_v2_70.pdf</v>
+=======
+>>>>>>> master
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>RpiMIB</v>
+<v>RpiMIB\Number3</v>
+<v>RpiMIB\Number3\PSoC 5LP Architecture TRM</v>
+<v>RpiMIB\Number3\CY8C58LP Family Datasheet</v>
+<v>RpiMIB\Number3\System Reference Guides</v>
+<<<<<<< HEAD
+<v>RpiMIB\Number3\System Reference Guides\cy_boot_v5_70</v>
+<v>RpiMIB\Number3\Comp_v2_0.pdf</v>
+<v>RpiMIB\Number3\cy_clock_v2_20</v>
+<v>RpiMIB\Number3\cy_clock_v2_20\cy_clock_v2_20.pdf</v>
+<v>RpiMIB\Number3\cy_constant_v1_0</v>
+<v>RpiMIB\Number3\cy_constant_v1_0\cy_constant_v1_0.pdf</v>
+<v>RpiMIB\Number3\cy_isr_v1_70</v>
+<v>RpiMIB\Number3\cy_isr_v1_70\cy_isr_v1_70.pdf</v>
+<v>RpiMIB\Number3\cy_pins_v2_20</v>
+<v>RpiMIB\Number3\cy_pins_v2_20\cy_pins_v2_20.pdf</v>
+<v>RpiMIB\Number3\cy_sync_v1_0.pdf</v>
+<v>RpiMIB\Number3\cy_vref_v1_70.pdf</v>
+<v>RpiMIB\Number3\CyControlReg_v1_80</v>
+<v>RpiMIB\Number3\CyControlReg_v1_80\CyControlReg_v1_80.pdf</v>
+<v>RpiMIB\Number3\CyStatusReg_v1_90.pdf</v>
+<v>RpiMIB\Number3\demux_v1_10</v>
+<v>RpiMIB\Number3\demux_v1_10\demux_v1_10.pdf</v>
+<v>RpiMIB\Number3\GlitchFilter_v2_0.pdf</v>
+<v>RpiMIB\Number3\I2C_v3_50.pdf</v>
+<v>RpiMIB\Number3\not_v1_0</v>
+<v>RpiMIB\Number3\not_v1_0\not_v1_0.pdf</v>
+<v>RpiMIB\Number3\PWM_v3_30</v>
+<v>RpiMIB\Number3\PWM_v3_30\PWM_v3_30.pdf</v>
+<v>RpiMIB\Number3\SPI_Master_v2_50</v>
+<v>RpiMIB\Number3\SPI_Master_v2_50\SPI_Master_v2_50.pdf</v>
+<v>RpiMIB\Number3\SPI_Slave_v2_70.pdf</v>
+=======
+>>>>>>> master
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStatesV2>
+</CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35>
+</dataGuid>
+<dataGuid v="5f2be1a5-0687-4501-bb8c-cf21cb8211bf">
+<CyGuid_5f2be1a5-0687-4501-bb8c-cf21cb8211bf type_name="CyDesigner.Common.ProjMgmt.GUI.CyBookmarkData" version="1">
+<<<<<<< HEAD
+<indicators>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="128" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="130" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="132" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="134" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="189" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="190" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="222" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="223" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="224" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="226" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="229" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="230" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="232" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="237" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="238" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="239" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="241" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="244" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="245" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="247" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="251" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="252" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="40" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="41" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="42" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="43" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="50" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="51" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="72" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="74" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="105" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+<CyGuid_67999771-01c6-4f62-90b3-2054bb36a318 type_name="CyDesigner.Framework.CyBookmark" version="1">
+<CyGuid_a1027fc4-3497-43a6-85d7-b91ffa0029b7 type_name="CyDesigner.Framework.CySerializableMarginIndicator" version="1" LineNumber="107" DocumentName=".\Number3.cydsn\main.c" />
+</CyGuid_67999771-01c6-4f62-90b3-2054bb36a318>
+</indicators>
+=======
+<indicators />
+>>>>>>> master
+</CyGuid_5f2be1a5-0687-4501-bb8c-cf21cb8211bf>
+</dataGuid>
+</userData>
+</CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
+<Unloaded />
+<OpenDocs>
+<<<<<<< HEAD
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\PWM_1.c" />
+<name v=".\Number3.cydsn\Number3.cydwr" />
+<name v=".\Number3.cydsn\TopDesign\TopDesign.cysch" />
+<name v=".\Number3.cydsn\main.c" />
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\CyLib.h" />
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\RpiInterrupts.c" />
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\RpiInterrupts.h" />
+<name v=".\Number3.cydsn\Generated_Source\PSoC5\cyfitter.h" />
+=======
+<name v=".\Number3.cydsn\main.c" />
+>>>>>>> master
+</OpenDocs>
+<OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
+
+  Actipro Docking/MDI for WinForms
+  Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
+  http://www.actiprosoftware.com
+
+<<<<<<< HEAD
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="615, 316" SelectedTabbedMdiWindow="43ed7b29-3952-4155-9117-a4173b3fc52d"><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\PWM_1.c" Guid="0521c4a7-be13-4cc4-b094-fc60f9a4e6af" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Number3.cydwr" Guid="93ffe678-50f3-4802-91d4-5bef3d82001d" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\TopDesign\TopDesign.cysch" Guid="ceca5570-a6af-4f44-94d8-90725da9d2f6" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\main.c" Guid="43ed7b29-3952-4155-9117-a4173b3fc52d" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="d50d4adc-fa38-4db6-9b65-f9c875afbbb4" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\CyLib.h" Guid="40846451-fe9d-4c49-b2ac-3457965ac0b6" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\RpiInterrupts.c" Guid="50f7c045-7dd2-4a2d-812a-27f57505ef7d" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\RpiInterrupts.h" Guid="9874443b-07d3-42a0-a289-704ec0e93af0" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Generated_Source\PSoC5\cyfitter.h" Guid="81327cbe-93aa-456f-8d2a-6bb4fd7fde51" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+<config v="Release" />
+=======
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1135, 832" SelectedTabbedMdiWindow="43ed7b29-3952-4155-9117-a4173b3fc52d"><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="d50d4adc-fa38-4db6-9b65-f9c875afbbb4" /><DocumentWindow Key="C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\main.c" Guid="43ed7b29-3952-4155-9117-a4173b3fc52d" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+<config v="" />
+>>>>>>> master
+<AutoUpdate v="true" />
+</CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>
+</CyXmlSerializer>

@@ -10,6 +10,7 @@ import RPi.GPIO as GPIO
 from threading import Thread
 
 SHUTDOWN_PORT = 21
+CLOCK_POLARITY_MODE = 0
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SHUTDOWN_PORT, GPIO.IN)
@@ -19,7 +20,6 @@ GPIO.setup(22, GPIO.IN)
 spi = spidev.SpiDev()
 #spiFrequency = 16000000
 spiFrequency = 1000000
-#spiFrequency = 10000000
 
 #takes 0, 1, or 2
 def readEncoder(encoder):
@@ -52,7 +52,7 @@ def readEncoder(encoder):
 def openSPI():
     print("openSPI")
     spi.open(0,0)
-    spi.mode=0
+    spi.mode = CLOCK_POLARITY_MODE
 
 def closeSPI():
     print("closeSPI");
