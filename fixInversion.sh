@@ -1,6 +1,6 @@
 cd /home/pi/kivy/kivy/input/providers
 
-sed -i '420s/.*/            invert_y = int(bool(drs('\'invert_y'\', 0)))/' hidinput.py
+sed -i '420s/.*/            invert_y = int(bool(drs("invert_y", 0)))/' hidinput.py
 
 cd /home/pi/kivy
 
