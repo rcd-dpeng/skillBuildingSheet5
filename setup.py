@@ -6,6 +6,6 @@ setup(
     packages=["pidev"],
     long_description="A DPEA package containing RPi infrastructure helpers.",
     install_requires=[
-        "kivy",
+        "pyserial",
     ]
 )
