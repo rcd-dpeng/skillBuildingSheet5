@@ -207,6 +207,22 @@ On the line that says ```on_release: root.manager.current = 'examples'``` change
 
 ### Password
 
-The default password is ```2018```. To change this password, open the ```AdminScreen.py``` file and edit the line that says ```password = '2018'``` near the top of the file.
+The default password is ```7266```. To change this password, open the ```AdminScreen.py``` file and edit the line that says ```password = '7266'``` near the top of the file.
 
 Passwords can be any length but must only contain numbers.
+
+### Adding A hiddne Button
+
+To keep all hidden button placement consistent, add this code to the .kv file in each ```<EXAMPLEScreen>``` that you want to lead to the admin screen.
+```
+Button:
+            id: admin
+            size_hint: None,None
+            font_size: 20
+            size: 10, 10
+            background_color: 0, 0, 0, 0
+            background_normal: ''
+            center: root.width - 5, 5
+            on_release: root.manager.current = 'main'
+```
+This creates a small transparent button in the bottom right of the screen.
