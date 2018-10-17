@@ -1,3 +1,4 @@
+import sys
 import Slush
 from Slush.Devices import L6470Registers as LReg
 from .slush_manager import slush_board as b
@@ -37,6 +38,9 @@ class stepper(Slush.Motor):
         return self.micro_steps
 
     def set_micro_steps(self, micro_steps):
+        if(micro_steps > 128):
+            sys.exit("ERROR: Slush Engine only supports microstepping values of base 2 up to a maximum of 128")
+
         self.micro_steps = micro_steps
         self.setMicroSteps(micro_steps)
 
