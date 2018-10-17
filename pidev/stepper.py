@@ -24,7 +24,7 @@ class stepper(Slush.Motor):
         self.setCurrent(kwargs.get("hold_current", 20),
                         kwargs.get("run_current", 20),
                         kwargs.get("accel_current", 20),
-                        kwargs.get("deaccell_current", 20))
+                        kwargs.get("deaccel_current", 20))
         self.steps_per_unit = kwargs.get("steps_per_unit", 200 / 25.4)
         self.speed = kwargs.get("speed", 1)
         self.set_speed(self.speed)
