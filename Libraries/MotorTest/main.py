@@ -1,83 +1,93 @@
 #!/usr/bin/python3
+import re
+import sys
+from pidev import stepper
 
-import Stepper
-import datetime # to print current date and time to testResults.txt
-import re #regex
 
-def runStepper(stepper):
+def run_stepper(stepper):
     stepper.run(1, 2500)
-    while stepper.readSwitch() == 0:
+    print("Motor should be spinning clockwise until the limit switch on port %s is pressed" % user_input_port)
+    while stepper.read_switch() == 0:
         continue
-    
-    checkIfSpinning(True)
-        
+
+    check_if_spinning(True)
+
     stepper.run(0, 2500)
-    while stepper.readSwitch() == 0:
+    print("Motor should be spinning counterclockwise until the limit switch on port %s is pressed" % user_input_port)
+    while stepper.read_switch() == 0:
         continue
-    
-    checkIfSpinning(False)
-    
+
+    check_if_spinning(False)
+
     stepper.hardStop()
     stepper.free()
-       
-        
-def checkIfSpinning(clockwise):
-    if clockwise == True:
-        clockWiseUserPrompt = input("Was the motor spinning clockwise? [y/n]\n")
-        
+
+
+def check_if_spinning(clockwise):
+    if clockwise:
+        clock_wise_user_prompt = input("Was the motor spinning clockwise? [y/n]\n")
+
         try:
-            if clockWiseUserPrompt == "y" or clockWiseUserPrompt == "n":
+            if clock_wise_user_prompt == "y":
                 return
+            elif clock_wise_user_prompt == "n":
+                print("The motor test has failed, the motor should have been spinning clockwise")
+                test_stepper.free()
+                input("Press any key to exit")
+                sys.exit()
             else:
                 raise ValueError("Not a valid response\n")
         except ValueError as error:
             print(error)
-            clockWiseUserPrompt = input("Was the motor spinning clockwise? [y/n]\n")
-        
+            input("Was the motor spinning clockwise? [y/n]\n")
+
     else:
-        counterClockWiseUserPrompt = input("Was the motor spinning counter clockwise? [y/n]\n")
-        
+        counter_clock_wise_user_prompt = input("Was the motor spinning counter clockwise? [y/n]\n")
+
         try:
-            if counterClockWiseUserPrompt == "y" or counterClockWiseUserPrompt == "n":
+            if counter_clock_wise_user_prompt == "y":
                 return
+            elif counter_clock_wise_user_prompt == "n":
+                print("The motor test has failed, the motor should have been spinning counterclockwise")
+                test_stepper.free()
+                input("Press any key to exit")
+                sys.exit()
             else:
                 raise ValueError("Not a valid response\n")
         except ValueError as error:
             print(error)
-            counterClockWiseUserPrompt = input("Was the motor spinning clockwise? [y/n]\n")
-            
-def checkUserInputPort(userInputPort):
+            input("Was the motor spinning clockwise? [y/n]\n")
+
+
+def check_user_input_port(user_input_port):
     regex = r"[0123]"
-    matches = re.finditer(regex, userInputPort)
-    totalMatches = 0
-    
-    for matchNum, match in enumerate(matches):
-        matchNum = matchNum + 1
-        totalMatches = matchNum
-       
-        return matchNum
-        
-    if totalMatches < 1:
-        return 0      
+    matches = re.finditer(regex, user_input_port)
 
-userInputPort = input("Which port is the stepper attached to?\n")
+    for match_num, match in enumerate(matches):
+        match_num = match_num + 1
 
-validUserInput = False
-
-while not validUserInput:
-    try:    
-        if int(checkUserInputPort(userInputPort)) >= 1:
-            int(userInputPort)
-            validUserInput = True
-            
-        else :
-            raise ValueError("Not a valid response")
-    except ValueError as error:
-        print(error)
-        userInputPort = input("Which port is the stepper attached to?\n")
+        return match_num
 
 
-rightStepper = Stepper.Stepper(port = int(userInputPort))
-runStepper(rightStepper)
+if __name__ == "__main__":
+    user_input_port = input("Which port is the stepper attached to?\n")
 
-input("press any key to exit")
+    valid_user_input = False
+
+    while not valid_user_input:
+        try:
+            if int(check_user_input_port(user_input_port)) >= 1:
+                int(user_input_port)
+                valid_user_input = True
+
+            else:
+                raise ValueError("Not a valid response")
+        except ValueError as error:
+            print(error)
+            user_input_port = input("Which port is the stepper attached to?\n")
+
+    test_stepper = stepper(port=int(user_input_port))
+    run_stepper(test_stepper)
+
+    print("Congratulations, the motor test was successful")
+    input("Press any key to exit")
