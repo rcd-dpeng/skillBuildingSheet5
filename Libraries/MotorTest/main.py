@@ -70,9 +70,11 @@ def check_user_input_port(user_input_port):
 
 
 if __name__ == "__main__":
+    input("You will need a limit switch before running this test, press any key when you are ready\n")
     user_input_port = input("Which port is the stepper attached to?\n")
 
     valid_user_input = False
+    test_stepper = None
 
     while not valid_user_input:
         try:
@@ -85,9 +87,13 @@ if __name__ == "__main__":
         except ValueError as error:
             print(error)
             user_input_port = input("Which port is the stepper attached to?\n")
+    try:
+        test_stepper = stepper(port=int(user_input_port))
+        run_stepper(test_stepper)
+    except KeyboardInterrupt:
+        test_stepper.free()
+        sys.exit("Exiting")
 
-    test_stepper = stepper(port=int(user_input_port))
-    run_stepper(test_stepper)
-
+    test_stepper.free()
     print("Congratulations, the motor test was successful")
-    input("Press any key to exit")
+    input("\nPress any key to exit")
