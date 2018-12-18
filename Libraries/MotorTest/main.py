@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 import re
 import sys
-from pidev import stepper
+try:
+    from pidev import stepper
+except (ImportError, ModuleNotFoundError):
+    sys.exit("Stepper libraries (pidev/slush) were not found. Install slushengine or pidev from RaspberryPiCommon")
 
 
 def run_stepper(stepper):
