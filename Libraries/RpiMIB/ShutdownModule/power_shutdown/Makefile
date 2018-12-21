@@ -5,8 +5,8 @@ all:
 clean:
 	make -C /lib/modules/$(shell uname -r)/build/ M=$(PWD) clean
 install:
-	mkdir /lib/modules/$(uname -r)/kernel/drivers/power_shutdown
-	cp power_shutdown.ko /lib/modules/$(uname -r)/kernel/drivers/power_shutdown
-	cd /lib/modules/$(uname -r)/kernel/drivers/power_shutdown
+	mkdir /lib/modules/$(shell uname -r)/kernel/drivers/power_shutdown
+	cp power_shutdown.ko /lib/modules/$(shell uname -r)/kernel/drivers/power_shutdown
+	cd /lib/modules/$(shell uname -r)/kernel/drivers/power_shutdown
 	depmod
 	echo power_shutdown >> /etc/modules-load.d/modules.conf
