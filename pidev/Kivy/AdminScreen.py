@@ -1,39 +1,34 @@
 from kivy.lang import Builder
-from kivy.core.window import Window
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.label import Label
-from kivy.uix.image import Image
-from kivy.uix.floatlayout import FloatLayout
-from kivy.graphics import *
+from kivy.uix.screenmanager import Screen
 
-password = '7266'
+
+PASSWORD = '7266'
 userPW = ''
 
 Builder.load_file('DPEAButton.kv')
 Builder.load_file('AdminScreen.kv')
 
+
 class AdminScreen(Screen):
 
-    def addNum(self, num):
+    def add_num(self, num):
         global userPW
         self.ids.pw.text += '* '
         userPW += str(num)
 
-    def removeNum(self):
+    def remove_num(self):
         global userPW
         self.ids.pw.text = self.ids.pw.text[:len(self.ids.pw.text) - 2]
         userPW = userPW[:len(userPW) - 1]
 
-    def checkPass(self):
-        global password
+    def check_pass(self):
         global userPW
-        if (password == userPW):
-            print('correct')
+        if PASSWORD == userPW:
             self.ids.pw.text = ' '
             userPW = ''
             self.parent.current = 'examples'
 
-    def resetColors(self):
+    def reset_colors(self):
         self.ids.back.color = 0.019, 0.337, 1, 1
         self.ids.one.color = 0.019, 0.337, 1, 1
         self.ids.two.color = 0.019, 0.337, 1, 1
@@ -48,41 +43,41 @@ class AdminScreen(Screen):
         self.ids.backspace.color = 0.019, 0.337, 1, 1
         self.ids.enter.color = 0.019, 0.337, 1, 1
 
-    def backButtonDown(self):
+    def back_button_down(self):
         self.ids.back.color = 0.01, 0.168, .5, 1
 
-    def oneButtonDown(self):
+    def one_button_down(self):
         self.ids.one.color = 0.01, 0.168, .5, 1
 
-    def twoButtonDown(self):
+    def two_button_down(self):
         self.ids.two.color = 0.01, 0.168, .5, 1
 
-    def threeButtonDown(self):
+    def three_button_down(self):
         self.ids.three.color = 0.01, 0.168, .5, 1
 
-    def fourButtonDown(self):
+    def four_button_down(self):
         self.ids.four.color = 0.01, 0.168, .5, 1
 
-    def fiveButtonDown(self):
+    def five_button_down(self):
         self.ids.five.color = 0.01, 0.168, .5, 1
 
-    def sixButtonDown(self):
+    def six_button_down(self):
         self.ids.six.color = 0.01, 0.168, .5, 1
 
-    def sevenButtonDown(self):
+    def seven_button_down(self):
         self.ids.seven.color = 0.01, 0.168, .5, 1
 
-    def eightButtonDown(self):
+    def eight_button_down(self):
         self.ids.eight.color = 0.01, 0.168, .5, 1
 
-    def nineButtonDown(self):
+    def nine_button_down(self):
         self.ids.nine.color = 0.01, 0.168, .5, 1
 
-    def zeroButtonDown(self):
+    def zero_button_down(self):
         self.ids.zero.color = 0.01, 0.168, .5, 1
 
-    def backspaceButtonDown(self):
+    def backspace_button_down(self):
         self.ids.backspace.color = 0.01, 0.168, .5, 1
 
-    def enterButtonDown(self):
+    def enter_button_down(self):
         self.ids.enter.color = 0.01, 0.168, .5, 1

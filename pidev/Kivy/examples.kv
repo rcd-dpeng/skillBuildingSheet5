@@ -18,7 +18,7 @@
             center_y: root.height * 0.955
             color: 1, 0, 0, 1
             on_press: root.XButtonDown()        # check examples.py file to see
-            on_touch_up: root.resetColors()     # examples of how to change
+            on_touch_up: root.reset_colors()     # examples of how to change
             on_release: quit()                  # button color and process touches
         #ImageButton Example using standard DPEALabel
         ImageButton:
@@ -49,7 +49,7 @@
             color: 0.019, 0.337, 1, 1
             on_press: root.DPEAButtonDown()
             on_release: root.DPEAButtonUp()
-            on_touch_up: root.resetColors()
+            on_touch_up: root.reset_colors()
 
         Label:
             text:"Standard DPEAButton\nTo use: load DPEAButton.kv\nYou can specify:\n      text\n      color\n      position\n      size\n      action"

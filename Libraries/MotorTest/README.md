@@ -1,4 +1,6 @@
 # Motor Testing
+Before running the test please ensure that the stepper motor is plugged in correctly to the Slush Board and there is a corresponding limit
+switch attached plugged in correctly to the Slush Board
 
 ## To test a stepper motor
 1. Run main.py, it should prompt the user to execute or execute in terminal, you want to execute in terminal.

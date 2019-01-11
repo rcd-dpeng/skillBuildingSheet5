@@ -3,31 +3,33 @@ import base64
 import json
 from threading import Thread
 
+
 class MixPanel(object):
     MIXPANEL_URL = "http://api.mixpanel.com/track/?data="
     properties = {}
 
-    def __init__(self, projectName, token):
+    def __init__(self, project_name, token):
         self.properties.clear()
-        self.addProperty("token", token)
-        self.addProperty("distinct_id", projectName)
+        self.add_property("token", token)
+        self.add_property("distinct_id", project_name)
+        self.event_name = None
 
-    def setEventName(self, eventName):
-        self.eventName = eventName
+    def set_event_name(self, event_name):
+        self.event_name = event_name
 
-    def addProperty(self, key, value):
+    def add_property(self, key, value):
         self.properties[key] = value
 
-    def httpPostRequest(self, url):
+    def http_post_request(self, url):
         requests.post(url)
     
-    def sendEvent(self):
+    def send_event(self):
         event = {}
-        event['event'] = self.eventName;
+        event['event'] = self.event_name
         event['properties'] = self.properties
 
         data = json.dumps(event)
         url = self.MIXPANEL_URL + base64.b64encode(data.encode("utf-8")).decode("utf-8")
-        request = Thread(target=self.httpPostRequest, args=(url,))
+        request = Thread(target=self.http_post_request, args=(url,))
         request.start()
 
