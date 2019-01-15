@@ -117,6 +117,12 @@ class stepper(Slush.Motor):
 
     def set_GPIO_state(self, port, pin, state):
         return b.setIOState(port, pin, state)
+    '''
+    If True motor with stop when sensor is high (Should be used in cases where there is a mechanical stop)
+    If False motor will continue past sensor (Should be used when motor can rotate freely)
+    '''
+    def set_limit_hardstop(self, stop):
+        self.setLimitHardStop(stop)
 
     '''
     hard stops the motor
