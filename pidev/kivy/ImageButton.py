@@ -19,4 +19,4 @@ class ImageButton(ButtonBehavior, Image):
         self.size = 150, 150
         self.background_color = 0, 0, 0, 0
         self.background_normal = ''
-        self.source = 'DPEA Logo Transparent.png'
+        self.source = 'iamges/DPEALogoTransparent.png'
