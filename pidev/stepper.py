@@ -1,10 +1,11 @@
 import sys
 import Slush
 from Slush.Devices import L6470Registers as LReg
-from .slush_manager import slush_board as b
-b = Slush.sBoard()
+from .slush_manager import slush_board as slush_board
+
 
 class stepper(Slush.Motor):
+    instances = []
 
     '''
     The init function sets a range of parameters:
@@ -28,8 +29,8 @@ class stepper(Slush.Motor):
         self.steps_per_unit = kwargs.get("steps_per_unit", 200 / 25.4)
         self.speed = kwargs.get("speed", 1)
         self.set_speed(self.speed)
-        self.getParam(LReg.CONFIG) == 0x2e88
-        # Allow for GPIO on the slushengine
+        self.getParam(LReg.CONFIG) == 0x2e88 # Allow for GPIO on the slushengine
+        stepper.instances.append(self)
 
     '''
     these are the functions used to change parameters
@@ -113,10 +114,10 @@ class stepper(Slush.Motor):
     pin: first pin = 0, goes up by 1 per pin
     '''
     def get_GPIO_state(self, port, pin):
-        return b.getIOState(port, pin)
+        return slush_board.getIOState(port, pin)
 
     def set_GPIO_state(self, port, pin, state):
-        return b.setIOState(port, pin, state)
+        return slush_board.setIOState(port, pin, state)
 
     '''
     hard stops the motor
@@ -145,6 +146,15 @@ class stepper(Slush.Motor):
 
     def set_max_speed(self, speed):
         self.setMaxSpeed(speed)
+
+    @staticmethod
+    def free_all():
+        """
+        Free all of the instantiated stepper motors
+        :return: None
+        """
+        for stp in stepper.instances:
+            stp.free()
 
     '''
     Some other helpful functions from motor that may be used

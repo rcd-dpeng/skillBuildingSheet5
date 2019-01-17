@@ -2,7 +2,7 @@ import sys
 try:
     import smbus
 except ImportError:
-    sys.exit("Unable to import smbus, install with sudo apt-get install python3-smbus")
+    sys.exit("Install smbus with sudo apt-get install python3-smbus")
 
 
 class TemperatureSensor:
@@ -23,7 +23,7 @@ class TemperatureSensor:
     def update_data(self):
         """
         Update the current data read off the temperature sensor
-        :return:
+        :return: None
         """
         self.data = self.bus.read_i2c_block_data(0x18, 0x05, 2)
 
@@ -43,7 +43,7 @@ class TemperatureSensor:
     def get_temperature_in_celsius(self):
         """
         Get the current temperature in Celsius
-        :return: Current temperature in Celsisus (Float)
+        :return: Current temperature in Celsius (Float)
         """
         self.update_data()
         ctemp = ((self.data[0] & 0x1F) * 256) + self.data[1]

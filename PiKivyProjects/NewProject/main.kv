@@ -13,12 +13,23 @@
             x: root.width * 0.965
             y: root.height * 0.945
             background_color: 0.7, 0.7, 0.7, 1
-            on_release: root.exitProgram()
+            on_release: root.exit_program()
+
+    Button:
+        text: 'X'
+        font_size: 23
+        size_hint: None,None
+        size: root.width * 0.015, root.width * 0.015
+        x: root.width * 0.965
+        y: root.height * 0.945
+        background_color: 0.7, 0.7, 0.7, 1
+        on_press: root.pressed()
+
 
 		# IMAGE
         Screen:
             Image:
-                source: 'DPEA Logo Transparent.png'
+                source: 'images/DPEALogoTransparent.png'
                 keep_ratio: False
                 allow_stretch: True
                 opacity: 1

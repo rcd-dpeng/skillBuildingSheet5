@@ -3,7 +3,6 @@ import base64
 import json
 from threading import Thread
 
-
 class MixPanel(object):
     MIXPANEL_URL = "http://api.mixpanel.com/track/?data="
     properties = {}

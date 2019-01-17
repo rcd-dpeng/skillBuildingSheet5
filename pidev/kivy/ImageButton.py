@@ -3,7 +3,6 @@
 
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
-from kivy.graphics import *
 
 #   An Image that has button capabilities.
 #   When using, specify:
@@ -19,4 +18,4 @@ class ImageButton(ButtonBehavior, Image):
         self.size = 150, 150
         self.background_color = 0, 0, 0, 0
         self.background_normal = ''
-        self.source = 'iamges/DPEALogoTransparent.png'
+        self.source = 'images/DPEALogoTransparent.png'

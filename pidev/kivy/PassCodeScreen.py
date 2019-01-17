@@ -1,15 +1,26 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
+import pkg_resources
 
+pidev_package = __name__
+dpea_button_path = '/'.join(('', 'DPEAButton.kv'))
+admin_screen_path = '/'.join(('', 'AdminScreen.kv'))
 
 PASSWORD = '7266'
 userPW = ''
 
-Builder.load_file('DPEAButton.kv')
-Builder.load_file('AdminScreen.kv')
+Builder.load_file(pkg_resources.resource_filename(pidev_package, dpea_button_path))
+Builder.load_file(pkg_resources.resource_filename(pidev_package, admin_screen_path))
+
+ADMIN_EVENTS_SCREEN = None
+TRANSITION_BACK_SCREEN = 'main'
+
+"""
+Class to display a passcode on screen to advance to admin screen
+"""
 
 
-class AdminScreen(Screen):
+class PassCodeScreen(Screen):
 
     def add_num(self, num):
         global userPW
@@ -26,7 +37,7 @@ class AdminScreen(Screen):
         if PASSWORD == userPW:
             self.ids.pw.text = ' '
             userPW = ''
-            self.parent.current = 'examples'
+            self.parent.current = ADMIN_EVENTS_SCREEN
 
     def reset_colors(self):
         self.ids.back.color = 0.019, 0.337, 1, 1
@@ -45,6 +56,9 @@ class AdminScreen(Screen):
 
     def back_button_down(self):
         self.ids.back.color = 0.01, 0.168, .5, 1
+
+    def transition_back(self):
+        self.parent.current = TRANSITION_BACK_SCREEN
 
     def one_button_down(self):
         self.ids.one.color = 0.01, 0.168, .5, 1
@@ -81,3 +95,23 @@ class AdminScreen(Screen):
 
     def enter_button_down(self):
         self.ids.enter.color = 0.01, 0.168, .5, 1
+
+    @staticmethod
+    def set_admin_events_screen(screen):
+        """
+        Set the name of the screen to transition to when the password is correct
+        :param screen: Name of the screen to transition to
+        :return: None
+        """
+        global ADMIN_EVENTS_SCREEN
+        ADMIN_EVENTS_SCREEN= screen
+
+    @staticmethod
+    def set_transition_back_screen(screen):
+        """
+        Set the screen to transition back to when the "Back to Game" button is pressed
+        :param screen: Name of the screen to transition back to
+        :return: None
+        """
+        global TRANSITION_BACK_SCREEN
+        TRANSITION_BACK_SCREEN = screen

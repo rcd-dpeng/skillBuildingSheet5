@@ -9,5 +9,5 @@
 * [Hardware Unit Testing](../Libraries/UnitTests/rpiUnitTests.py)
 * [Slush Engine Examples](../SlushEngineExamples)
 * [Fixing Kivy Touch Inversion](../Libraries/VNC-Touch-Inversion/fix-inversion.md)
-* [Kivy Addon Files](../pidev/Kivy)
+* [Kivy Addon Files](../pidev/kivy)
 * [Launcher and Updater Scripts](../pidev/Scripts/README.md)

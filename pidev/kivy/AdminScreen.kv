@@ -14,7 +14,7 @@
             color: 0.019, 0.337, 1, 1
             size: 280, 80
             on_press: root.back_button_down()
-            on_release: root.manager.current = 'examples'
+            on_release: root.transition_back()
             on_touch_up: root.reset_colors()
 
         Label:
@@ -53,7 +53,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.two_button_down()
-            on_release: root.addNum(2)
+            on_release: root.add_num(2)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
@@ -67,7 +67,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.three_button_down()
-            on_release: root.addNum(3)
+            on_release: root.add_num(3)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
@@ -81,7 +81,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.four_button_down()
-            on_release: root.addNum(4)
+            on_release: root.add_num(4)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
@@ -95,7 +95,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.five_button_down()
-            on_release: root.addNum(5)
+            on_release: root.add_num(5)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
@@ -109,7 +109,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.six_button_down()
-            on_release: root.addNum(6)
+            on_release: root.add_num(6)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
@@ -123,7 +123,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.seven_button_down()
-            on_release: root.addNum(7)
+            on_release: root.add_num(7)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
@@ -137,7 +137,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.eight_button_down()
-            on_release: root.addNum(8)
+            on_release: root.add_num(8)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
@@ -151,7 +151,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.nine_button_down()
-            on_release: root.addNum(9)
+            on_release: root.add_num(9)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
@@ -165,7 +165,7 @@
             color: 0.019, 0.337, 1, 1
             size: 80, 80
             on_press: root.zero_button_down()
-            on_release: root.addNum(0)
+            on_release: root.add_num(0)
             on_touch_up: root.reset_colors()
 
         DPEAButton:
