@@ -18,4 +18,4 @@ class ImageButton(ButtonBehavior, Image):
         self.size = 150, 150
         self.background_color = 0, 0, 0, 0
         self.background_normal = ''
-        self.source = 'images/DPEALogoTransparent.png'
+        self.source = 'pidev/kivy/images/DPEALogoTransparent.png'

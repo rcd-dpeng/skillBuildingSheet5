@@ -5,7 +5,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from pidev import MixPanel
 from pidev.kivy import PassCodeScreen
 from pidev.kivy import PauseScreen
-from time import sleep
+
 
 PROJECT_TOKEN = "x"
 MIXPANEL = MixPanel("Project Name", PROJECT_TOKEN)
@@ -23,18 +23,22 @@ Window.clearcolor = (1, 1, 1, 1)  # White
 
 class MainScreen(Screen):
 
+    def passcode_button_pressed(self):
+        SCREEN_MANAGER.current = 'passCode'
+
     @staticmethod
     def exit_program():
         quit()
 
     def pressed(self):
-        PauseScreen.pause(SCREEN_MANAGER, 'test', 10)
 
+        PauseScreen.pause(SCREEN_MANAGER, 'test', 10)
 
 Builder.load_file('main.kv')
 SCREEN_MANAGER.add_widget(MainScreen(name='main'))
-SCREEN_MANAGER.add_widget(PassCodeScreen(name='admin'))
+SCREEN_MANAGER.add_widget(PassCodeScreen(name='passCode'))
 SCREEN_MANAGER.add_widget(PauseScreen(name='pauseScene'))
+
 """
 MixPanel
 """

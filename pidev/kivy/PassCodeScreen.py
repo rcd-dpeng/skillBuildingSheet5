@@ -4,7 +4,7 @@ import pkg_resources
 
 pidev_package = __name__
 dpea_button_path = '/'.join(('', 'DPEAButton.kv'))
-admin_screen_path = '/'.join(('', 'AdminScreen.kv'))
+admin_screen_path = '/'.join(('', 'PassCodeScreen.kv'))
 
 PASSWORD = '7266'
 userPW = ''
@@ -21,7 +21,6 @@ Class to display a passcode on screen to advance to admin screen
 
 
 class PassCodeScreen(Screen):
-
     def add_num(self, num):
         global userPW
         self.ids.pw.text += '* '
@@ -115,3 +114,34 @@ class PassCodeScreen(Screen):
         """
         global TRANSITION_BACK_SCREEN
         TRANSITION_BACK_SCREEN = screen
+
+    @staticmethod
+    def set_password(pswd):
+        """
+        Change the default password
+        :param pswd: New password
+        :return: None
+        """
+        global PASSWORD
+        PASSWORD = pswd
+
+    @staticmethod
+    def change_main_screen_name(name):
+        """
+        Change the name of the screen to add the hidden button to go to the admin screen
+
+        NOTE: This only needs to be run ONCE, once it is called with the new name you can remove the call from your code
+        :param name: Name of the main screen of the UI
+        :return: None
+        """
+        if name == '':
+            return
+
+        with open(pkg_resources.resource_filename(pidev_package, admin_screen_path)) as file:
+            data = file.readlines()
+
+        data[198] = '<' + name + '>\n'
+
+        with open(pkg_resources.resource_filename(pidev_package, admin_screen_path), 'w') as file:
+            file.writelines(data)
+
