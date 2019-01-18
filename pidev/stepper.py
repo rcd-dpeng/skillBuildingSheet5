@@ -4,6 +4,7 @@ from Slush.Devices import L6470Registers as LReg
 from .slush_manager import slush_board as b
 b = Slush.sBoard()
 
+
 class stepper(Slush.Motor):
 
     '''
@@ -28,8 +29,7 @@ class stepper(Slush.Motor):
         self.steps_per_unit = kwargs.get("steps_per_unit", 200 / 25.4)
         self.speed = kwargs.get("speed", 1)
         self.set_speed(self.speed)
-        self.getParam(LReg.CONFIG) == 0x2e88
-        # Allow for GPIO on the slushengine
+        self.getParam(LReg.CONFIG) == 0x2e88  # Allow for GPIO on the slushengine
 
     '''
     these are the functions used to change parameters
@@ -38,7 +38,7 @@ class stepper(Slush.Motor):
         return self.micro_steps
 
     def set_micro_steps(self, micro_steps):
-        if(micro_steps > 128):
+        if micro_steps > 128:
             sys.exit("ERROR: Slush Engine only supports microstepping values of base 2 up to a maximum of 128")
 
         self.micro_steps = micro_steps
@@ -61,7 +61,7 @@ class stepper(Slush.Motor):
     def home(self, direction):
         self.run(direction, self.speed)
 
-        while self.read_switch() == False:
+        while not self.read_switch():
             continue
 
         self.hard_stop()
@@ -112,11 +112,23 @@ class stepper(Slush.Motor):
     port:   a = 0; b = 1
     pin: first pin = 0, goes up by 1 per pin
     '''
-    def get_GPIO_state(self, port, pin):
+    @staticmethod
+    def get_GPIO_state(port, pin):
         return b.getIOState(port, pin)
 
-    def set_GPIO_state(self, port, pin, state):
+    @staticmethod
+    def set_GPIO_state(port, pin, state):
         return b.setIOState(port, pin, state)
+
+    '''
+    If True motor with stop when sensor is high (Should be used in cases where there is a mechanical stop)
+    If False motor will continue past sensor (Should be used when motor can rotate freely)
+    '''
+    def set_limit_hardstop(self, stop):
+        try:
+            self.setLimitHardStop(stop)
+        except AttributeError:
+            sys.exit("Update SlushEngine Code, this feature is only on recent versions")
 
     '''
     hard stops the motor
