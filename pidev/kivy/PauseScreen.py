@@ -1,42 +1,52 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 from kivy.animation import Animation
-import pkg_resources
-from threading import Thread
+from kivy.clock import Clock
+import os.path
 
-pidev_package = __name__
-pause_screen_path = '/'.join(('', 'PauseScreen.kv'))
+pause_screen_kv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "PauseScreen.kv")
+Builder.load_file(pause_screen_kv_path)
 
-Builder.load_file(pkg_resources.resource_filename(pidev_package, pause_screen_path))
+SCREEN_MANAGER = None
+TRANSITION_SCREEN = None
 
 
 class PauseScreen(Screen):
-    sm = None
-    text = None
-    seconds = None
-    thread = None
+    """
+    Class used to pause the UI
+    """
+    white_image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "white.png")
 
     @staticmethod
-    def pause(screen_manager, text, seconds):
-        PauseScreen.sm = screen_manager
-        PauseScreen.text = text
-        PauseScreen.seconds = seconds
-        thread = Thread(target=PauseScreen.start_pause())
+    def pause(screen_manager, pause_scene_name, transition_back_screen, text, seconds):
+        """
+        Pause the UI for a given amount of time
+        :param screen_manager: The screen manager used for the UI
+        :param pause_scene_name: The name of the PauseScreen when added as a widget
+        :param transition_back_screen: The name of the screen to transition to when complete
+        :param text: The text to display on screen while paused
+        :param seconds: The number of seconds to pause the UI for
+        :return: None
+        """
+        global SCREEN_MANAGER, TRANSITION_SCREEN
 
-        print(thread.is_alive())
+        SCREEN_MANAGER = screen_manager
+        TRANSITION_SCREEN = transition_back_screen
 
-    @staticmethod
-    def start_pause():
-        PauseScreen.sm.current = 'pauseScene'
-        PauseScreen.sm.get_screen('pauseScene').ids.pauseText = PauseScreen.text
+        screen_manager.current = pause_scene_name
+        screen_manager.get_screen('pauseScene').ids.pauseText = text
         load = Animation(size=(10, 10), duration=0) + \
-               Animation(size=(150, 10), duration=PauseScreen.seconds)
+                    Animation(size=(150, 10), duration=seconds)
+        load.start(screen_manager.get_screen(pause_scene_name).ids.progress_bar)
 
-        load.start(PauseScreen.sm.get_screen('pauseScene').ids.progress_bar)
-        return
+        Clock.schedule_once(lambda dt: PauseScreen.transition_back(), seconds)
 
     @staticmethod
     def transition_back():
-        print("here")
-        #screen_manager.current = 'main'
+        """
+        Transition the UI back from the PauseScreen
+        :return: None
+        """
+        global SCREEN_MANAGER
+        SCREEN_MANAGER.current = TRANSITION_SCREEN
 

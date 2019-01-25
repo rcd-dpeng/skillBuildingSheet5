@@ -195,3 +195,18 @@
             on_press: root.enter_button_down()
             on_release: root.check_pass()
             on_touch_up: root.reset_colors()
+
+<MainScreen>
+    name: 'main'
+    FloatLayout:
+        size_hint: None, None
+
+    Button:
+        id: admin
+        size_hint: None,None
+        font_size: 20
+        size: 10, 10
+        background_color: 0, 0, 0, 0
+        background_normal: ''
+        center: root.width - 5, 5
+        on_release: root.admin_action()

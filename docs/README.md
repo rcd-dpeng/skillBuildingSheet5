@@ -10,4 +10,4 @@
 * [Slush Engine Examples](../SlushEngineExamples)
 * [Fixing Kivy Touch Inversion](../Libraries/VNC-Touch-Inversion/fix-inversion.md)
 * [Kivy Addon Files](../pidev/kivy)
-* [Launcher and Updater Scripts](../pidev/Scripts/README.md)
+* [Launcher and Updater Scripts](../Scripts/README.md)

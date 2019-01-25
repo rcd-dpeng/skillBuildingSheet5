@@ -1,16 +1,16 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
-import pkg_resources
-
-pidev_package = __name__
-dpea_button_path = '/'.join(('', 'DPEAButton.kv'))
-admin_screen_path = '/'.join(('', 'PassCodeScreen.kv'))
+import os.path
+import inspect
 
 PASSWORD = '7266'
 userPW = ''
 
-Builder.load_file(pkg_resources.resource_filename(pidev_package, dpea_button_path))
-Builder.load_file(pkg_resources.resource_filename(pidev_package, admin_screen_path))
+dpea_button_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "DPEAButton.kv")
+passcode_screen_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "PassCodeScreen.kv")
+
+Builder.load_file(dpea_button_path)
+Builder.load_file(passcode_screen_path)
 
 ADMIN_EVENTS_SCREEN = None
 TRANSITION_BACK_SCREEN = 'main'
@@ -21,17 +21,33 @@ Class to display a passcode on screen to advance to admin screen
 
 
 class PassCodeScreen(Screen):
+    """
+    Class used to enter the PassCodeScreen to enter the admin screen
+    """
     def add_num(self, num):
+        """
+        Add a number to the current password entry
+        :param num: Number to add
+        :return: None
+        """
         global userPW
         self.ids.pw.text += '* '
         userPW += str(num)
 
     def remove_num(self):
+        """
+        Remove a number from the current password entry
+        :return: None
+        """
         global userPW
         self.ids.pw.text = self.ids.pw.text[:len(self.ids.pw.text) - 2]
         userPW = userPW[:len(userPW) - 1]
 
     def check_pass(self):
+        """
+        Check to see if the password was entered correctly
+        :return: None
+        """
         global userPW
         if PASSWORD == userPW:
             self.ids.pw.text = ' '
@@ -39,6 +55,10 @@ class PassCodeScreen(Screen):
             self.parent.current = ADMIN_EVENTS_SCREEN
 
     def reset_colors(self):
+        """
+        Reset all of the colors
+        :return: None
+        """
         self.ids.back.color = 0.019, 0.337, 1, 1
         self.ids.one.color = 0.019, 0.337, 1, 1
         self.ids.two.color = 0.019, 0.337, 1, 1
@@ -137,11 +157,11 @@ class PassCodeScreen(Screen):
         if name == '':
             return
 
-        with open(pkg_resources.resource_filename(pidev_package, admin_screen_path)) as file:
+        with open(passcode_screen_path) as file:
             data = file.readlines()
 
         data[198] = '<' + name + '>\n'
 
-        with open(pkg_resources.resource_filename(pidev_package, admin_screen_path), 'w') as file:
+        with open(passcode_screen_path, 'w') as file:
             file.writelines(data)
 
