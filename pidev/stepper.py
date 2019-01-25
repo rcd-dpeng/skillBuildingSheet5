@@ -8,6 +8,43 @@ b = Slush.sBoard()
 
 
 class stepper(Slush.Motor):
+    """
+    DPEA stepper implementation, extended from Slush.Motor
+    Reference Slush.Motor for additional functionality
+    """
+    chip_statuses_xlt = OrderedDict([  # MSB to LSB of motor controller status and the number of associated bits
+        ('SCK_MOD', 1),
+        ('STEP_LOSS_B\\', 1),
+        ('STEP_LOSS_A\\', 1),
+        ('OCD\\', 1),
+        ('TH_SD\\', 1),
+        ('TH_WRN\\', 1),
+        ('UVLO\\', 1),
+        ('WRONG_CMD', 1),
+        ('NOTPERF_CMD', 1),
+        ('MOT_STATUS', 2),
+        ('DIR', 1),
+        ('SW_EVEN', 1),
+        ('SW_F', 1),
+        ('BUSY\\', 1),
+        ('HiZ', 1)])
+
+    chip_statuses_d = OrderedDict([ # MSB to LSB of motor controller status and the number of associated bits
+        ('STEP_LOSS_B\\', 1),
+        ('STEP_LOSS_A\\', 1),
+        ('OCD\\', 1),
+        ('TH_STATUS', 2),
+        ('UVLO_ADC', 1),
+        ('UVLO', 1),
+        ('STCK_MOD', 1),
+        ('CMD_ERROR', 1),
+        ('MOT_STATUS', 2),
+        ('DIR', 1),
+        ('SW_EVN', 1),
+        ('SW_F', 1),
+        ('BUSY', 1),
+        ('HiZ', 1)
+    ])
 
     def __init__(self, **kwargs):
         """
@@ -36,23 +73,6 @@ class stepper(Slush.Motor):
         Print all of the registers status for the L6470 chipset, if a status has a \ means it is active low
         :return: None
         """
-        chip_statuses = OrderedDict([
-            ('SCK_MOD', 1),
-            ('STEP_LOSS_B\\', 1),
-            ('STEP_LOSS_A\\', 1),
-            ('OCD\\', 1),
-            ('TH_SD\\', 1),
-            ('TH_WRN\\', 1),
-            ('UVLO\\', 1),
-            ('WRONG_CMD', 1),
-            ('NOTPERF_CMD', 1),
-            ('MOT_STATUS', 2),
-            ('DIR', 1),
-            ('SW_EVEN', 1),
-            ('SW_F', 1),
-            ('BUSY\\', 1),
-            ('HiZ', 1)])
-
         byte = '{0:b}'.format(self.getStatus())
 
         if len(byte) != 16:  # Add leading zeroes to the byte to make it 16 bits
@@ -61,14 +81,24 @@ class stepper(Slush.Motor):
 
         print("The byte for ", str(self), "is: ", byte)
 
-        location = 0
+        if self.boardInUse == 0:  # if the slush board is not the model D
+            location = 0
 
-        for status in chip_statuses:
-            data = ""
-            for i in range(0, chip_statuses[status]):
-                data += str(int(byte[location]))
-                location += 1
-            print(status + ": " + data)
+            for status in self.chip_statuses_xlt:
+                data = ""
+                for i in range(0, self.chip_statuses_xlt[status]):
+                    data += str(int(byte[location]))
+                    location += 1
+                print(status + ": " + data)
+        else:
+            location = 0
+
+            for status in self.chip_statuses_d:
+                data = ""
+                for i in range(0, self.chip_statuses_d[status]):
+                    data += str(int(byte[location]))
+                    location += 1
+                print(status + ": " + data)
 
     def get_micro_steps(self):
         """
@@ -197,64 +227,65 @@ class stepper(Slush.Motor):
         """
         return b.setIOState(port, pin, state)
 
-    '''
-    If True motor with stop when sensor is high (Should be used in cases where there is a mechanical stop)
-    If False motor will continue past sensor (Should be used when motor can rotate freely)
-    '''
-
     def set_limit_hardstop(self, stop):
         """
-        Set whether the Slush Engine should stop moving
-        :param stop:
-        :return:
+        Set whether the Slush Engine should stop moving the stepper motor when it hits the limit switch
+        :param stop: True motor with stop when sensor is high (Should be used in cases where there is a mechanical stop)
+                     False motor will continue past sensor (Should be used when motor can rotate freely)
+        :return: None
         """
         try:
             self.setLimitHardStop(stop)
         except AttributeError:
-            sys.exit("Update SlushEngine Code, this feature is only on recent versions")
-
-    '''
-    hard stops the motor
-    '''
+            sys.exit("Update SlushEngine Code (DPEA Fork), this feature is only on recent versions")
 
     def stop(self):
+        """
+        Stops the motor, same as performing a hard stop
+        :return: None
+        """
         self.hard_stop()
 
-    '''
-    helper Functions:
-    motor.py is Camel Case
-    stepper.py is underscore
-    
-    stepper extends motors so must adjust the functions accordingly
-    '''
-
     def hard_stop(self):
+        """
+        Hard stop the motor
+        :return: None
+        """
         self.hardStop()
 
     def go_to(self, number_of_steps):
+        """
+        Make the stepper go to a position
+        :param number_of_steps: Number of steps to move
+        :return: None
+        """
         self.goTo(number_of_steps)
 
     def wait_move_finish(self):
+        """
+        Wait for the move to finish
+        :return: None
+        """
         self.waitMoveFinish()
 
     def set_as_home(self):
+        """
+        Set the current position as home
+        :return: None
+        """
         self.setAsHome()
 
     def set_max_speed(self, speed):
+        """
+        Set the max speed the stepper motor can run at
+        :param speed: The maximum speed
+        :return: None
+        """
         self.setMaxSpeed(speed)
 
-    def wait_to_return(self):
-        while self.isBusy():
-            continue
-
     def __repr__(self):
-        return "stepper on port" + str(self.port)
-
-    '''
-    Some other helpful functions from motor that may be used
-    
-    run (self, dir, spd)
-    
-    goToDir (self, dir,pos) #same as goTo but with direction
-    
-    '''
+        """
+        Returns string representation of the stepper object
+        :return: "stepper on port" with the corresponding port number
+        """
+        return "stepper on port " + str(self.port)
