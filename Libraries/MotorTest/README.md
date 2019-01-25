@@ -1,6 +1,6 @@
 # Motor Testing
 Before running the test please ensure that the stepper motor is plugged in correctly to the Slush Board and there is a corresponding limit
-switch attached plugged in correctly to the Slush Board
+switch attached and plugged in correctly to the Slush Board
 
 ## To test a stepper motor
 0. Before running the test you will need a limit switch connected to the associated stepper port
