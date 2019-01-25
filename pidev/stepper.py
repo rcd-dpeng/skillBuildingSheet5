@@ -30,12 +30,12 @@ class stepper(Slush.Motor):
         ('HiZ', 1)])
 
     chip_statuses_d = OrderedDict([ # MSB to LSB of motor controller status and the number of associated bits
-        ('STEP_LOSS_B\\', 1),
-        ('STEP_LOSS_A\\', 1),
+        ('STEP_LOSS_B', 1),
+        ('STEP_LOSS_A', 1),
         ('OCD\\', 1),
         ('TH_STATUS', 2),
-        ('UVLO_ADC', 1),
-        ('UVLO', 1),
+        ('UVLO_ADC\\', 1),
+        ('UVLO\\', 1),
         ('STCK_MOD', 1),
         ('CMD_ERROR', 1),
         ('MOT_STATUS', 2),
