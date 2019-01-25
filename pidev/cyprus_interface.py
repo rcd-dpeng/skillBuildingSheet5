@@ -7,7 +7,6 @@ delay = .001
 spi_frequency = 1000000
 
 
-#OPERATIONAL FUNCTIONS
 
 #break_into_list and form_word translate between lists of 2 bytes and 16 bit words
 
@@ -77,7 +76,7 @@ def write_i2c_data_byte(value): #writes a single byte to the stored i2c data in 
     spi_write_word(0x0800)
     sleep(2*delay)
     spi_write_word(value)
-
+    
 def write_i2c_data_list(values): #writes a list of bytes to stored i2c data in the cyprus
     for i in range(len(values)):
         write_i2c_data_byte(values[i] & 0x00FF)
@@ -91,37 +90,24 @@ def write_i2c_address(address): #writes the stored i2c address in the cyprus in 
 def send_i2c(port): #signals the cyprus to send the prewritten data to the prewritten adress through the given port
     command_data = 0x0700 | port
     spi_write_word(command_data)
-
+    
 def write_i2c(port, address, values): #complete procedure to send given list of bytes to given adress through given i2c port
     write_i2c_data_list(values)
     write_i2c_address(address)
-    sleep(delay)
+    sleep(2*delay)
     send_i2c(port)
-
+    
+def set_encoder_trigger(channel, value): #sets trigger on given channel to given value, cyprus activates 
+    command_data = 0x0a00 | channel      #corresponding gpio pin when encoder reads within radius of trigger
+    spi_write_word(command_data)
+    sleep(delay)
+    spi_write_word(value)
+    
+def read_encoder(port, channel): #returns the value from the encoder at the given channel
+    command_data = 0x0b00 | (port << 4) | channel
+    spi_write_word(command_data)
+    sleep(2*delay)
+    return spi_read_word()
+        
 def no_command(): #sends command to cyprus that tells it to do nothing
     spi_write_word(0x000)
-
-#DEBUG COMMANDS
-
-def scan_gpio():
-    for i in range(60):
-        print(read_gpio())
-        sleep(1)
-
-def scan_MISO():
-    for i in range(60):
-        print(spi_read_word())
-        sleep(1)
-
-def iterate_MOSI():
-    for i in range(128):
-        spi_write_word(i)
-        sleep(.1)
-
-def iterate_gpio():
-    write_gpio(0)
-    sleep(.1)
-    for i in range(0, 4):
-        write_gpio(1<<i)
-        sleep(.1)
-    write_gpio(0)
