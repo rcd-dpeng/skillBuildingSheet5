@@ -5,8 +5,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from pidev import MixPanel
 from pidev.kivy import PassCodeScreen
 from pidev.kivy import PauseScreen
-from pidev.kivy import DPEAButton
-
 
 PROJECT_TOKEN = "x"
 MIXPANEL = MixPanel("Project Name", PROJECT_TOKEN)
@@ -32,12 +30,10 @@ class MainScreen(Screen):
         quit()
 
     def pressed(self):
-
-        PauseScreen.pause(SCREEN_MANAGER, 'pauseScene', 'main','test', 10)
+        print("pressed")
 
     def admin_action(self):
         SCREEN_MANAGER.current = 'passCode'
-        print("hello world")
 
 Builder.load_file('main.kv')
 SCREEN_MANAGER.add_widget(MainScreen(name='main'))
