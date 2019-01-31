@@ -11,7 +11,7 @@
 In order to read from the Temperature you need to have the python3 smbus installed
 You can do this by running this command in terminal
 ```sudo apt-get install python3-smbus```
-or by running the prewritten [script](installPackages.sh)
+or by running the prewritten [script](../Libraries/TemperatureSensor/installPackages.sh)
 
 ## Enabling I2C in Raspberry Pi Configuration
 You need to have I2C enabled in the Raspberry Pi Configuration to be able to communicate with the Temperature Sensor
@@ -34,5 +34,5 @@ This means there is a device connected on address 18 through I2C
 ## Reading from the Temperature Sensor
 Reading from the temperature sensor is pretty simple all you need to do is import the Temperature Sensor Class and create a Temperature Sensor object
 
-* You can copy the Temperature Sensor [File](TemperatureSensor.py) into your own repository
-* Refer to the [example code](main.py) on how to make a Temperature Sensor Object and getting the temperature
+* You can copy the Temperature Sensor [File](../pidev/TemperatureSensor.py) into your own repository
+* Refer to the [example code](../Libraries/TemperatureSensor/main.py) on how to make a Temperature Sensor Object and getting the temperature
