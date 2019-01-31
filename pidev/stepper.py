@@ -4,46 +4,47 @@ import Slush
 from Slush.Devices import L6470Registers as LReg
 from .slush_manager import slush_board as slush_board
 
+CHIP_STATUSES_XLT = OrderedDict([  # MSB to LSB of motor controller status and index of the associated bit (16 bit number)
+        ('SCK_MOD', 0),
+        ('STEP_LOSS_B\\', 1),
+        ('STEP_LOSS_A\\', 2),
+        ('OCD\\', 3),
+        ('TH_SD\\', 4),
+        ('TH_WRN\\', 5),
+        ('UVLO\\', 6),
+        ('WRONG_CMD', 7),
+        ('NOTPERF_CMD', 8),
+        ('MOT_STATUS', (9, 10)),
+        ('DIR', 11),
+        ('SW_EVEN', 12),
+        ('SW_F', 13),
+        ('BUSY\\', 14),
+        ('HiZ', 15)])
+
+CHIP_STATUSES_D = OrderedDict([ # MSB to LSB of motor controller status and the number of associated bits
+        ('STEP_LOSS_B', 0),
+        ('STEP_LOSS_A', 1),
+        ('OCD\\', 2),
+        ('TH_STATUS', (3, 4)),
+        ('UVLO_ADC\\', 5),
+        ('UVLO\\', 6),
+        ('STCK_MOD', 7),
+        ('CMD_ERROR', 8),
+        ('MOT_STATUS', (9, 10)),
+        ('DIR', 11),
+        ('SW_EVN', 12),
+        ('SW_F', 13),
+        ('BUSY', 14),
+        ('HiZ', 15)
+    ])
+
 
 class stepper(Slush.Motor):
     """
     DPEA stepper implementation, extended from Slush.Motor
     Reference Slush.Motor for additional functionality
     """
-    chip_statuses_xlt = OrderedDict([  # MSB to LSB of motor controller status and the number of associated bits
-        ('SCK_MOD', 1),
-        ('STEP_LOSS_B\\', 1),
-        ('STEP_LOSS_A\\', 1),
-        ('OCD\\', 1),
-        ('TH_SD\\', 1),
-        ('TH_WRN\\', 1),
-        ('UVLO\\', 1),
-        ('WRONG_CMD', 1),
-        ('NOTPERF_CMD', 1),
-        ('MOT_STATUS', 2),
-        ('DIR', 1),
-        ('SW_EVEN', 1),
-        ('SW_F', 1),
-        ('BUSY\\', 1),
-        ('HiZ', 1)])
     instances = []
-
-    chip_statuses_d = OrderedDict([ # MSB to LSB of motor controller status and the number of associated bits
-        ('STEP_LOSS_B', 1),
-        ('STEP_LOSS_A', 1),
-        ('OCD\\', 1),
-        ('TH_STATUS', 2),
-        ('UVLO_ADC\\', 1),
-        ('UVLO\\', 1),
-        ('STCK_MOD', 1),
-        ('CMD_ERROR', 1),
-        ('MOT_STATUS', 2),
-        ('DIR', 1),
-        ('SW_EVN', 1),
-        ('SW_F', 1),
-        ('BUSY', 1),
-        ('HiZ', 1)
-    ])
 
     def __init__(self, **kwargs):
         """
@@ -67,37 +68,70 @@ class stepper(Slush.Motor):
         self.set_speed(self.speed)
         self.getParam(LReg.CONFIG) == 0x2e88  # Allow for GPIO on the slushengine
 
-    def print_status(self):
+    def _get_status_byte(self):
         """
-        Print all of the registers status for the L6470 chipset, if a status has a \ means it is active low
-        :return: None
+        Get the status byte as a String
+        :return: String of the status byte
         """
         byte = '{0:b}'.format(self.getStatus())
 
         if len(byte) != 16:  # Add leading zeroes to the byte to make it 16 bits
             diff = 16 - len(byte)
             byte = "0" * diff + byte
+        return byte
+
+    def print_status(self):
+        """
+        Print all of the registers status for the L6470 chipset, if a status has a \ means it is active low
+        :return: None
+        """
+        byte = self._get_status_byte()
 
         print("The byte for ", str(self), "is: ", byte)
 
         if self.boardInUse == 0:  # if the slush board is not the model D
-            location = 0
+            for status in CHIP_STATUSES_XLT:
+                byte_index = CHIP_STATUSES_XLT.get(status)
 
-            for status in self.chip_statuses_xlt:
-                data = ""
-                for i in range(0, self.chip_statuses_xlt[status]):
-                    data += str(int(byte[location]))
-                    location += 1
-                print(status + ": " + data)
+                if isinstance(byte_index, tuple):
+                    print(status + " " + str(byte[byte_index[0]]) + str(byte[byte_index[1]]))
+                else:
+                    print(status + " " + str(byte[byte_index]))
         else:
-            location = 0
+            for status in CHIP_STATUSES_D:
+                byte_index = CHIP_STATUSES_D.get(status)
 
-            for status in self.chip_statuses_d:
-                data = ""
-                for i in range(0, self.chip_statuses_d[status]):
-                    data += str(int(byte[location]))
-                    location += 1
-                print(status + ": " + data)
+                if isinstance(byte_index, tuple):
+                    print(status + " " + str(byte[byte_index[0]]) + str(byte[byte_index[1]]))
+                else:
+                    print(status + " " + str(byte[byte_index]))
+
+    def get_specific_status(self, status_register):
+        """
+        Get the specific status of a register
+        :param status_register: The register status you want to check
+        :return: String of the status. This is necessary as some statuses are 2 bits and a string ensures no truncation
+        """
+        byte = self._get_status_byte()
+
+        if self.boardInUse == 0:
+            data = CHIP_STATUSES_XLT.get(status_register)
+            if data is None:
+                raise ValueError("Invalid status register try adding the active low flag '\\\\' to the parameter")
+
+            if isinstance(data, tuple):
+                return str(byte[data[0]]) + str(byte[data[1]])
+            else:
+                return str(byte[data])
+        else:
+            data = CHIP_STATUSES_D.get(status_register)
+            if data is None:
+                raise ValueError("Invalid status register try adding the active low flag '\\\\' to the parameter")
+
+            if isinstance(data, tuple):
+                return str(byte[data[0]]) + str(byte[data[1]])
+            else:
+                return str(byte[data])
 
     def get_micro_steps(self):
         """
