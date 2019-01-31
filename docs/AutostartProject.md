@@ -9,7 +9,7 @@ You will need to create a launcher script and configure the Pi to run the script
 1. Create a shell script in your project directory. Do this in terminal by running the command `touch launcher.sh`
 2. Edit the shell script so it navigates into your directory and runs your main python script, example `cd home/pi/ProjectName`
 3. Make the launcher and python main script executable by running `chmod u+x filename` in your projects source code directory ex. `chmod u+x main.py`. Don't forget to do this for both files.
-4. Refer to the [example](launcher.sh) to see how your launcher should look
+4. Refer to the [example](../Libraries/AutoStart/launcher.sh) to see how your launcher should look
 
 ## Auto run script on boot
 1. Go into the terminal and run `crontab -e`
