@@ -1,5 +1,5 @@
 import time
-
+import sys
 import odrive
 from odrive.enums import *
 
@@ -179,5 +179,7 @@ class ODriveAxis(object):
 
 if __name__ == "__main__":
     find_odrive()
+    if odrv0 is None:
+        sys.exit("Unable to find an odrive, the hardware trigger script")
     print(odrv0)
     odrv0.reboot()
