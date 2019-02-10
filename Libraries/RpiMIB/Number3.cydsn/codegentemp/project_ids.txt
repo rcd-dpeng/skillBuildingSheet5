@@ -1,7 +1,0 @@
-C:\Users\harlow2016\Documents\PSOC_Designs\RpiMIB\Number3.cydsn\Number3.cyprj|2f9b7e4b-f0b0-4ae9-9fc0-b9bc08a75f7d
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|4dc0584d-104c-4b80-bfb5-7bff4cb2ae19
-C:\Users\harlow2016\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|2bfb3528-38ca-405e-912e-37e43eb8fca1
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|9ffd4838-2138-4df3-8a5c-182f7fb9493c
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|14db5b57-6487-454a-89d7-0438452bf8f0
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|a43f694f-b574-4081-a23c-fec004006fde
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyReferenceLibrary\CyReferenceLibrary.cylib\CyReferenceLibrary.cyprj|0595366f-7d8c-40d6-aafe-3c4875b7f98d

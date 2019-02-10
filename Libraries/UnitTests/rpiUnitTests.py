@@ -12,17 +12,10 @@ from datetime import datetime
 import random
 
 import RPi.GPIO as GPIO 
-sys.path.insert(0, "/home/pi/GitHub/RaspberryPiCommon/pidev")
-import stepper
-import RPiMIB
+#sys.path.insert(0, "/home/pi/packages/RaspberryPiCommon/pidev")
+from pidev import stepper
+from pidev import Cyprus_Commands_RPi as cyprus
 import Slush
-
-#from pidev import RPiMIB
-#from pidev import slush_manager
-
-#sys.path.insert(0, "/home/pi/Documents/RaspberryPiCommon/Libraries/Hardware/RPiMIB")
-#sys.path.insert(0, "Libraries/Hardware/RPiMIB")
-#import RPiMIB
 
 MAX_SPEED = 50
 CLOCKWISE = 0
@@ -33,7 +26,7 @@ DIRECTIONS = ["CLOCKWISE", "COUNTERCLOCKWISE"]
 parser = argparse.ArgumentParser()
 parser.add_argument("-motor", type=int, help="Enter the motor to test", nargs='?', default = -1)
 parser.add_argument("-motorCount", type=int, help="Enter the number of motors to test", nargs='?', default = 4)
-parser.add_argument("-verbose", type=bool, help="Print verbose messages", nargs='?', default = False)
+parser.add_argument("-verbose", type=bool, help="Print verbose messages", nargs='?', default = True)
 args = parser.parse_args()
 
 if (args.motor != -1):
@@ -41,7 +34,7 @@ if (args.motor != -1):
 
 def homeTest(motorNumber):
     printTitle("Home Test motor " + str(motorNumber))
-    motor = stepper.stepper(port = motorNumber, speed = MAX_SPEED/2, micro_steps = 2)
+    motor = stepper(port = motorNumber, speed = MAX_SPEED/2, micro_steps = 2)
     motor.resetDev()
         
     moveOffSwitch(motor, COUNTERCLOCKWISE)
@@ -77,7 +70,7 @@ def homeTest(motorNumber):
 def speedTest(motorNumber):
     printTitle("Speed Test motor " + str(motorNumber))
     debug("Increase speed in 5 increaments")
-    motor = stepper.stepper(port = motorNumber, speed = MAX_SPEED)
+    motor = stepper(port = motorNumber, speed = MAX_SPEED)
     motor.set_speed(3000)
 
     for speed in range(200, 1200, 200):
@@ -99,15 +92,22 @@ def gpioInputTest():
 
 def pwmTest(port, channel):
     printTitle("# Send PWM test 4 speeds (or positions) on Port " + str(port) + " and channel " + str(channel))
-    RPiMIB.open_spi()
+    cyprus.open_spi()
     for speed in range(500, 3000, 500):
         debug("Speed = " + str(speed))
-        RPiMIB.write_pwm(port, "period", speed)
-        sleep(2)
-        debug(RPiMIB.read_spi(port, channel))
-        RPiMIB.write_pwm(port, "period", 0)
+        cyprus.write_pwm(port, "period", speed)
+        sleep(5)
+        #debug(cyprus.read_spi(port, channel))
+        cyprus.write_pwm(port, "period", 0)
         sleep(0.5)
-    RPiMIB.close_spi()
+    cyprus.close_spi()
+
+def readEncoderTest(motorNumber):
+    port, channel = encoderInfo(motorNumber)
+    portChannel = motorEncoderMessage(motorNumber, port, channel)
+
+    encoder = readEncoder(port, channel)
+    print("Encoder: " + hex(encoder))
 
 def encoderTest(motorNumber):
     port, channel = encoderInfo(motorNumber)
@@ -116,7 +116,7 @@ def encoderTest(motorNumber):
     printTitle("Encoder Test " + portChannel)
     encoder1 = readEncoder(port, channel)
               
-    motor = stepper.stepper(port = motorNumber, speed = MAX_SPEED)
+    motor = stepper(port = motorNumber, speed = MAX_SPEED)
     motor.relative_move(-1.0)
 
     if (encoder1 == 0xffff):
@@ -142,12 +142,12 @@ def encoderTriggerTest(motorNumber, value):
     portChannel = motorEncoderMessage(motorNumber, port, channel)
     printTitle("Encoder Trigger Test with value: " + hex(value))
     
-    motor = stepper.stepper(port = motorNumber, speed = 10)
+    motor = stepper(port = motorNumber, speed = 10)
     motor.relative_move(1)
     
-    RPiMIB.open_spi()
-    RPiMIB.set_encoder_trigger(port, channel, value)
-    RPiMIB.close_spi()
+    cyprus.open_spi()
+    cyprus.set_encoder_trigger(channel, value)
+    cyprus.close_spi()
 
     motor.relative_move(50)
     debug("Encoder value: " + hex(readEncoder(port, channel)))
@@ -156,9 +156,9 @@ def encoderTriggerTest(motorNumber, value):
     assertTrue(assertEqualsWithDelta(value, result, 0xf),
                "Encoder Trigger Test " + portChannel + ". Out of range")
 
-    RPiMIB.open_spi()
-    RPiMIB.set_encoder_trigger(port, channel, 0xffff)
-    RPiMIB.close_spi()
+    cyprus.open_spi()
+    cyprus.set_encoder_trigger(channel, 0xffff)
+    cyprus.close_spi()
     
     motor.stop()
     motor.free()
@@ -166,7 +166,7 @@ def encoderTriggerTest(motorNumber, value):
 
 def relativeMoveTest(motorNumber, value):
     printTitle("Relative Move Test motor " + str(motorNumber) + " with value = " + str(value))
-    motor = stepper.stepper(port = motorNumber, speed = MAX_SPEED)
+    motor = stepper(port = motorNumber, speed = MAX_SPEED)
     debug("Relative move Counter Clockwise.")
     sleep(0.1)
     port, channel = encoderInfo(motorNumber)
@@ -192,18 +192,18 @@ def relativeMoveTest(motorNumber, value):
     
 def pwmAndStepperTest(pwmPort, stepperPort):
     printTitle("PWM(port = " + str(pwmPort) + ") and Stepper(port = " + str(stepperPort) + ") test")
-    motor = stepper.stepper(port = stepperPort, speed = MAX_SPEED)
+    motor = stepper(port = stepperPort, speed = MAX_SPEED)
     debug("Stepper Run Until Stop for 2 seconds. NOTE: PWM should not be running.")
-    stepper.runUntilStop(1, 500)
+    motor.run(1, 500)
     sleep(2)
     motor.stop()
-    RPiMIB.openSPI()
+    cyprus.open_spi()
     debug("PWM 4000 for 2 seconds")
-    RPiMIB.sendPWM(pwmPort, 1000)
+    cyprus.write_pwm(stepperPort, "period", 1000)
     sleep(2)
     debug("Stop PWM")
-    RPiMIB.sendPWM(pwmPort, 0)
-    RPiMIB.closeSPI()
+    cyprus.write_pwm(stepperPort, "period", 0)
+    cyprus.close_spi()
     sleep(1)
 
 #### Helpers
@@ -241,10 +241,10 @@ def moveOffSwitch(motor, direction):
         motor.stop()
         
 def readEncoder(port, index):
-    RPiMIB.open_spi()
+    cyprus.open_spi()
     sleep(0.1)
-    encoderValue = RPiMIB.read_encoder(port, index)
-    RPiMIB.close_spi()
+    encoderValue = cyprus.read_encoder(port, index)
+    cyprus.close_spi()
     return(encoderValue)
 
 def encoderInfo(motorNumber):
@@ -315,33 +315,33 @@ def debug(message):
 def endTests():
     debug("Ending tests, freeing motors")
     for i in range(0, 4):
-        motor = stepper.stepper(port = i, speed = 10)
+        motor = stepper(port = i, speed = 10)
         motor.stop()
         motor.free()
     
 ########################### Tests #########################################
 
-#gpioInputTest()
+pwmAndStepperTest(4, 0)
+gpioInputTest()
 
 for i in range(0, args.motorCount):
-#    homeTest(i)
-#    speedTest(i)
-#    relativeMoveTest(i, 20)
+    homeTest(i)
+    speedTest(i)
+    relativeMoveTest(i, 20)
     encoderTest(i)
-#    encoderTriggerTest(i, 0x0F0)
+    encoderTriggerTest(i, 0x0F0)
 
 if args.motor != -1:
-#    homeTest(args.motor)
-#    speedTest(args.motor)
-#    relativeMoveTest(args.motor, 20)
+    homeTest(args.motor)
+    speedTest(args.motor)
+    relativeMoveTest(args.motor, 20)
+    readEncoderTest(args.motor)
     encoderTest(args.motor)
-#    encoderTriggerTest(args.motor, 0x0F0)
+    encoderTriggerTest(args.motor, 0x0F0)
 
-#pwmAndStepperTest(4, 0)
-#for pwmPort in range(4, 6, 1):
-#    RPiMIB.openSPI()
-#    RPiMIB.sendPWM(pwmPort, 0)
-#    RPiMIB.closeSPI()
+pwmAndStepperTest(4, 0)
+readEncoderTest(0);
+pwmTest(1, 0);
 
 endTests()
 
