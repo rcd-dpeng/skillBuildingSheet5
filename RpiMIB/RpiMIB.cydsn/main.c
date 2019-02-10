@@ -316,7 +316,7 @@ int main() {
                     break; 
                 
                 case set_spi_trigger:
-                    spi_trigger_value[RPi_Command_Data & DATA_MASK] = RPi_Data;
+                    spi_trigger_value[RPi_Command_Data & CHANNEL_MASK] = RPi_Data;
                     break;
                 
                 case read_encoder: {
