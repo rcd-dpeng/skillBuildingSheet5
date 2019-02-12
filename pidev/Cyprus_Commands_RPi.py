@@ -23,7 +23,7 @@ def spi_read_word(): #reads the spi value sent to the RPi as a 16 bit word
 
 def open_spi(): #opens spi communication
     spi.open(0,0)
-    spi.mode = 0b01
+    spi.mode = 0b00
 
 def close_spi(): #closes spi communication
     spi.close()
