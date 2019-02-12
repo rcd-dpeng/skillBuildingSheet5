@@ -59,6 +59,7 @@ def write_pwm(port, parameter, value): #changes the given paremeter, either "com
 	
 def setup_servo(port): #sets up the given pwm port to control a servo
 	write_pwm(port, "compare mode", 1)
+	sleep(delay)
 	write_pwm(port, "period", .02)
 	
 def write_servo_position(port, position): #sets servo on given port to position given by a number in the interval
