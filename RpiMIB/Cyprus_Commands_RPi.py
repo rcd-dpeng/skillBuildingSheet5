@@ -23,7 +23,7 @@ def spi_read_word(): #reads the spi value sent to the RPi as a 16 bit word
 
 def open_spi(): #opens spi communication
     spi.open(0,0)
-    spi.mode = 0b01
+    spi.mode = 0b00
 
 def close_spi(): #closes spi communication
     spi.close()
@@ -56,6 +56,19 @@ def write_pwm(port, parameter, value): #changes the given paremeter, either "com
     spi_write_word(command_data)
     sleep(delay)
     spi_write_word(processed_value)
+	
+def setup_servo(port): #sets up the given pwm port to control a servo
+	write_pwm(port, "compare mode", 1)
+	sleep(delay)
+	write_pwm(port, "period", .02)
+	
+def write_servo_position(port, position): #sets servo on given port to position given by a number in the interval
+	if (position > 1): 		              # [0, 1], where 0 corresponds to one end of its range and 1 to the other
+		position = 1
+	elif (position < 0):
+		position = 0
+	compare = .001 * (1 + position)
+	write_pwm(port, "compare", compare)
 
 def read_gpio(): #returns a 4 bit number, each bit corresponds to a gpio pin
     spi_write_word(0x0100)

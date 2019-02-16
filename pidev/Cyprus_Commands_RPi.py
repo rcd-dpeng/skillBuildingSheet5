@@ -59,6 +59,20 @@ def write_pwm(port, parameter, value):
     spi_write_word(command_data)
     sleep(delay*2)
     spi_write_word(value)
+	
+def setup_servo(port): #sets up the given pwm port to control a servo
+	write_pwm(port, "compare mode", 1)
+	sleep(delay)
+	write_pwm(port, "period", .02)
+	
+def write_servo_position(port, position): #sets servo on given port to position given by a number in the interval
+	if (position > 1): 		              # [0, 1], where 0 corresponds to one end of its range and 1 to the other
+		position = 1
+	elif (position < 0):
+		position = 0
+	compare = .001 * (1 + position)
+	write_pwm(port, "compare", compare)
+>>>>>>> 33d91179ff09a40e23cd167607a9223ed3f51e09
 
 def initialize_pwm(port, period, compare_mode):
     write_pwm(port, PERIOD, period)
