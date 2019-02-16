@@ -72,7 +72,6 @@ def write_servo_position(port, position): #sets servo on given port to position 
 		position = 0
 	compare = .001 * (1 + position)
 	write_pwm(port, "compare", compare)
->>>>>>> 33d91179ff09a40e23cd167607a9223ed3f51e09
 
 def initialize_pwm(port, period, compare_mode):
     write_pwm(port, PERIOD, period)
