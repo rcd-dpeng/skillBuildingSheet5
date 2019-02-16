@@ -17,6 +17,10 @@ from pidev import stepper
 from pidev import Cyprus_Commands_RPi as cyprus
 import Slush
 
+SERVO_MIN_SPEED = 1400
+SERVO_MAX_SPEED = 1600
+SERVO_MIN_POSITION = 300
+SERVO_MAX_POSITION = 2800
 MAX_SPEED = 50
 CLOCKWISE = 0
 COUNTERCLOCKWISE = 1
@@ -27,10 +31,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-motor", type=int, help="Enter the motor to test", nargs='?', default = -1)
 parser.add_argument("-motorCount", type=int, help="Enter the number of motors to test", nargs='?', default = 4)
 parser.add_argument("-verbose", type=bool, help="Print verbose messages", nargs='?', default = True)
+parser.add_argument("-value", type=int, help="set value for PWM", nargs='?', default = 100)
+parser.add_argument("-position", type=float, help="set position for servo", nargs='?', default = 0.5)
+parser.add_argument("-speed", type=int, help="set speed of servo", nargs='?', default = 50)
 args = parser.parse_args()
 
 if (args.motor != -1):
     args.motorCount = 0
+    
+def initTests():
+    cyprus.open_spi()
 
 def homeTest(motorNumber):
     printTitle("Home Test motor " + str(motorNumber))
@@ -90,18 +100,27 @@ def gpioInputTest():
     sleep(0.1)
     checkGPIOValue(False)
 
-def pwmTest(port, channel):
-    printTitle("# Send PWM test 4 speeds (or positions) on Port " + str(port) + " and channel " + str(channel))
-    cyprus.open_spi()
-    for speed in range(500, 3000, 500):
-        debug("Speed = " + str(speed))
-        cyprus.write_pwm(port, "period", speed)
-        sleep(5)
-        #debug(cyprus.read_spi(port, channel))
-        cyprus.write_pwm(port, "period", 0)
+def pwmPositionTest(port):
+    printTitle("# Send PWM test 4 speeds (or positions) on Port " + str(port))
+    cyprus.initialize_pwm(1, 5000, 1)
+    for value in range(0, 10, 1):
+        debug("Value = " + str(value*0.1))
+        cyprus.set_servo_position(port, value*0.1)
+        sleep(1.5)
+    cyprus.set_servo_position(port, 0)
+    #debug(cyprus.read_spi(port, channel))
+        
+def pwmSpeedTest(port):
+    printTitle("# Send PWM test 4 speeds (or positions) on Port " + str(port))
+    cyprus.initialize_pwm(1, 5000, 1)
+    for value in range(-10, 10, 1):
+        cyprus.open_spi()
+        debug("Value = " + str(value*0.1))
+        cyprus.set_servo_speed(port, value*0.1)
         sleep(0.5)
-    cyprus.close_spi()
+    cyprus.set_servo_speed(port, 0)
 
+        
 def readEncoderTest(motorNumber):
     port, channel = encoderInfo(motorNumber)
     portChannel = motorEncoderMessage(motorNumber, port, channel)
@@ -145,9 +164,7 @@ def encoderTriggerTest(motorNumber, value):
     motor = stepper(port = motorNumber, speed = 10)
     motor.relative_move(1)
     
-    cyprus.open_spi()
     cyprus.set_encoder_trigger(channel, value)
-    cyprus.close_spi()
 
     motor.relative_move(50)
     debug("Encoder value: " + hex(readEncoder(port, channel)))
@@ -155,10 +172,7 @@ def encoderTriggerTest(motorNumber, value):
     
     assertTrue(assertEqualsWithDelta(value, result, 0xf),
                "Encoder Trigger Test " + portChannel + ". Out of range")
-
-    cyprus.open_spi()
     cyprus.set_encoder_trigger(channel, 0xffff)
-    cyprus.close_spi()
     
     motor.stop()
     motor.free()
@@ -197,13 +211,11 @@ def pwmAndStepperTest(pwmPort, stepperPort):
     motor.run(1, 500)
     sleep(2)
     motor.stop()
-    cyprus.open_spi()
     debug("PWM 4000 for 2 seconds")
     cyprus.write_pwm(stepperPort, "period", 1000)
     sleep(2)
     debug("Stop PWM")
     cyprus.write_pwm(stepperPort, "period", 0)
-    cyprus.close_spi()
     sleep(1)
 
 #### Helpers
@@ -241,10 +253,8 @@ def moveOffSwitch(motor, direction):
         motor.stop()
         
 def readEncoder(port, index):
-    cyprus.open_spi()
     sleep(0.1)
     encoderValue = cyprus.read_encoder(port, index)
-    cyprus.close_spi()
     return(encoderValue)
 
 def encoderInfo(motorNumber):
@@ -318,8 +328,11 @@ def endTests():
         motor = stepper(port = i, speed = 10)
         motor.stop()
         motor.free()
+    cyprus.close_spi()
     
 ########################### Tests #########################################
+
+initTests()
 
 pwmAndStepperTest(4, 0)
 gpioInputTest()
@@ -341,7 +354,9 @@ if args.motor != -1:
 
 pwmAndStepperTest(4, 0)
 readEncoderTest(0);
-pwmTest(1, 0);
 
+pwmSpeedTest(1)
+pwmPositionTest(1)
+    
 endTests()
 

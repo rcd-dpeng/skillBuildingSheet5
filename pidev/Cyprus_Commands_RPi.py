@@ -7,6 +7,15 @@ delay = .001
 spi_frequency = 1000000
 pwm_clock_frequency = 1000000
 
+SERVO_MIN_SPEED = 1445
+SERVO_MAX_SPEED = 1555
+SERVO_SPEED_RANGE = 70
+SERVO_MIN_POSITION = 700
+SERVO_MAX_POSITION = 2800
+COMPARE_MODE = 0
+PERIOD = 1
+COMPARE = 2
+
 #break_into_list and form_word translate between lists of 2 bytes and 16 bit words
 
 def break_into_list(word):
@@ -23,7 +32,7 @@ def spi_read_word(): #reads the spi value sent to the RPi as a 16 bit word
 
 def open_spi(): #opens spi communication
     spi.open(0,0)
-    spi.mode = 0b01
+    spi.mode = 0b00
 
 def close_spi(): #closes spi communication
     spi.close()
@@ -40,23 +49,34 @@ def write_spi(port, channel, value): #writes the given value to the given spi po
     sleep(delay)
     spi_write_word(value)
 
-def write_pwm(port, parameter, value): #changes the given paremeter, either "compare mode", "period", or "compare",
-    if (parameter == "compare mode"):  #of the given port to the given value. Compare modes: 0:<, 1:<=, 2:>, 3:>=, 4:=
-        parameter_number = 0
-        processed_value = value
-    elif (parameter == "period"):
-        parameter_number = 1
-        processed_value = int(value * pwm_clock_frequency)
-    elif (parameter == "compare"):
-        parameter_number = 2
-        processed_value = int(value * pwm_clock_frequency)
-    else:
+def write_pwm(port, parameter, value):
+    # Changes the given paremeter, either "compare mode", "period", or "compare",
+    # of the given port to the given value. Compare modes: 0:<, 1:<=, 2:>, 3:>=, 4:=
+    if ((parameter < COMPARE_MODE) or (parameter > COMPARE)):
         return "parameter not recognized"
-    command_data = 0x0500 | (port << 4) | parameter_number
-    spi_write_word(command_data)
-    sleep(delay)
-    spi_write_word(processed_value)
 
+    command_data = 0x0500 | (port << 4) | parameter
+    spi_write_word(command_data)
+    sleep(delay*2)
+    spi_write_word(value)
+
+def initialize_pwm(port, period, compare_mode):
+    write_pwm(port, PERIOD, period)
+    write_pwm(port, COMPARE_MODE, compare_mode)
+    
+def set_servo_position(port, value):
+    print("# Set Servo Postion on Port " + str(port) + " to value " + str(value))
+    position = ((SERVO_MAX_POSITION - SERVO_MIN_POSITION) * value) + SERVO_MIN_POSITION
+    write_pwm(port, COMPARE, int(position))
+        
+def set_servo_speed(port, value):
+    if (value < 0):
+        speed = SERVO_MIN_SPEED
+    else:
+        speed = SERVO_MAX_SPEED
+    speed = speed + (SERVO_SPEED_RANGE * value)
+    write_pwm(port, COMPARE, int(speed))
+        
 def read_gpio(): #returns a 4 bit number, each bit corresponds to a gpio pin
     spi_write_word(0x0100)
     sleep(delay)
