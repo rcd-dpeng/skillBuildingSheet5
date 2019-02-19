@@ -229,9 +229,9 @@ int main() {
             
             if ((spi_trigger_value[i] - spi_trigger_radius < encoderValue) && 
                 (spi_trigger_value[i] + spi_trigger_radius > encoderValue)) {
-                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
-            } else {
                 GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
+            } else {
+                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
             } 
         }
     
