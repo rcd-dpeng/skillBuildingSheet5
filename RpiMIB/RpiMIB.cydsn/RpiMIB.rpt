@@ -1,13 +1,13 @@
-Loading plugins phase: Elapsed time ==> 2s.147ms
+Loading plugins phase: Elapsed time ==> 0s.311ms
 <CYPRESSTAG name="CyDsfit arguments...">
-cydsfit arguments: -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -d CY8C5888LTI-LP097 -s C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\Generated_Source\PSoC5 -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
+cydsfit arguments: -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -d CY8C5888LTI-LP097 -s C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\Generated_Source\PSoC5 -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
 </CYPRESSTAG>
 <CYPRESSTAG name="Design elaboration results...">
 </CYPRESSTAG>
-Elaboration phase: Elapsed time ==> 13s.236ms
+Elaboration phase: Elapsed time ==> 5s.894ms
 <CYPRESSTAG name="HDL generation results...">
 </CYPRESSTAG>
-HDL generation phase: Elapsed time ==> 0s.122ms
+HDL generation phase: Elapsed time ==> 0s.280ms
 <CYPRESSTAG name="Synthesis results...">
 
      | | | | | | |
@@ -25,23 +25,23 @@ HDL generation phase: Elapsed time ==> 0s.122ms
 ======================================================================
 Compiling:  RpiMIB.v
 Program  :   C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\bin\warp.exe
-Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 RpiMIB.v -verilog
+Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 RpiMIB.v -verilog
 ======================================================================
 
 ======================================================================
 Compiling:  RpiMIB.v
 Program  :   C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\bin\warp.exe
-Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 RpiMIB.v -verilog
+Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 RpiMIB.v -verilog
 ======================================================================
 
 ======================================================================
 Compiling:  RpiMIB.v
 Program  :   vlogfe
-Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 -verilog RpiMIB.v
+Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 -verilog RpiMIB.v
 ======================================================================
 
 vlogfe V6.3 IR 41:  Verilog parser
-Sat Feb 02 09:05:07 2019
+Wed Feb 20 09:27:58 2019
 
 
 ======================================================================
@@ -51,7 +51,7 @@ Options  :    -yv2 -q10 RpiMIB.v
 ======================================================================
 
 vpp V6.3 IR 41:  Verilog Pre-Processor
-Sat Feb 02 09:05:07 2019
+Wed Feb 20 09:27:58 2019
 
 Flattening file 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_virtualmux_v1_0\cy_virtualmux_v1_0.v'
 Flattening file 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\B_SPI_Master_v2_50\B_SPI_Master_v2_50.v'
@@ -103,11 +103,11 @@ vlogfe:  No errors.
 ======================================================================
 Compiling:  RpiMIB.v
 Program  :   tovif
-Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 -verilog RpiMIB.v
+Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 -verilog RpiMIB.v
 ======================================================================
 
 tovif V6.3 IR 41:  High-level synthesis
-Sat Feb 02 09:05:08 2019
+Wed Feb 20 09:27:59 2019
 
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\std.vhd'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\cypress.vhd'.
@@ -118,9 +118,9 @@ Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\c
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\stdlogic\mod_cnst.vif'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\stdlogic\mod_mthv.vif'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\stdlogic\mod_genv.vif'.
-Linking 'C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\codegentemp\RpiMIB.ctl'.
+Linking 'C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\codegentemp\RpiMIB.ctl'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_virtualmux_v1_0\cy_virtualmux_v1_0.v'.
-Linking 'C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\codegentemp\RpiMIB.v'.
+Linking 'C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\codegentemp\RpiMIB.v'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\B_SPI_Master_v2_50\B_SPI_Master_v2_50.v'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\cypress.v'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\cy_psoc3_inc.v'.
@@ -147,11 +147,11 @@ tovif:  No errors.
 ======================================================================
 Compiling:  RpiMIB.v
 Program  :   topld
-Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 -verilog RpiMIB.v
+Options  :    -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 -verilog RpiMIB.v
 ======================================================================
 
 topld V6.3 IR 41:  Synthesis and optimization
-Sat Feb 02 09:05:10 2019
+Wed Feb 20 09:28:01 2019
 
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\std.vhd'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\cypress.vhd'.
@@ -162,9 +162,9 @@ Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\c
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\stdlogic\mod_cnst.vif'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\stdlogic\mod_mthv.vif'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\stdlogic\mod_genv.vif'.
-Linking 'C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\codegentemp\RpiMIB.ctl'.
+Linking 'C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\codegentemp\RpiMIB.ctl'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyPrimitives\cyprimitives.cylib\cy_virtualmux_v1_0\cy_virtualmux_v1_0.v'.
-Linking 'C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\codegentemp\RpiMIB.v'.
+Linking 'C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\codegentemp\RpiMIB.v'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\CyComponentLibrary\CyComponentLibrary.cylib\B_SPI_Master_v2_50\B_SPI_Master_v2_50.v'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\cypress.v'.
 Linking 'C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\lib\common\cy_psoc3_inc.v'.
@@ -1022,16 +1022,16 @@ topld:  No errors.
 
 CYPRESS_DIR    : C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp
 Warp Program   : C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\warp\bin\warp.exe
-Warp Arguments : -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 RpiMIB.v -verilog
+Warp Arguments : -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -dcpsoc3 RpiMIB.v -verilog
 </CYPRESSTAG>
-Warp synthesis phase: Elapsed time ==> 4s.452ms
+Warp synthesis phase: Elapsed time ==> 4s.382ms
 <CYPRESSTAG name="Fitter results...">
 <CYPRESSTAG name="Fitter startup details...">
-cyp3fit: V4.2.0.641, Family: PSoC3, Started at: Saturday, 02 February 2019 09:05:10
-Options: -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -d CY8C5888LTI-LP097 RpiMIB.v -verilog
+cyp3fit: V4.2.0.641, Family: PSoC3, Started at: Wednesday, 20 February 2019 09:28:02
+Options: -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE -ya -.fftprj=C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB.cyprj -d CY8C5888LTI-LP097 RpiMIB.v -verilog
 </CYPRESSTAG>
 <CYPRESSTAG name="Design parsing">
-Design parsing phase: Elapsed time ==> 0s.075ms
+Design parsing phase: Elapsed time ==> 0s.081ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Tech Mapping">
 <CYPRESSTAG name="Initial Mapping" icon="FILE_RPT_TECHM">
@@ -2139,7 +2139,7 @@ Design Equations
             SIO Multiplier Index: 0
             SIO RefSel: VCC_IO
             Required Capabilities: DIGITAL, ROUTABLE
-            Initial Value: 0
+            Initial Value: 1
             IO Voltage: 0
         PORT MAP (
             pa_out => GPIO_0(0)__PA ,
@@ -2180,7 +2180,7 @@ Design Equations
             SIO Multiplier Index: 0
             SIO RefSel: VCC_IO
             Required Capabilities: DIGITAL, ROUTABLE
-            Initial Value: 0
+            Initial Value: 1
             IO Voltage: 0
         PORT MAP (
             pa_out => GPIO_3(0)__PA ,
@@ -2221,7 +2221,7 @@ Design Equations
             SIO Multiplier Index: 0
             SIO RefSel: VCC_IO
             Required Capabilities: DIGITAL, ROUTABLE
-            Initial Value: 0
+            Initial Value: 1
             IO Voltage: 0
         PORT MAP (
             pa_out => GPIO_2(0)__PA ,
@@ -2262,7 +2262,7 @@ Design Equations
             SIO Multiplier Index: 0
             SIO RefSel: VCC_IO
             Required Capabilities: DIGITAL, ROUTABLE
-            Initial Value: 0
+            Initial Value: 1
             IO Voltage: 0
         PORT MAP (
             pa_out => GPIO_1(0)__PA ,
@@ -5168,8 +5168,8 @@ Analog (SC/CT) Blocks         :    0 :    4 :    4 :  0.00 %
 DAC                           :      :      :      :        
   VIDAC                       :    0 :    4 :    4 :  0.00 %
 </CYPRESSTAG>
-Technology Mapping: Elapsed time ==> 0s.981ms
-Tech Mapping phase: Elapsed time ==> 1s.100ms
+Technology Mapping: Elapsed time ==> 0s.927ms
+Tech Mapping phase: Elapsed time ==> 1s.126ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Analog Placement">
 Initial Analog Placement Results:
@@ -5244,7 +5244,7 @@ IO_5@[IOP=(12)][IoId=(5)] : rpi_intb(0) (fixed)
 Comparator[1]@[FFB(Comparator,1)] : \Comp_1:ctComp\
 Vref[3]@[FFB(Vref,3)] : vRef_1
 
-Analog Placement phase: Elapsed time ==> 1s.994ms
+Analog Placement phase: Elapsed time ==> 1s.898ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Analog Routing">
 Analog Routing phase: Elapsed time ==> 0s.001ms
@@ -5284,11 +5284,11 @@ Dump of CyP35AnalogRoutingResultsDB
 IsVddaHalfUsedForComp = False
 IsVddaHalfUsedForSar0 = False
 IsVddaHalfUsedForSar1 = False
-Analog Code Generation phase: Elapsed time ==> 1s.177ms
+Analog Code Generation phase: Elapsed time ==> 0s.695ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Digital Placement">
 <CYPRESSTAG name="Detailed placement messages">
-I2076: Total run-time: 12.0 sec.
+I2076: Total run-time: 8.4 sec.
 
 </CYPRESSTAG>
 <CYPRESSTAG name="PLD Packing">
@@ -5312,14 +5312,14 @@ PLD Packing Summary
 <CYPRESSTAG name="Packed PLD Contents">
 Packed PLD Contents not displayed at this verbose level.</CYPRESSTAG>
 </CYPRESSTAG>
-PLD Packing: Elapsed time ==> 0s.008ms
+PLD Packing: Elapsed time ==> 0s.012ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Partitioning">
 <CYPRESSTAG name="Initial Partitioning Summary">
 Initial Partitioning Summary not displayed at this verbose level.</CYPRESSTAG>
 <CYPRESSTAG name="Final Partitioning Summary">
 Final Partitioning Summary not displayed at this verbose level.</CYPRESSTAG>
-Partitioning: Elapsed time ==> 0s.299ms
+Partitioning: Elapsed time ==> 0s.497ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Final Placement Summary">
 
@@ -9777,7 +9777,7 @@ Pin : Name = GPIO_0(0)
         SIO Multiplier Index: 0
         SIO RefSel: VCC_IO
         Required Capabilities: DIGITAL, ROUTABLE
-        Initial Value: 0
+        Initial Value: 1
         IO Voltage: 0
     PORT MAP (
         pa_out => GPIO_0(0)__PA ,
@@ -9819,7 +9819,7 @@ Pin : Name = GPIO_1(0)
         SIO Multiplier Index: 0
         SIO RefSel: VCC_IO
         Required Capabilities: DIGITAL, ROUTABLE
-        Initial Value: 0
+        Initial Value: 1
         IO Voltage: 0
     PORT MAP (
         pa_out => GPIO_1(0)__PA ,
@@ -9861,7 +9861,7 @@ Pin : Name = GPIO_2(0)
         SIO Multiplier Index: 0
         SIO RefSel: VCC_IO
         Required Capabilities: DIGITAL, ROUTABLE
-        Initial Value: 0
+        Initial Value: 1
         IO Voltage: 0
     PORT MAP (
         pa_out => GPIO_2(0)__PA ,
@@ -9903,7 +9903,7 @@ Pin : Name = GPIO_3(0)
         SIO Multiplier Index: 0
         SIO RefSel: VCC_IO
         Required Capabilities: DIGITAL, ROUTABLE
-        Initial Value: 0
+        Initial Value: 1
         IO Voltage: 0
     PORT MAP (
         pa_out => GPIO_3(0)__PA ,
@@ -10110,34 +10110,34 @@ Port | Pin | Fixed |      Type |       Drive Mode |              Name | Connecti
 </CYPRESSTAG>
 </CYPRESSTAG>
 </CYPRESSTAG>
-Digital component placer commit/Report: Elapsed time ==> 0s.704ms
-Digital Placement phase: Elapsed time ==> 14s.677ms
+Digital component placer commit/Report: Elapsed time ==> 0s.563ms
+Digital Placement phase: Elapsed time ==> 10s.300ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Digital Routing">
-"C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\bin/sjrouter.exe" --xml-path "C:\Users\Doug\Documents\PSoC Creator\4.2\Devices\psoc5/psoc5lp/route_arch-rrg.cydata" --vh2-path "RpiMIB_r.vh2" --pcf-path "RpiMIB.pco" --des-name "RpiMIB" --dsf-path "RpiMIB.dsf" --sdc-path "RpiMIB.sdc" --lib-path "RpiMIB_r.lib"
+"C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\bin/sjrouter.exe" --xml-path "C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\dev\psoc5/psoc5lp/route_arch-rrg.cydata" --vh2-path "RpiMIB_r.vh2" --pcf-path "RpiMIB.pco" --des-name "RpiMIB" --dsf-path "RpiMIB.dsf" --sdc-path "RpiMIB.sdc" --lib-path "RpiMIB_r.lib"
 Routing successful.
-Digital Routing phase: Elapsed time ==> 9s.163ms
+Digital Routing phase: Elapsed time ==> 12s.643ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Bitstream Generation">
-Bitstream Generation phase: Elapsed time ==> 0s.376ms
+Bitstream Generation phase: Elapsed time ==> 0s.593ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Bitstream Verification">
-Bitstream Verification phase: Elapsed time ==> 0s.074ms
+Bitstream Verification phase: Elapsed time ==> 0s.200ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Static timing analysis">
-Warning: sta.M0019: RpiMIB_timing.html: Warning-1367: Hold time violation found in a path from clock ( CyBUS_CLK ) to clock ( Rpi_sclk(0)/fb ). (File=C:\Users\Doug\Documents\DPEA\RpiMIB\RpiMIB.cydsn\RpiMIB_timing.html)
+Warning: sta.M0019: RpiMIB_timing.html: Warning-1367: Hold time violation found in a path from clock ( CyBUS_CLK ) to clock ( Rpi_sclk(0)/fb ). (File=C:\Users\SoftwareDevAdmin\Documents\RaspberryPiCommon\RpiMIB\RpiMIB.cydsn\RpiMIB_timing.html)
 Timing report is in RpiMIB_timing.html.
-Static timing analysis phase: Elapsed time ==> 3s.354ms
+Static timing analysis phase: Elapsed time ==> 2s.406ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Data reporting">
 Data reporting phase: Elapsed time ==> 0s.000ms
 </CYPRESSTAG>
 <CYPRESSTAG name="Database update...">
-Design database save phase: Elapsed time ==> 0s.431ms
+Design database save phase: Elapsed time ==> 0s.795ms
 </CYPRESSTAG>
-cydsfit: Elapsed time ==> 32s.467ms
+cydsfit: Elapsed time ==> 30s.875ms
 </CYPRESSTAG>
-Fitter phase: Elapsed time ==> 32s.472ms
-API generation phase: Elapsed time ==> 11s.175ms
-Dependency generation phase: Elapsed time ==> 0s.026ms
-Cleanup phase: Elapsed time ==> 0s.003ms
+Fitter phase: Elapsed time ==> 30s.876ms
+API generation phase: Elapsed time ==> 7s.492ms
+Dependency generation phase: Elapsed time ==> 0s.095ms
+Cleanup phase: Elapsed time ==> 0s.002ms
