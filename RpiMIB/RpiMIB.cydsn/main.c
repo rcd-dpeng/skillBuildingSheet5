@@ -49,13 +49,14 @@ typedef enum {
 uint16 ReadWriteSPIM1(uint8, uint8);
 uint16 ReadWriteSPIM2(uint8, uint16);
 uint16 ReadEncoder(uint8, uint8);
+int abs(int x);
 command InterpretCommand(uint16);
 uint16 RPi_Command_Data;
 uint16 RPi_Data;
 uint8 i2c_address = 0;
 uint8 i2c_data_to_write[8];
 uint8 i2c_byte_count = 0;
-uint16 spi_trigger_value[] = [0x800,0x800,0x800,0x800];
+uint16 spi_trigger_value[] = {0x800,0x800,0x800,0x800};
 uint16 spi_trigger_radius = 25;
 uint16 COMMAND_MASK = 0xFF00;
 uint16 PORT_MASK = 0x00F0;
@@ -219,16 +220,15 @@ int main() {
     
         // Writes correspondign GPIO high if encoder value is within specified range of trigger value
         for (int i = 0; i < 4; i++) {
-            uint16 encoderValue;
+            int encoderValue;
             
             if (i == 3) {
-                encoderValue = ReadEncoder(2, 0);
+                encoderValue = (int)ReadEncoder(2, 0);
             } else {
-                encoderValue = ReadEncoder(1, i);
+                encoderValue = (int)ReadEncoder(1, i);
             }
             
-            if ((spi_trigger_value[i] - spi_trigger_radius < encoderValue) && 
-                (spi_trigger_value[i] + spi_trigger_radius > encoderValue)) {
+            if (abs(encoderValue - spi_trigger_value[i]) < spi_trigger_radius) {
                 GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
             } else {
                 GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
