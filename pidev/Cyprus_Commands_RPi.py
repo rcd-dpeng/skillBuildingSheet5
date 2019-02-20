@@ -7,6 +7,8 @@ delay = .001
 spi_frequency = 1000000
 pwm_clock_frequency = 1000000
 
+DEFAULT_PWM_PERIOD=5000
+DEFAULT_PWM_COMPARE_MODE=1
 SERVO_MIN_SPEED = 1445
 SERVO_MAX_SPEED = 1555
 SERVO_SPEED_RANGE = 70
@@ -73,7 +75,7 @@ def write_servo_position(port, position): #sets servo on given port to position 
 	compare = .001 * (1 + position)
 	write_pwm(port, "compare", compare)
 
-def initialize_pwm(port, period, compare_mode):
+def initialize_pwm(port, period=DEFAULT_PWM_PERIOD, compare_mode=DEFAULT_PWM_COMPARE_MODE):
     write_pwm(port, PERIOD, period)
     write_pwm(port, COMPARE_MODE, compare_mode)
     
