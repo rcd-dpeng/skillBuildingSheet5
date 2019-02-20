@@ -56,7 +56,7 @@ uint8 i2c_address = 0;
 uint8 i2c_data_to_write[8];
 uint8 i2c_byte_count = 0;
 uint16 spi_trigger_value[3];
-uint16 spi_trigger_radius = 5;
+uint16 spi_trigger_radius = 50;
 uint16 COMMAND_MASK = 0xFF00;
 uint16 PORT_MASK = 0x00F0;
 uint16 PARAMETER_MASK = 0x00F0;
