@@ -113,14 +113,14 @@ def write_i2c(port, address, values): #complete procedure to send given list of 
     sleep(2*delay)
     send_i2c(port)
     
-def set_encoder_trigger(channel, value): #sets trigger on given channel to given value, cyprus activates 
-	if(value = "off"):					 #corresponding gpio pin when encoder reads within radius of trigger
-	set_encoder_trigger(channel, 0x800)  #set value to "off" to disable trigger
-	else:
-		command_data = 0x0a00 | channel      
-		spi_write_word(command_data)
-		sleep(delay)
-		spi_write_word(value)
+def set_encoder_trigger(channel, value):   #sets trigger on given channel to given value, cyprus activates 
+    if(value == "off"):					   #corresponding gpio pin when encoder reads within radius of trigger
+        set_encoder_trigger(channel, 0x800)#set value to "off" to disable trigger
+    else:
+        command_data = 0x0a00 | channel      
+        spi_write_word(command_data)
+        sleep(delay)
+        spi_write_word(value)
     
 def read_encoder(port, channel): #returns the value from the encoder at the given channel
     command_data = 0x0b00 | (port << 4) | channel
