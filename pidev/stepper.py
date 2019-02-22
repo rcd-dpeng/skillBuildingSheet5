@@ -316,6 +316,14 @@ class stepper(Slush.Motor):
         """
         self.setMaxSpeed(speed)
 
+    def move_steps(self, steps):
+        """
+        Move the stepper motor a set amount of steps including microstepping. Forwards the call to Slush Motor move()
+        :param steps: Number of steps to move (multiplied by microstepping amount)
+        :return: None
+        """
+        self.move(steps * self.micro_steps)
+
     @staticmethod
     def free_all():
         """
