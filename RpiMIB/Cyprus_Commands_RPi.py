@@ -6,6 +6,9 @@ spi = spidev.SpiDev()
 delay = .001
 spi_frequency = 1000000
 pwm_clock_frequency = 1000000
+servo_position_minimum = .001
+servo_position_range = .001
+
 COMPARE_MODE = 0
 PERIOD = 1
 COMPARE = 2
@@ -73,7 +76,7 @@ def write_servo_position(port, position): #sets servo on given port to position 
 		position = 1
 	elif (position < 0):
 		position = 0
-	compare = .001 * (1 + position)
+	compare = servo_position_minimum + (position * servo_position_range) 
 	write_pwm(port, COMPARE, compare)
 
 def read_gpio(): #returns a 4 bit number, each bit corresponds to a gpio pin
