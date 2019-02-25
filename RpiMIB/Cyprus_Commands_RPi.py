@@ -6,6 +6,15 @@ spi = spidev.SpiDev()
 delay = .001
 spi_frequency = 1000000
 pwm_clock_frequency = 1000000
+COMPARE_MODE = 0
+PERIOD = 1
+COMPARE = 2
+
+LESS_THAN = 0
+LESS_THAN_OR_EQUAL = 1
+GREATER_THAN = 2
+GREATER_THAN_OR_EQUAL = 3
+EQUAL = 4
 
 #break_into_list and form_word translate between lists of 2 bytes and 16 bit words
 
@@ -40,27 +49,24 @@ def write_spi(port, channel, value): #writes the given value to the given spi po
     sleep(delay)
     spi_write_word(value)
 
-def write_pwm(port, parameter, value): #changes the given paremeter, either "compare mode", "period", or "compare",
-    if (parameter == "compare mode"):  #of the given port to the given value. Compare modes: 0:<, 1:<=, 2:>, 3:>=, 4:=
-        parameter_number = 0
-        processed_value = value
-    elif (parameter == "period"):
-        parameter_number = 1
+def write_pwm(port, parameter, value): #changes the given paremeter, either COMPARE_MODE, PERIOD, or COMPARE,
+    if (parameter == COMPARE_MODE):    #of the given port to the given value. Compare modes: LESS_THAN,
+        processed_value = value        #LESS_THAN_OR_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, EQUAL
+    elif (parameter == PERIOD):
         processed_value = int(value * pwm_clock_frequency)
-    elif (parameter == "compare"):
-        parameter_number = 2
+    elif (parameter == COMPARE):
         processed_value = int(value * pwm_clock_frequency)
     else:
         return "parameter not recognized"
-    command_data = 0x0500 | (port << 4) | parameter_number
+    command_data = 0x0500 | (port << 4) | parameter
     spi_write_word(command_data)
     sleep(delay)
     spi_write_word(processed_value)
 	
 def setup_servo(port): #sets up the given pwm port to control a servo
-	write_pwm(port, "compare mode", 1)
+	write_pwm(port, COMPARE, LESS_THAN_OR_EQUAL)
 	sleep(delay)
-	write_pwm(port, "period", .02)
+	write_pwm(port, PERIOD, .02)
 	
 def write_servo_position(port, position): #sets servo on given port to position given by a number in the interval
 	if (position > 1): 		              # [0, 1], where 0 corresponds to one end of its range and 1 to the other
@@ -68,7 +74,7 @@ def write_servo_position(port, position): #sets servo on given port to position 
 	elif (position < 0):
 		position = 0
 	compare = .001 * (1 + position)
-	write_pwm(port, "compare", compare)
+	write_pwm(port, COMPARE, compare)
 
 def read_gpio(): #returns a 4 bit number, each bit corresponds to a gpio pin
     spi_write_word(0x0100)
@@ -113,20 +119,26 @@ def write_i2c(port, address, values): #complete procedure to send given list of 
     sleep(2*delay)
     send_i2c(port)
     
-def set_encoder_trigger(channel, value): #sets trigger on given channel to given value, cyprus activates 
-	if(value = "off"):					 #corresponding gpio pin when encoder reads within radius of trigger
-	set_encoder_trigger(channel, 0x800)  #set value to "off" to disable trigger
-	else:
-		command_data = 0x0a00 | channel      
-		spi_write_word(command_data)
-		sleep(delay)
-		spi_write_word(value)
+def set_encoder_trigger(channel, value):   #sets trigger on given channel to given value, cyprus activates 
+    if(value == "off"):					   #corresponding gpio pin when encoder reads within radius of trigger
+        set_encoder_trigger(channel, 0x800)#set value to "off" to disable trigger
+    else:
+        command_data = 0x0a00 | channel      
+        spi_write_word(command_data)
+        sleep(delay)
+        spi_write_word(value)
     
 def read_encoder(port, channel): #returns the value from the encoder at the given channel
     command_data = 0x0b00 | (port << 4) | channel
     spi_write_word(command_data)
     sleep(2*delay)
     return spi_read_word()
-        
+
+def set_trigger_radius(channel, value): #sets the encoder trigger radius of the given channel to the given value
+    command_data = 0x0c00 | channel
+    spi_write_word(command_data)
+    sleep(delay)
+    spi_write_word(value)
+	
 def no_command(): #sends command to cyprus that tells it to do nothing
     spi_write_word(0x000)

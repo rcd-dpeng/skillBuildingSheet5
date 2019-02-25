@@ -43,7 +43,8 @@ typedef enum {
     add_i2c_data,
     add_i2c_address,
     set_spi_trigger,
-    read_encoder
+    read_encoder,
+    set_trigger_radius
 } command;
 
 uint16 ReadWriteSPIM1(uint8, uint8);
@@ -57,7 +58,7 @@ uint8 i2c_address = 0;
 uint8 i2c_data_to_write[8];
 uint8 i2c_byte_count = 0;
 uint16 spi_trigger_value[] = {0x800,0x800,0x800,0x800};
-uint16 spi_trigger_radius = 25;
+uint16 spi_trigger_radius[] = {25,25,25,25};
 uint16 COMMAND_MASK = 0xFF00;
 uint16 PORT_MASK = 0x00F0;
 uint16 PARAMETER_MASK = 0x00F0;
@@ -74,7 +75,7 @@ CY_ISR(SS_Rise_Handler) {
         RPi_Command_Data = SPIS_ReadRxData();
         RPi_Command = InterpretCommand(RPi_Command_Data);
         SPIS_ClearRxBuffer();
-        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger)) {
+        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger) || (RPi_Command == set_trigger_radius)) {
             PSOC_state = listening_state;
         } else {
             PSOC_state = execution_state;
@@ -142,7 +143,9 @@ command InterpretCommand(uint16 data)
             break;
         case 0x0b00:
             result = read_encoder;
-            break; 
+            break;
+        case 0x0c00:
+            result = set_trigger_radius;
         default:
             result = no_command;
             break;
@@ -228,7 +231,7 @@ int main() {
                 encoderValue = (int)ReadEncoder(1, i);
             }
             
-            if (abs(encoderValue - spi_trigger_value[i]) < spi_trigger_radius) {
+            if (abs(encoderValue - spi_trigger_value[i]) < spi_trigger_radius[i]) {
                 GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
             } else {
                 GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
@@ -326,6 +329,10 @@ int main() {
                     SPIS_WriteTxDataZero(encoder);
                     break;
                 }
+                
+                case set_trigger_radius:
+                    spi_trigger_radius[RPi_Command_Data & CHANNEL_MASK] = RPi_Data;
+                    break;
             
                 case no_command:
                 default:
