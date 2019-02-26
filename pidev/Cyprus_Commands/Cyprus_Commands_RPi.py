@@ -24,6 +24,8 @@ GREATER_THAN = 2
 GREATER_THAN_OR_EQUAL = 3
 EQUAL = 4
 
+TRIGGER_OFF = 0x800
+
 #break_into_list and form_word translate between lists of 2 bytes and 16 bit words
 
 def break_into_list(word):
@@ -139,13 +141,10 @@ def write_i2c(port, address, values): #complete procedure to send given list of 
     send_i2c(port)
     
 def set_encoder_trigger(channel, value):   #sets trigger on given channel to given value, cyprus activates 
-    if(value == "off"):					   #corresponding gpio pin when encoder reads within radius of trigger
-        set_encoder_trigger(channel, 0x800)#set value to "off" to disable trigger
-    else:
-        command_data = 0x0a00 | channel      
-        spi_write_word(command_data)
-        sleep(delay)
-        spi_write_word(value)
+    command_data = 0x0a00 | channel        #corresponding gpio pin when encoder reads within radius of trigger 
+    spi_write_word(command_data)           #set value to TRIGGER_OFF to disable trigger
+    sleep(delay)
+    spi_write_word(value)
     
 def read_encoder(port, channel): #returns the value from the encoder at the given channel
     command_data = 0x0b00 | (port << 4) | channel
