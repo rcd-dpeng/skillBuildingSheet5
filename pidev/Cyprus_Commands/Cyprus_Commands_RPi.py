@@ -74,22 +74,22 @@ def write_pwm(port, parameter, value): #changes the given paremeter, either COMP
     spi_write_word(processed_value)
 	
 def setup_servo(port): #sets up the given pwm port to control a servo
-	write_pwm(port, COMPARE, LESS_THAN_OR_EQUAL)
-	sleep(delay)
-	write_pwm(port, PERIOD, .02)
+    write_pwm(port, COMPARE, LESS_THAN_OR_EQUAL)
+    sleep(delay)
+    write_pwm(port, PERIOD, .02)
 	
 def write_servo_position(port, position): #sets servo on given port to position given by a number in the interval
-	if (position > 1): 		              # [0, 1], where 0 corresponds to one end of its range and 1 to the other
-		position = 1
-	elif (position < 0):
-		position = 0
-	compare = servo_position_minimum + (position * servo_position_range) 
-	write_pwm(port, COMPARE, compare)
+    if (position > 1): 		              # [0, 1], where 0 corresponds to one end of its range and 1 to the other
+        position = 1
+    elif (position < 0):
+        position = 0
+    compare = servo_position_minimum + (position * servo_position_range) 
+    write_pwm(port, COMPARE, compare)
 	
 def set_servo_speed(port, speed): #sets servo on given port to speed given by a number in the interval [-1, 1],
     if (speed < -1):			  #where -1 corresponds to maximum in one direction and 1 to the other
         speed = -1
-	elif (speed > 1):
+    elif (speed > 1):
         speed = 1
     if (speed < 0):
         compare = servo_speed_minimum_negative + (speed * servo_speed_range)
