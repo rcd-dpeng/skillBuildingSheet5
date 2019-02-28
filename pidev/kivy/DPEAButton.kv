@@ -5,7 +5,7 @@
 #    When using, specify:
 #        id, text, color, size, position, on_press, and on_release
 
-<DPEAButton@Button>:
+<DPEAButton>:
     Button:
         size_hint: None,None                # Need to copy these three lines
         background_color: 0, 0, 0, 0        # of code to get rid of grey corners
@@ -13,7 +13,7 @@
         canvas:
             BorderImage:
                 border: 25, 25, 25, 25
-                source: "images/shadow.png"
+                source: self.parent.shadow_path
                 pos: self.parent.x, self.parent.y - 11
                 size: self.parent.width + 11, self.parent.height + 11
             Color:
