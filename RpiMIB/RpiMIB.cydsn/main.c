@@ -376,15 +376,17 @@ uint16 ReadEncoder(uint8 port, uint8 ChannelNumber) {
         ReadWriteSPIM1(ChannelNumber, READ_ENCODER);
         while (ReadWriteSPIM1(ChannelNumber, 0x00) == ENCODER_IDLE){}
         MSB = ReadWriteSPIM1(ChannelNumber, 0x00);
+        CyDelayUs(2000);
         LSB = ReadWriteSPIM1(ChannelNumber, 0x00);
-   } else if (port == 0x02) {
+    } else if (port == 0x02) {
         ReadWriteSPIM2(ChannelNumber, READ_ENCODER);
         while (ReadWriteSPIM2(ChannelNumber, 0x00) == ENCODER_IDLE){}
         MSB = ReadWriteSPIM2(ChannelNumber, 0x00);
+        CyDelayUs(2000);
         LSB = ReadWriteSPIM2(ChannelNumber, 0x00);
-   }
-
-   return (uint16)(LSB + (MSB << 8));
+    }
+    CyDelayUs(2000);
+    return (uint16)(LSB + (MSB << 8));
 }
 
 /* QWJvbGlzaCB3YWdliGxhYm9yIG5vdyE= */
