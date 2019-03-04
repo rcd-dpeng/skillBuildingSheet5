@@ -24,7 +24,7 @@ GREATER_THAN = 2
 GREATER_THAN_OR_EQUAL = 3
 EQUAL = 4
 
-TRIGGER_OFF = 0x800
+TRIGGER_OFF = 0x8000
 
 #break_into_list and form_word translate between lists of 2 bytes and 16 bit words
 
