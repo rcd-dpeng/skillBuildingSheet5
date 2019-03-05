@@ -44,7 +44,8 @@ typedef enum {
     add_i2c_address,
     set_spi_trigger,
     read_encoder,
-    set_trigger_radius
+    set_trigger_radius,
+    set_pinmode
 } command;
 
 uint16 ReadWriteSPIM1(uint8, uint8);
@@ -66,6 +67,9 @@ uint16 CHANNEL_MASK = 0x000F;
 uint16 DATA_MASK = 0x00F0;
 uint8 READ_ENCODER = 0x10;
 uint8 ENCODER_IDLE = 0xA5;
+uint8 GPIO_MODE = 0;
+uint8 TRIGGER_MODE = 1;
+uint8 pinmode;
 
 state PSOC_state;
 command RPi_Command;
@@ -75,7 +79,7 @@ CY_ISR(SS_Rise_Handler) {
         RPi_Command_Data = SPIS_ReadRxData();
         RPi_Command = InterpretCommand(RPi_Command_Data);
         SPIS_ClearRxBuffer();
-        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger) || (RPi_Command == set_trigger_radius)) {
+        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger) || (RPi_Command == set_trigger_radius) || (RPi_Command == set_pinmode)) {
             PSOC_state = listening_state;
         } else {
             PSOC_state = execution_state;
@@ -146,6 +150,8 @@ command InterpretCommand(uint16 data)
             break;
         case 0x0c00:
             result = set_trigger_radius;
+        case 0x0d00:
+            result = set_pinmode;
         default:
             result = no_command;
             break;
@@ -222,23 +228,25 @@ int main() {
         }
     
         // Writes correspondign GPIO high if encoder value is within specified range of trigger value
-        for (int i = 0; i < 4; i++) {
-            int encoderValue;
+        if (pinmode == TRIGGER_MODE) {
+            for (int i = 0; i < 4; i++) {
+                int encoderValue;
             
-            if (i == 3) {
-                encoderValue = (int)ReadEncoder(2, 0);
-            } else {
-                encoderValue = (int)ReadEncoder(1, i);
+                if (i == 3) {
+                    encoderValue = (int)ReadEncoder(2, 0);
+                } else {
+                    encoderValue = (int)ReadEncoder(1, i);
+                }
+            
+                if (abs(encoderValue - spi_trigger_value[i]) < spi_trigger_radius[i]) {
+                    GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
+                    CyDelayUs(2000);
+                    GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
+                    spi_trigger_value[i] = 0x8000;
+                } else {
+                    GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
+                } 
             }
-            
-            if (abs(encoderValue - spi_trigger_value[i]) < spi_trigger_radius[i]) {
-                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
-                CyDelayUs(2000);
-                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
-                spi_trigger_value[i] = 0x8000;
-            } else {
-                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
-            } 
         }
     
         if (PSOC_state == execution_state) {
@@ -336,6 +344,9 @@ int main() {
                 case set_trigger_radius:
                     spi_trigger_radius[RPi_Command_Data & CHANNEL_MASK] = RPi_Data;
                     break;
+                    
+                case set_pinmode:
+                    pinmode = RPi_Data;
             
                 case no_command:
                 default:
