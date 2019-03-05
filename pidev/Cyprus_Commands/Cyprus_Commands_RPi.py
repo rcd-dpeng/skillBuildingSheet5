@@ -12,7 +12,7 @@ servo_position_range = .001
 
 servo_speed_minimum_positive = .001555
 servo_speed_minimum_negative = .001445
-servo_position_range = .00007
+servo_speed_range = .00007
 
 COMPARE_MODE = 0
 PERIOD = 1
