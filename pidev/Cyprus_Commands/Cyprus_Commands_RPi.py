@@ -12,7 +12,7 @@ servo_position_range = .001
 
 servo_speed_minimum_positive = .001555
 servo_speed_minimum_negative = .001445
-servo_position_range = .00007
+servo_speed_range = .00007
 
 COMPARE_MODE = 0
 PERIOD = 1
@@ -25,6 +25,9 @@ GREATER_THAN_OR_EQUAL = 3
 EQUAL = 4
 
 TRIGGER_OFF = 0x8000
+
+TRIGGER_MODE = 1 
+GPIO_MODE = 0
 
 #break_into_list and form_word translate between lists of 2 bytes and 16 bit words
 
@@ -157,6 +160,11 @@ def set_trigger_radius(channel, value): #sets the encoder trigger radius of the 
     spi_write_word(command_data)
     sleep(delay)
     spi_write_word(value)
+
+def set_pinmode(mode): #sets the pins to either encoder trigger mode or gpio mode, using constants TRIGGER_MODE and GPIO_MODE
+    spi_write_word(0x0d00)
+    sleep(delay)
+    spi_write_word(mode)
 	
 def no_command(): #sends command to cyprus that tells it to do nothing
     spi_write_word(0x000)
