@@ -45,7 +45,9 @@ typedef enum {
     set_spi_trigger,
     read_encoder,
     set_trigger_radius,
-    set_pinmode
+    set_pinmode,
+    write_chip_number,
+    read_chip_number
 } command;
 
 uint16 ReadWriteSPIM1(uint8, uint8);
@@ -70,6 +72,7 @@ uint8 ENCODER_IDLE = 0xA5;
 uint8 GPIO_MODE = 0;
 uint8 TRIGGER_MODE = 1;
 uint8 pinmode;
+uint16 chip_number = 0;
 
 state PSOC_state;
 command RPi_Command;
@@ -79,7 +82,7 @@ CY_ISR(SS_Rise_Handler) {
         RPi_Command_Data = SPIS_ReadRxData();
         RPi_Command = InterpretCommand(RPi_Command_Data);
         SPIS_ClearRxBuffer();
-        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger) || (RPi_Command == set_trigger_radius) || (RPi_Command == set_pinmode)) {
+        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger) || (RPi_Command == set_trigger_radius) || (RPi_Command == set_pinmode) || (RPi_Command == write_chip_number)) {
             PSOC_state = listening_state;
         } else {
             PSOC_state = execution_state;
@@ -150,8 +153,16 @@ command InterpretCommand(uint16 data)
             break;
         case 0x0c00:
             result = set_trigger_radius;
+            break;
         case 0x0d00:
             result = set_pinmode;
+            break;
+        case 0x0e00:
+            result = write_chip_number;
+            break;
+        case 0x0f00:
+            result = read_chip_number;
+            break;
         default:
             result = no_command;
             break;
@@ -347,7 +358,16 @@ int main() {
                     
                 case set_pinmode:
                     pinmode = RPi_Data;
-            
+                    break;
+                    
+                case write_chip_number:
+                    chip_number = RPi_Data;
+                    break;
+                
+                case read_chip_number:
+                    SPIS_WriteTxDataZero(chip_number);
+                    break;
+                    
                 case no_command:
                 default:
                     break;
