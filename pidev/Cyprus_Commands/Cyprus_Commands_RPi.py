@@ -152,7 +152,7 @@ def set_encoder_trigger(channel, value):   #sets trigger on given channel to giv
 def read_encoder(port, channel): #returns the value from the encoder at the given channel
     command_data = 0x0b00 | (port << 4) | channel
     spi_write_word(command_data)
-    sleep(2*delay)
+    sleep(5*delay)
     return spi_read_word()
 
 def set_trigger_radius(channel, value): #sets the encoder trigger radius of the given channel to the given value
