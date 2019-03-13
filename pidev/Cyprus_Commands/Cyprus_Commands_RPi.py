@@ -166,15 +166,28 @@ def set_pinmode(mode): #sets the pins to either encoder trigger mode or gpio mod
     sleep(delay)
     spi_write_word(mode)
 	
-def write_chip_number(number): #writes a number to identify the cyprus
+def write_firmware_date(day, month, year): #writes a date to identify the cyprus firmware
     spi_write_word(0x0e00)
     sleep(delay)
-    spi_write_word(number)
+    spi_write_word(day)
+    spi_write_word(0x0e01)
+    sleep(delay)
+    spi_write_word(month)
+    spi_write_word(0x0e02)
+    sleep(delay)
+    spi_write_word(year)
 
-def read_chip_number(number): #reads the identification number from the cyprus
+def read_firmware_date(): #reads the firmware date from the cyprus
     spi_write_word(0x0f0000)
     sleep(delay)
-    return spi_read_word()
+    day = spi_read_word()
+    spi_write_word(0x0f0001)
+    sleep(delay)
+    month = spi_read_word()
+    spi_write_word(0x0f0002)
+    sleep(delay)
+    year = spi_read_word()
+    return [day, month, year]
 	
 def no_command(): #sends command to cyprus that tells it to do nothing
     spi_write_word(0x000)

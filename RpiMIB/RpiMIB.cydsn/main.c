@@ -46,8 +46,8 @@ typedef enum {
     read_encoder,
     set_trigger_radius,
     set_pinmode,
-    write_chip_number,
-    read_chip_number
+    write_firmware_date,
+    read_firmware_date
 } command;
 
 uint16 ReadWriteSPIM1(uint8, uint8);
@@ -72,7 +72,8 @@ uint8 ENCODER_IDLE = 0xA5;
 uint8 GPIO_MODE = 0;
 uint8 TRIGGER_MODE = 1;
 uint8 pinmode;
-uint16 chip_number = 0;
+uint16 firmware_date[] = {13, 3, 2019};
+uint16 ORDINAL_MASK = 0x000F;
 
 state PSOC_state;
 command RPi_Command;
@@ -82,7 +83,7 @@ CY_ISR(SS_Rise_Handler) {
         RPi_Command_Data = SPIS_ReadRxData();
         RPi_Command = InterpretCommand(RPi_Command_Data);
         SPIS_ClearRxBuffer();
-        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger) || (RPi_Command == set_trigger_radius) || (RPi_Command == set_pinmode) || (RPi_Command == write_chip_number)) {
+        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger) || (RPi_Command == set_trigger_radius) || (RPi_Command == set_pinmode) || (RPi_Command == write_firmware_date)) {
             PSOC_state = listening_state;
         } else {
             PSOC_state = execution_state;
@@ -158,10 +159,10 @@ command InterpretCommand(uint16 data)
             result = set_pinmode;
             break;
         case 0x0e00:
-            result = write_chip_number;
+            result = write_firmware_date;
             break;
         case 0x0f00:
-            result = read_chip_number;
+            result = read_firmware_date;
             break;
         default:
             result = no_command;
@@ -360,12 +361,12 @@ int main() {
                     pinmode = RPi_Data;
                     break;
                     
-                case write_chip_number:
-                    chip_number = RPi_Data;
+                case write_firmware_date:
+                    firmware_date[RPi_Command_Data & ORDINAL_MASK] = RPi_Data;
                     break;
                 
-                case read_chip_number:
-                    SPIS_WriteTxDataZero(chip_number);
+                case read_firmware_date:
+                    SPIS_WriteTxDataZero(firmware_date[RPi_Command_Data & ORDINAL_MASK]);
                     break;
                     
                 case no_command:
