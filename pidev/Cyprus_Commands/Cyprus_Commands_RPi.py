@@ -152,7 +152,7 @@ def set_encoder_trigger(channel, value):   #sets trigger on given channel to giv
 def read_encoder(port, channel): #returns the value from the encoder at the given channel
     command_data = 0x0b00 | (port << 4) | channel
     spi_write_word(command_data)
-    sleep(2*delay)
+    sleep(5*delay)
     return spi_read_word()
 
 def set_trigger_radius(channel, value): #sets the encoder trigger radius of the given channel to the given value
@@ -165,6 +165,29 @@ def set_pinmode(mode): #sets the pins to either encoder trigger mode or gpio mod
     spi_write_word(0x0d00)
     sleep(delay)
     spi_write_word(mode)
+	
+def write_firmware_date(day, month, year): #writes a date to identify the cyprus firmware
+    spi_write_word(0x0e00)
+    sleep(delay)
+    spi_write_word(day)
+    spi_write_word(0x0e01)
+    sleep(delay)
+    spi_write_word(month)
+    spi_write_word(0x0e02)
+    sleep(delay)
+    spi_write_word(year)
+
+def read_firmware_date(): #reads the firmware date from the cyprus
+    spi_write_word(0x0f0000)
+    sleep(delay)
+    day = spi_read_word()
+    spi_write_word(0x0f0001)
+    sleep(delay)
+    month = spi_read_word()
+    spi_write_word(0x0f0002)
+    sleep(delay)
+    year = spi_read_word()
+    return [day, month, year]
 	
 def no_command(): #sends command to cyprus that tells it to do nothing
     spi_write_word(0x000)
