@@ -252,9 +252,6 @@ int main() {
             
                 if (abs(encoderValue - spi_trigger_value[i]) < spi_trigger_radius[i]) {
                     GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
-                    CyDelayUs(2000);
-                    GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
-                    spi_trigger_value[i] = 0x8000;
                 } else {
                     GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
                 } 
