@@ -18,11 +18,11 @@ COMPARE_MODE = 0
 PERIOD = 1
 COMPARE = 2
 
-LESS_THAN = 0
-LESS_THAN_OR_EQUAL = 1
-GREATER_THAN = 2
-GREATER_THAN_OR_EQUAL = 3
-EQUAL = 4
+EQUAL = 0
+LESS_THAN = 1
+LESS_THAN_OR_EQUAL = 2
+GREATER_THAN = 3
+GREATER_THAN_OR_EQUAL = 4
 
 TRIGGER_OFF = 0x8000
 
@@ -96,8 +96,10 @@ def set_servo_speed(port, speed): #sets servo on given port to speed given by a 
         speed = 1
     if (speed < 0):
         compare = servo_speed_minimum_negative + (speed * servo_speed_range)
-    else:
-        compare = speed_minimum_positive + (speed * servo_speed_range)
+    elif(speed > 0):
+        compare = servo_speed_minimum_positive + (speed * servo_speed_range)
+    elif(speed = 0):
+	compare = (servo_speed_minmimum_positive + servo_speed_minmimum_negative) / 2
     write_pwm(port, COMPARE, compare)
 
 def read_gpio(): #returns a 4 bit number, each bit corresponds to a gpio pin
