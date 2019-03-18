@@ -96,8 +96,10 @@ def set_servo_speed(port, speed): #sets servo on given port to speed given by a 
         speed = 1
     if (speed < 0):
         compare = servo_speed_minimum_negative + (speed * servo_speed_range)
-    else:
-        compare = speed_minimum_positive + (speed * servo_speed_range)
+    elif(speed > 0):
+        compare = servo_speed_minimum_positive + (speed * servo_speed_range)
+    elif(speed = 0):
+	compare = (servo_speed_minmimum_positive + servo_speed_minmimum_negative) / 2
     write_pwm(port, COMPARE, compare)
 
 def read_gpio(): #returns a 4 bit number, each bit corresponds to a gpio pin
