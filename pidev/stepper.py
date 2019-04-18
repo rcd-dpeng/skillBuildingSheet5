@@ -327,9 +327,9 @@ class stepper(Slush.Motor):
     def go_until_press(self, dir, speed):
         self.goUntilPress(1,dir,speed)
     def is_busy(self):
-        self.isBusy()
+        return self.isBusy()
     def get_position(self):
-        self.getPosition()
+        return self.getPosition()
 
     @staticmethod
     def free_all():
