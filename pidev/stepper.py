@@ -324,6 +324,13 @@ class stepper(Slush.Motor):
         """
         self.move(steps * self.micro_steps)
 
+    def go_until_press(self, dir, speed):
+        self.goUntilPress(1,dir,speed)
+    def is_busy(self):
+        self.isBusy()
+    def get_position(self):
+        self.getPosition()
+
     @staticmethod
     def free_all():
         """
