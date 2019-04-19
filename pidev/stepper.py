@@ -325,7 +325,7 @@ class stepper(Slush.Motor):
         self.move(steps * self.micro_steps)
 
     def go_until_press(self, dir, speed):
-        if self.read_switch() is False:
+        if self.read_switch() is 0:
             self.goUntilPress(1, dir, speed)
 
     def is_busy(self):
