@@ -8,5 +8,8 @@ Builder.load_file(dpea_button_kv_path)
 
 
 class DPEAButton(Button):
+    """
+    DPEAButton class
+    """
     shadow_image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "shadow.png")
     shadow_path = ObjectProperty(shadow_image_path)
