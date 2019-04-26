@@ -1,12 +1,17 @@
+"""
+@file PassCodeScreen.py
+File that contains the PassCodeScreen Class to interact with the PassCodeScreen.
+There is no need to copy the .kv file into your project simply import this class and set the main screen name as well as transition back screen
+"""
+
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 import os.path
-import inspect
 
 PASSWORD = '7266'
 userPW = ''
 
-dpea_button_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "DPEAButton.kv")
+dpea_button_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "DPEAButton.kv")  # TODO remove this and import instead
 passcode_screen_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "PassCodeScreen.kv")
 
 Builder.load_file(dpea_button_path)
@@ -74,45 +79,101 @@ class PassCodeScreen(Screen):
         self.ids.enter.color = 0.019, 0.337, 1, 1
 
     def back_button_down(self):
+        """
+        back button pressed event, changes the color of the button
+        :return: None
+        """
         self.ids.back.color = 0.01, 0.168, .5, 1
 
     def transition_back(self):
+        """
+        Transition back to given transition back scren
+        :return: None
+        """
         self.parent.current = TRANSITION_BACK_SCREEN
 
     def one_button_down(self):
+        """
+        One button down pressed
+        :return: None
+        """
         self.ids.one.color = 0.01, 0.168, .5, 1
 
     def two_button_down(self):
+        """
+        Two button down pressed
+        :return: None
+        """
         self.ids.two.color = 0.01, 0.168, .5, 1
 
     def three_button_down(self):
+        """
+        Three button down pressed event
+        :return: None
+        """
         self.ids.three.color = 0.01, 0.168, .5, 1
 
     def four_button_down(self):
+        """
+        Four button down pressed event
+        :return: None
+        """
         self.ids.four.color = 0.01, 0.168, .5, 1
 
     def five_button_down(self):
+        """
+        Five button down pressed event
+        :return: None
+        """
         self.ids.five.color = 0.01, 0.168, .5, 1
 
     def six_button_down(self):
+        """
+        Size button down pressed event
+        :return: None
+        """
         self.ids.six.color = 0.01, 0.168, .5, 1
 
     def seven_button_down(self):
+        """
+        Seven button down pressed event
+        :return: None
+        """
         self.ids.seven.color = 0.01, 0.168, .5, 1
 
     def eight_button_down(self):
+        """
+        Eight button down pressed event
+        :return: None
+        """
         self.ids.eight.color = 0.01, 0.168, .5, 1
 
     def nine_button_down(self):
+        """
+        Nine button down pressed event
+        :return: None
+        """
         self.ids.nine.color = 0.01, 0.168, .5, 1
 
     def zero_button_down(self):
+        """
+        Zero button down pressed event
+        :return: None
+        """
         self.ids.zero.color = 0.01, 0.168, .5, 1
 
     def backspace_button_down(self):
+        """
+        Backspace button down pressed event
+        :return: None
+        """
         self.ids.backspace.color = 0.01, 0.168, .5, 1
 
     def enter_button_down(self):
+        """
+        Enter button down pressed event
+        :return: None
+        """
         self.ids.enter.color = 0.01, 0.168, .5, 1
 
     @staticmethod
