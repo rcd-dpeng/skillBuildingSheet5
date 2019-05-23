@@ -9,7 +9,7 @@ from kivy.uix.screenmanager import Screen
 import os.path
 
 PASSWORD = '7266'
-userPW = ''
+USERPW = ''
 
 passcode_screen_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "PassCodeScreen.kv")
 
@@ -33,28 +33,29 @@ class PassCodeScreen(Screen):
         :param num: Number to add
         :return: None
         """
-        global userPW
+        global USERPW
+
         self.ids.pw.text += '* '
-        userPW += str(num)
+        USERPW += str(num)
 
     def remove_num(self):
         """
         Remove a number from the current password entry
         :return: None
         """
-        global userPW
+        global USERPW
         self.ids.pw.text = self.ids.pw.text[:len(self.ids.pw.text) - 2]
-        userPW = userPW[:len(userPW) - 1]
+        USERPW = USERPW[:len(USERPW) - 1]
 
     def check_pass(self):
         """
         Check to see if the password was entered correctly
         :return: None
         """
-        global userPW
-        if PASSWORD == userPW:
+        global USERPW
+        if PASSWORD == USERPW:
             self.ids.pw.text = ' '
-            userPW = ''
+            USERPW = ''
             self.parent.current = ADMIN_EVENTS_SCREEN
 
     def reset_colors(self):
@@ -88,6 +89,7 @@ class PassCodeScreen(Screen):
         Transition back to given transition back scren
         :return: None
         """
+        self.ids.pw.text = ""
         self.parent.current = TRANSITION_BACK_SCREEN
 
     def one_button_down(self):
