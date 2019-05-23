@@ -11,10 +11,8 @@ import os.path
 PASSWORD = '7266'
 userPW = ''
 
-dpea_button_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "DPEAButton.kv")  # TODO remove this and import instead
 passcode_screen_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "PassCodeScreen.kv")
 
-Builder.load_file(dpea_button_path)
 Builder.load_file(passcode_screen_path)
 
 ADMIN_EVENTS_SCREEN = None

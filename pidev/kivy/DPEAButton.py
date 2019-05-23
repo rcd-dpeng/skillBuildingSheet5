@@ -13,3 +13,13 @@ class DPEAButton(Button):
     """
     shadow_image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "shadow.png")
     shadow_path = ObjectProperty(shadow_image_path)
+
+    def __init__(self, **kwargs):
+        """
+        Specifies the background_color, background_normal, and size_hint for all instances
+        :param kwargs: Arguments passed to the Button Instance
+        """
+        self.background_color = (0, 0, 0, 0)
+        self.background_normal: ''
+        self.size_hint: (None, None)
+        super(DPEAButton, self).__init__(**kwargs)
