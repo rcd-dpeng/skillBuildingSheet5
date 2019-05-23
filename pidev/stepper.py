@@ -22,8 +22,8 @@ CHIP_STATUSES_XLT = OrderedDict([  # MSB to LSB of motor controller status and i
         ('HiZ', 15)])
 
 CHIP_STATUSES_D = OrderedDict([ # MSB to LSB of motor controller status and the number of associated bits
-        ('STEP_LOSS_B', 0),
-        ('STEP_LOSS_A', 1),
+        ('STEP_LOSS_B\\', 0),
+        ('STEP_LOSS_A\\', 1),
         ('OCD\\', 2),
         ('TH_STATUS', (3, 4)),
         ('UVLO_ADC\\', 5),

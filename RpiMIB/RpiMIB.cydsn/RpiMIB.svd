@@ -37,7 +37,7 @@
         <register>
           <name>I2C_1_CSR</name>
           <description>I2C Status Register</description>
-          <addressOffset>0x40006467</addressOffset>
+          <addressOffset>0x4000646B</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -95,9 +95,62 @@
           </fields>
         </register>
         <register>
+          <name>I2C_1_CFG</name>
+          <description>I2C Configuration Register</description>
+          <addressOffset>0x4000647A</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+          <fields>
+            <field>
+              <name>start_gen</name>
+              <description>Set to 1 to generate a Start condition on the bus. This bit must be cleared by firmware before initiating the next transaction.</description>
+              <lsb>7</lsb>
+              <msb>7</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>stop_gen</name>
+              <description>Set to 1 to generate a Stop condition on the bus. This bit must be cleared by firmware before initiating the next transaction.</description>
+              <lsb>6</lsb>
+              <msb>6</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>restart_gen</name>
+              <description>Set to 1 to generate a Restart condition on the bus. This bit must be cleared by firmware after a Restart condition is generated.</description>
+              <lsb>5</lsb>
+              <msb>5</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>nack</name>
+              <description>Set to 1 to NAK the next read byte. Clear to ACK next read byte. This bit must be cleared by firmware between bytes.</description>
+              <lsb>4</lsb>
+              <msb>4</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>transmit</name>
+              <description>Set to 1 to set the current mode to transmit or clear to 0 to receive a byte of data. This bit must be cleared by firmware before starting the next transmit or receive transaction.</description>
+              <lsb>2</lsb>
+              <msb>2</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>master_en</name>
+              <description>Set to 1 to enable the master functionality.</description>
+              <lsb>1</lsb>
+              <msb>1</msb>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
           <name>I2C_1_INT_MASK</name>
           <description>I2C Interrupt Enable Mask</description>
-          <addressOffset>0x40006487</addressOffset>
+          <addressOffset>0x4000648B</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -150,59 +203,6 @@
               <description>Enables interrupt from the corresponding bit in status register.</description>
               <lsb>0</lsb>
               <msb>0</msb>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>I2C_1_CFG</name>
-          <description>I2C Configuration Register</description>
-          <addressOffset>0x40006578</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
-          <fields>
-            <field>
-              <name>start_gen</name>
-              <description>Set to 1 to generate a Start condition on the bus. This bit must be cleared by firmware before initiating the next transaction.</description>
-              <lsb>7</lsb>
-              <msb>7</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>stop_gen</name>
-              <description>Set to 1 to generate a Stop condition on the bus. This bit must be cleared by firmware before initiating the next transaction.</description>
-              <lsb>6</lsb>
-              <msb>6</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>restart_gen</name>
-              <description>Set to 1 to generate a Restart condition on the bus. This bit must be cleared by firmware after a Restart condition is generated.</description>
-              <lsb>5</lsb>
-              <msb>5</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>nack</name>
-              <description>Set to 1 to NAK the next read byte. Clear to ACK next read byte. This bit must be cleared by firmware between bytes.</description>
-              <lsb>4</lsb>
-              <msb>4</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>transmit</name>
-              <description>Set to 1 to set the current mode to transmit or clear to 0 to receive a byte of data. This bit must be cleared by firmware before starting the next transmit or receive transaction.</description>
-              <lsb>2</lsb>
-              <msb>2</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>master_en</name>
-              <description>Set to 1 to enable the master functionality.</description>
-              <lsb>1</lsb>
-              <msb>1</msb>
               <access>read-write</access>
             </field>
           </fields>
@@ -396,62 +396,9 @@
       </addressBlock>
       <registers>
         <register>
-          <name>I2C_2_CFG</name>
-          <description>I2C Configuration Register</description>
-          <addressOffset>0x40006474</addressOffset>
-          <size>8</size>
-          <access>read-write</access>
-          <resetValue>0</resetValue>
-          <resetMask>0</resetMask>
-          <fields>
-            <field>
-              <name>start_gen</name>
-              <description>Set to 1 to generate a Start condition on the bus. This bit must be cleared by firmware before initiating the next transaction.</description>
-              <lsb>7</lsb>
-              <msb>7</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>stop_gen</name>
-              <description>Set to 1 to generate a Stop condition on the bus. This bit must be cleared by firmware before initiating the next transaction.</description>
-              <lsb>6</lsb>
-              <msb>6</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>restart_gen</name>
-              <description>Set to 1 to generate a Restart condition on the bus. This bit must be cleared by firmware after a Restart condition is generated.</description>
-              <lsb>5</lsb>
-              <msb>5</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>nack</name>
-              <description>Set to 1 to NAK the next read byte. Clear to ACK next read byte. This bit must be cleared by firmware between bytes.</description>
-              <lsb>4</lsb>
-              <msb>4</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>transmit</name>
-              <description>Set to 1 to set the current mode to transmit or clear to 0 to receive a byte of data. This bit must be cleared by firmware before starting the next transmit or receive transaction.</description>
-              <lsb>2</lsb>
-              <msb>2</msb>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>master_en</name>
-              <description>Set to 1 to enable the master functionality.</description>
-              <lsb>1</lsb>
-              <msb>1</msb>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
           <name>I2C_2_DATA</name>
           <description>I2C Data Register</description>
-          <addressOffset>0x40006507</addressOffset>
+          <addressOffset>0x40006407</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -469,7 +416,7 @@
         <register>
           <name>I2C_2_CSR</name>
           <description>I2C Status Register</description>
-          <addressOffset>0x40006567</addressOffset>
+          <addressOffset>0x40006467</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -529,7 +476,7 @@
         <register>
           <name>I2C_2_INT_MASK</name>
           <description>I2C Interrupt Enable Mask</description>
-          <addressOffset>0x40006587</addressOffset>
+          <addressOffset>0x40006487</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -582,6 +529,59 @@
               <description>Enables interrupt from the corresponding bit in status register.</description>
               <lsb>0</lsb>
               <msb>0</msb>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>I2C_2_CFG</name>
+          <description>I2C Configuration Register</description>
+          <addressOffset>0x40006578</addressOffset>
+          <size>8</size>
+          <access>read-write</access>
+          <resetValue>0</resetValue>
+          <resetMask>0</resetMask>
+          <fields>
+            <field>
+              <name>start_gen</name>
+              <description>Set to 1 to generate a Start condition on the bus. This bit must be cleared by firmware before initiating the next transaction.</description>
+              <lsb>7</lsb>
+              <msb>7</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>stop_gen</name>
+              <description>Set to 1 to generate a Stop condition on the bus. This bit must be cleared by firmware before initiating the next transaction.</description>
+              <lsb>6</lsb>
+              <msb>6</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>restart_gen</name>
+              <description>Set to 1 to generate a Restart condition on the bus. This bit must be cleared by firmware after a Restart condition is generated.</description>
+              <lsb>5</lsb>
+              <msb>5</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>nack</name>
+              <description>Set to 1 to NAK the next read byte. Clear to ACK next read byte. This bit must be cleared by firmware between bytes.</description>
+              <lsb>4</lsb>
+              <msb>4</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>transmit</name>
+              <description>Set to 1 to set the current mode to transmit or clear to 0 to receive a byte of data. This bit must be cleared by firmware before starting the next transmit or receive transaction.</description>
+              <lsb>2</lsb>
+              <msb>2</msb>
+              <access>read-write</access>
+            </field>
+            <field>
+              <name>master_en</name>
+              <description>Set to 1 to enable the master functionality.</description>
+              <lsb>1</lsb>
+              <msb>1</msb>
               <access>read-write</access>
             </field>
           </fields>
@@ -1185,7 +1185,7 @@
         <register>
           <name>GPIO_Control_Reg_CONTROL_REG</name>
           <description>No description available</description>
-          <addressOffset>0x40006476</addressOffset>
+          <addressOffset>0x40006576</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -1206,7 +1206,7 @@
         <register>
           <name>RpiInterrupts_CONTROL_REG</name>
           <description>No description available</description>
-          <addressOffset>0x40006479</addressOffset>
+          <addressOffset>0x4000657A</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -1227,7 +1227,7 @@
         <register>
           <name>Status_Reg_1_STATUS_REG</name>
           <description>No description available</description>
-          <addressOffset>0x40006565</addressOffset>
+          <addressOffset>0x40006567</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -1236,7 +1236,7 @@
         <register>
           <name>Status_Reg_1_MASK_REG</name>
           <description>No description available</description>
-          <addressOffset>0x40006585</addressOffset>
+          <addressOffset>0x40006587</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -1245,7 +1245,7 @@
         <register>
           <name>Status_Reg_1_STATUS_AUX_CTL_REG</name>
           <description>No description available</description>
-          <addressOffset>0x40006595</addressOffset>
+          <addressOffset>0x40006597</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -2376,7 +2376,7 @@
         <register>
           <name>EnableBattery_CONTROL_REG</name>
           <description>No description available</description>
-          <addressOffset>0x4000657A</addressOffset>
+          <addressOffset>0x40006479</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -2415,7 +2415,7 @@
         <register>
           <name>SPIS_TXSTATUS</name>
           <description>SPIS TX Status Register</description>
-          <addressOffset>0x40006463</addressOffset>
+          <addressOffset>0x4000646E</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -2461,7 +2461,7 @@
         <register>
           <name>SPIS_RXSTATUS</name>
           <description>SPIS RX Status Register</description>
-          <addressOffset>0x4000646B</addressOffset>
+          <addressOffset>0x40006569</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
@@ -2519,7 +2519,7 @@
         <register>
           <name>Control_Reg_SS_1_CONTROL_REG</name>
           <description>No description available</description>
-          <addressOffset>0x40006576</addressOffset>
+          <addressOffset>0x40006474</addressOffset>
           <size>8</size>
           <access>read-write</access>
           <resetValue>0</resetValue>
