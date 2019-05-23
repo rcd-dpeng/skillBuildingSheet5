@@ -20,6 +20,6 @@ class DPEAButton(Button):
         :param kwargs: Arguments passed to the Button Instance
         """
         self.background_color = (0, 0, 0, 0)
-        self.background_normal: ''
-        self.size_hint: (None, None)
+        self.background_normal= ''
+        self.size_hint= (None, None)
         super(DPEAButton, self).__init__(**kwargs)
