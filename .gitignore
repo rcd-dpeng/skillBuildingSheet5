@@ -4,4 +4,6 @@
 __pycache__/
 *.idea/
 build/
-docs/html/
+RpiMIB/Generated_Source/**
+RpiMIB/CortexM3/**
+RpiMIB/codegentemp/**
