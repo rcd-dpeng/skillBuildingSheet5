@@ -14,7 +14,8 @@ There is a default passcode screen that is already written, and should be used. 
 screen name is "MainScreen" if it is different you need to run a command.
 
  * Add this line of code to your main UI file, run your project once then you can delete this line ```PassCodeScreen.set_admin_events_screen('nameOfMainScreen')```
- This command tells the PassCodeScreen what the name of your main UI screen is
+ This command tells the PassCodeScreen what the name of your main UI screen is. This needs to be run every time you change your mains UI screen name. Once it has been run once you can 
+ delete the line.
   
  * Next you need to specify the name of your admin screen by adding to your main UI code ```PassCodeScreen.set_admin_events_screen('nameOfAdminScreen')```
  this specifies the name of your admin screen which the passcode screen will transition to upon a successful password entry
