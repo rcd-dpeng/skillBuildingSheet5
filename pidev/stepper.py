@@ -1,3 +1,7 @@
+"""
+@file stepper.py
+File containing stepper class to interface with stepper motors on the Slush Engine
+"""
 import sys
 from collections import OrderedDict
 import Slush
