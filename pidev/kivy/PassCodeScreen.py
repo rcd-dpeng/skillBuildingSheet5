@@ -92,10 +92,6 @@ class PassCodeScreen(Screen):
         self.ids.pw.text = ""
         self.parent.current = TRANSITION_BACK_SCREEN
 
-    @staticmethod
-    def test(instance):
-        print(instance.id)
-
     def one_button_down(self):
         """
         One button down pressed
