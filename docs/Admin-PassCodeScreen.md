@@ -27,14 +27,14 @@ screen name is "MainScreen" if it is different you need to run a command.
  an [example](https://github.com/dpengineering/SandTablePi2.0/blob/17a309b2185e5c54e212d2f488afe4e4fcdc346f/sandtable/ui/GUI.py#L93)
  
  * Finally you need to add the PassCodeScreen widget to the screenmanager for example if your screenmanager is named: "SCREEN_MANAGER" you would run 
- ```SCREEN_MANAGER.add_widget(PassCodeScreen(name='passCode'))```
+ ```SCREEN_MANAGER.add_widget(PassCodeScreen(name='passCode'))```, here is an [example](https://github.com/dpengineering/SandTablePi2.0/blob/17a309b2185e5c54e212d2f488afe4e4fcdc346f/sandtable/ui/GUI.py#L128)
  
-  * In your main screen class add the following method, 
+  * In your main screen class add the following method (change variable naming to fit your project). This method allows the UI to transition from the main screen to the PassCodeScreen.
  ```python
 def admin_action(self):
     SCREEN_MANAGER.current = 'passCode' 
-```
-change this method to your to work with your variable naming. This method allows the UI to transition from the main screen to the PassCodeScreen. 
+``` 
+ 
  
  ## Conclusion
  After following the steps outlined above there should be a hidden button in the bottom right corner of your main UI screen. Upon press of this button
