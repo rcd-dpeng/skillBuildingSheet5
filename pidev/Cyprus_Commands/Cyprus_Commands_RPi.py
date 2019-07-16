@@ -28,7 +28,7 @@ LESS_THAN_OR_EQUAL = 2
 GREATER_THAN = 3
 GREATER_THAN_OR_EQUAL = 4
 
-TRIGGER_OFF = 0x8000
+TRIGGER_OFF = 0xFFFF
 
 TRIGGER_MODE = 1 
 GPIO_MODE = 0
@@ -256,13 +256,27 @@ def write_i2c(port, address, values):
 def set_encoder_trigger(channel, value):
     """
     sets trigger on given channel to given value, cyprus activates corresponding gpio pin when encoder reads
-    within radius of trigger set value to TRIGGER_OFF to disable trigger
+    within radius of trigger. Caller must set value to TRIGGER_OFF to disable trigger
     :param channel: channel to set the trigger value
     :param value: value to set the trigger on the given channel
     :return:
     """
     command_data = 0x0a00 | channel
-    spi_write_word(command_data)
+    write_encoder_trigger(command_data, value):
+
+def set_encoder_trigger_auto_reset(channel, value):
+    """
+    sets trigger on given channel to given value, cyprus activates corresponding gpio pin when encoder reads
+    within radius of trigger. The trigger only fires once, the trigger value is reset after it is hit.
+    :param channel: channel to set the trigger value
+    :param value: value to set the trigger on the given channel
+    :return:
+    """
+    command_data = 0x0a10 | channel
+    write_encoder_trigger(command_data, value):
+
+def write_encoder_trigger(command, value):
+    spi_write_word(command)
     sleep(delay)
     spi_write_word(value)
     
@@ -300,25 +314,7 @@ def set_pinmode(mode):
     sleep(delay)
     spi_write_word(mode)
 	
-def write_firmware_date(day, month, year):
-    """
-    writes a date to identify the cyprus firmware
-    :param day: Firmware day
-    :param month: Firmware month
-    :param year: Firmware year
-    :return: None
-    """
-    spi_write_word(0x0e00)
-    sleep(delay)
-    spi_write_word(day)
-    spi_write_word(0x0e01)
-    sleep(delay)
-    spi_write_word(month)
-    spi_write_word(0x0e02)
-    sleep(delay)
-    spi_write_word(year)
-
-def read_firmware_date():
+def read_firmware_version():
     """
     reads the firmware date from the cyprus
     :return: list in the form of [day, month, year]
