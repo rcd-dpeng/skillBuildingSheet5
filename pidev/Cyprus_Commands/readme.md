@@ -23,13 +23,18 @@ When sending multiple commands in sequence, calling `sleep(delay)` between them 
 
 ### SPI Write Word
 Sends a 16 bit word to the cyprus
+
 :param word: 16 bit word
+
 :return: None
+
 `spi_write_word(word)`
 
 ### SPI Read Word
 Reads the spi value sent to the RPi as a 16 bit word
+
 :return:
+
 `spi_read_word()`
 
 '''
