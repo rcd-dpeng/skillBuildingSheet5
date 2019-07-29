@@ -21,30 +21,31 @@ When sending multiple commands in sequence, calling `sleep(delay)` between them 
 
 # Cyprus API
 
+### Opens SPI Communication 
+    Open SPI communication with the Cyprus. Before any communication can be sent or read from the Cyprus chip `open_spi` must be called.
+        return: None
+
+`open_spi()`
+
+### Closes SPI Communication 
+    Close SPI communication with the Cyprus. `close_spi` should be called when exiting a program.
+        return: None
+
+`close_spi()`
+
 ### SPI Write Word
-    Sends a 16 bit word to the cyprus
+    Sends a 16 bit word to the Cyprus.
         word: 16 bit word
         return: None
 
 `spi_write_word(word)`
 
 ### SPI Read Word
-    Reads the spi value sent to the RPi as a 16 bit word
+    Reads the SPI value from the Cyprus as a 16 bit word
         return: None
 
 `spi_read_word()`
 
-'''
-Open SPI communication with the Cyprus
-:return: None
-'''
-def open_spi()
-
-'''
-Close SPI communication with the Cyprus
-:return: None
-'''
-def close_spi() #closes spi communication
 
 '''
 Read SPI on a given port and channel
