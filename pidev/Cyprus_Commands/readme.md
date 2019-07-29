@@ -19,18 +19,16 @@ use cases where they may improve efficiency.
 
 When sending multiple commands in sequence, calling `sleep(delay)` between them is advised.
 
-'''
-Sends a 16 bit word to the cyprus
-:param word: 16 bit word
-:return: None
-'''
-def spi_write_word(word)
+# Cyprus API
 
-'''
-reads the spi value sent to the RPi as a 16 bit word
-:return:
-'''
-def spi_read_word()
+## Sends a 16 bit word to the cyprus
+## :param word: 16 bit word
+## :return: None
+`spi_write_word(word)`
+
+## reads the spi value sent to the RPi as a 16 bit word
+## :return:
+`spi_read_word()`
 
 '''
 Open SPI communication with the Cyprus
