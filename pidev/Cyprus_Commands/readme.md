@@ -21,186 +21,87 @@ When sending multiple commands in sequence, calling `sleep(delay)` between them 
 
 # Cyprus API
 
-### Opens SPI Communication 
-    Open SPI communication with the Cyprus. Before any communication can be sent or read from the Cyprus chip `open_spi` must be called.
-        return: None
+### open_spi()
+Open SPI communication with the Cyprus chip. The must be called before attempting to communicate with the Cyprus chip.
+* Parameters: None
+* return: None
+```
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
+cyprus.open_spi()
+```
 
-`open_spi()`
+### close_spi()
+Closes SPI communication with the Cyprus chip. `close_spi()` should be called when exiting a program.
+* Parameters: None
+* return: None
+```
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 
-### Closes SPI Communication 
-    Close SPI communication with the Cyprus. `close_spi` should be called when exiting a program.
-        return: None
+cyprus.open_spi()
+<Do some SPI stuff>
+cyprus.close_spi()
+```
 
-`close_spi()`
+### spi_write_word(word)
+Writes one word (16 bits) of data to the SPI channel.
+* Parameters: word - a 16 bit word of data
+* return: None
+```
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 
-### SPI Write Word
-    Sends a 16 bit word to the Cyprus.
-        word: 16 bit word
-        return: None
+cyprus.open_spi()
+cyprus.spi_write_word(0x0D00)
+cyprus.close_spi()
+```
 
-`spi_write_word(word)`
+### spi_read_word()
+Reads one word (16 bits) of data from the SPI channel.
+* Parameter: None
+* return: one 16 bit word
+```
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 
-### SPI Read Word
-    Reads the SPI value from the Cyprus as a 16 bit word
-        return: None
+cyprus.open_spi()
+word = cyprus.spi_read_word()
+cyprus.close_spi()
+```
+### write_pwm(port, parameter, value)
+Write a 16 bit word to the given Cyprus PWM port.  
 
-`spi_read_word()`
+* Parameters:
+    - **port** (valid values 1 or 2):
+        - 1 = RPiMIB port P4
+        - 2 = RPiMIB port P5
+    - **parameter** (valid values COMPARE_MODE, PERIOD, or COMPARE):
+        - COMPARE_MODE
+        - PERIOD
+        - COMPARE
+    - **value**: 16 bit PWM value
+* Return: None
+```
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 
+cyprus.open_spi()
+cyprus.write_pwm(2, cyprus.COMPARE, 1000)
+cyprus.close_spi()
+```
+### read_gpio()
+Read the GPIO from the RPiMIB board. Valid GPIO ports are P6, P7, P8 and P9.
+* Parameters: None
+* Return: 4 bits which represents ALL GPIO pins
+```
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 
-'''
-Read SPI on a given port and channel
+cyprus.open_spi()
+if (cyprus.read_gpio() & 0b0001):
+    print("GPIO on port P6 is HIGH")
+elif (cyprus.read_gpio() & 0b0010):
+    print("GPIO on port P7 is HIGH")
+elif (cyprus.read_gpio() & 0b0100):
+    print("GPIO on port P8 is HIGH")
+else (cyprus.read_gpio() & 0b1000):
+    print("GPIO on port P9 is HIGH")
+cyprus.close_spi()
+```
+ 
 
-:param port: SPI port to read from
-:param channel: SPI channel on port to read from
-:return: returns the response received by the cyprus from the given port and channel
-'''
-def read_spi(port, channel)
-
-'''
-Writes the given value to the given spi port and channel of the cyprus
-:param port: Port on the cyprus to write to
-:param channel: Channel on the cyprus to write to
-:param value: The value to write on the given spi port and channel
-:return:
-'''
-def write_spi(port, channel, value)
-
-'''
-changes the given parameter, either COMPARE_MODE, PERIOD, or COMPARE,
-of the given port to the given value. Compare modes: LESS_THAN, LESS_THAN_OR_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, EQUAL
-
-:param port: PWM Port
-:param parameter: PWM parameter to change
-:param value: value to change the parameter to
-:return: Reutrns string if the parameter isn't recognized, None otherwise
-'''
-def write_pwm(port, parameter, value)
-
-'''
-sets up the given pwm port to control a servo
-:param port: PWM port to setup a servo on
-:return: None
-'''
-def setup_servo(port)
-	
-'''
-sets servo on given port to position given by a number in the interval [0, 1], where 0 corresponds to one end of its range and 1 to the ot
-:param port: Port the servo motor is attached to
-:param position: Position to write the servo to in the given interval [0,1]
-:return: None
-'''
-def write_servo_position(port, position)
-	
-'''
-sets servo on given port to speed given by a number in the interval [-1, 1], where -1 corresponds to maximum in one direction and 1 to the other
-:param port: Port the servo motor is attached to
-:param speed: Speed to set the servo to in the interval [1, 1]
-:return:
-'''
-def set_servo_speed(port, speed)
-
-'''
-Read the GPIO
-:return: returns a 4 bit number, each bit corresponds to a gpio pin
-'''
-def read_gpio()
-
-'''
-given a 4 bit number, writes the bits to the gpio pins
-:param value: 4 bit number
-:return: None
-'''
-def write_gpio(value)
-
-'''
-Read i2c at a given port and address
-:param port: i2c port to read from
-:param address: address on the i2c port
-:return: value read from i2c at the given address
-'''
-def read_i2c(port, address)
-
-'''
-writes a single byte to the stored i2c data in the cyprus in advance of send i2c command
-:type value: single byte
-:param value: value to write to the stored i2c data in the cyprus
-:return:
-'''
-def write_i2c_data_byte(value)
-    
-'''
-writes a list of bytes to stored i2c data in the cyprus
-:type values: list of bytes
-:param values: list of bytes to write to the i2c stored data in the cyprus
-:return: None
-'''
-def write_i2c_data_list(values)
-
-'''
-writes the stored i2c address in the cyprus in advance of send i2c command
-:param address: i2c address to write
-:return: None
-'''
-def write_i2c_address(address)
-
-'''
-signals the cyprus to send the prewritten data to the prewritten address through the given port
-:param port: i2c port to write to
-:return:
-'''
-def send_i2c(port)
-    
-'''
-complete procedure to send given list of bytes to given address through given i2c port
-:param port: i2c port
-:param address: i2c address
-:param values: values to write to the i2c port and address
-:return: None
-'''
-def write_i2c(port, address, values)
-    
-'''
-sets trigger on given channel to given value, cyprus activates corresponding gpio pin when encoder reads
-within radius of trigger. Caller must set value to TRIGGER_OFF to disable trigger
-:param channel: channel to set the trigger value
-:param value: value to set the trigger on the given channel
-:return:
-'''
-def set_encoder_trigger(channel, value)
-
-'''
-sets trigger on given channel to given value, cyprus activates corresponding gpio pin when encoder reads
-within radius of trigger. The trigger only fires once, the trigger value is reset after it is hit.
-:param channel: channel to set the trigger value
-:param value: value to set the trigger on the given channel
-:return:
-'''
-def set_encoder_trigger_auto_reset(channel, value)
-
-'''
-returns the value from the encoder at the given channel
-:param port: port of the encoder
-:param channel: channel the encoder is on
-:return:
-'''
-def read_encoder(port, channel)
-
-'''
-sets the encoder trigger radius of the given channel to the given value
-:param channel: channel of the encoder
-:param value: value of the trigger radius
-:return:
-'''
-def set_trigger_radius(channel, value)
-
-'''
-reads the firmware date from the cyprus
-:return: list in the form of [day, month, year]
-'''
-def read_firmware_version()
-	
-'''
-sends command to cyprus that tells it to do nothing
-:return: None
-'''
-def no_command()
