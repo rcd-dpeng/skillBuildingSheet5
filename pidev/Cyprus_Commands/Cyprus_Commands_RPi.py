@@ -7,18 +7,10 @@ import os
 from time import sleep
 
 spi = spidev.SpiDev()
-delay = .001
-spi_frequency = 1000000
-pwm_clock_frequency = 1000000
 
-#servo_position_minimum = 0.0001
-#servo_position_range = 0.001 * 2.5
-servo_position_minimum = 400 
-servo_position_ = 2600
-
-servo_speed_minimum_positive = 0.001555
-servo_speed_minimum_negative = 0.001445
-servo_speed_range = .00007
+DELAY = .001
+SPI_FREQUENCY = 1000000
+PWM_CLOCK_FREQUENCY = 1000000
 
 COMPARE_MODE = 0
 PERIOD = 1
@@ -41,18 +33,28 @@ SERVO_SPEED_CLOCKWISE = 1650
 TRIGGER_MODE = 1 
 GPIO_MODE = 0
 
-#break_into_list and form_word translate between lists of 2 bytes and 16 bit words
+currentPeriod = DEFAULT_PERIOD
 
 def initialize():
+    currentPeriod = DEFAULT_PERIOD
     open_spi()
-    setup_servo(1)
-    setup_servo(2)
+
+    for i in range(1, 3, 1):
+        setup_servo(i)
+        set_servo_speed(i, 0)
+        set_pwm_values(i, currentPeriod, 0, compare_mode = LESS_THAN_OR_EQUAL)
+
     reset_all_encoder_triggers()
 
 def close():
     reset_all_encoder_triggers()
+
+    for i in range(1, 3, 1):
+        set_servo_speed(i, 0)
+
     close_spi()
 
+# break_into_list() and form_word() translate between lists of 2 bytes and 16 bit words
 def break_into_list(word):
     return [word >> 8, word & 0x0FF]
 
@@ -65,14 +67,14 @@ def spi_write_word(word):
     :param word: 16 bit word
     :return: None
     """
-    spi.xfer(break_into_list(word), spi_frequency)
+    spi.xfer(break_into_list(word), SPI_FREQUENCY)
 
 def spi_read_word():
     """
     reads the spi value sent to the RPi as a 16 bit word
     :return:
     """
-    return form_word(spi.xfer([0x00, 0x00], spi_frequency, 1))
+    return form_word(spi.xfer([0x00, 0x00], SPI_FREQUENCY, 1))
 
 def open_spi():
     """
@@ -91,9 +93,9 @@ def close_spi(): #closes spi communication
 
 def read_spi_command(command):
     spi_write_word(command)
-    sleep(5 * delay)
+    sleep(5 * DELAY)
     word = spi_read_word()
-    sleep(5 * delay)
+    sleep(5 * DELAY)
     return word
 
 def read_spi(port, channel):
@@ -106,7 +108,7 @@ def read_spi(port, channel):
     """
     command_data = 0x0300 | (port << 4) | channel
     spi_write_word(command_data)
-    sleep(2*delay)
+    sleep(2*DELAY)
     return spi_read_word()
 
 def write_spi(port, channel, value):
@@ -119,7 +121,7 @@ def write_spi(port, channel, value):
     """
     command_data = 0x0400 | (port << 4) | channel
     spi_write_word(command_data)
-    sleep(delay)
+    sleep(DELAY)
     spi_write_word(value)
 
 def write_pwm(port, parameter, value):
@@ -133,25 +135,26 @@ def write_pwm(port, parameter, value):
     :param value: value to change the parameter to
     :return: None
     """
-    if ((parameter == PERIOD) or (parameter == COMPARE) or (parameter == COMPARE_MODE)):
-        processed_value = int(value)
-    else:
+    if ((parameter != PERIOD) and (parameter != COMPARE) and (parameter != COMPARE_MODE)):
         print("ERROR: write_pwm, parameter not recognized (" + str(parameter) + ")")
         return
 
+    if (parameter == PERIOD):
+        currentPeriod = int(value)
+
     command_data = 0x0500 | (port << 4) | parameter
     spi_write_word(command_data)
-    sleep(delay)
-    spi_write_word(processed_value)
-    sleep(delay)
+    sleep(DELAY)
+    spi_write_word(int(value))
+    sleep(DELAY)
 	
-def write_pwm_values(port, period_value, compare_value, compare_mode = LESS_THAN_OR_EQUAL):
+def set_pwm_values(port, period_value, compare_value, compare_mode = LESS_THAN_OR_EQUAL):
     write_pwm(port, COMPARE_MODE, compare_mode)
-    sleep(delay)
+    sleep(DELAY)
     write_pwm(port, PERIOD, period_value)
-    sleep(delay)
+    sleep(DELAY)
     write_pwm(port, COMPARE, compare_value)
-    sleep(delay)
+    sleep(DELAY)
 
 def setup_servo(port):
     """
@@ -160,8 +163,8 @@ def setup_servo(port):
     :return: None
     """
     write_pwm(port, COMPARE, LESS_THAN_OR_EQUAL)
-    sleep(delay)
-    write_pwm(port, PERIOD, DEFAULT_PERIOD)
+    sleep(DELAY)
+    write_pwm(port, PERIOD, currentPeriod)
 	
 def set_servo_position(port, position):
     """
@@ -215,7 +218,7 @@ def set_motor_speed(port, position):
     elif (position < 0):
         position = 0
 
-    compare = position * DEFAULT_PERIOD
+    compare = position * currentPeriod
     write_pwm(port, COMPARE, compare)
 	
 def read_gpio():
@@ -232,7 +235,7 @@ def write_gpio(value):
     :return: None
     """
     spi_write_word(0x0200)
-    sleep(delay)
+    sleep(DELAY)
     spi_write_word(value & 0x0F)
 
 def read_i2c(port, address):
@@ -244,9 +247,9 @@ def read_i2c(port, address):
     """
     command_data = 0x0600 | port
     spi_write_word(command_data)
-    sleep(delay)
+    sleep(DELAY)
     spi_write_word(address << 8)
-    sleep(delay)
+    sleep(DELAY)
     return spi_read_word()
 
 def write_i2c_data_byte(value):
@@ -257,7 +260,7 @@ def write_i2c_data_byte(value):
     :return:
     """
     spi_write_word(0x0800)
-    sleep(2*delay)
+    sleep(2*DELAY)
     spi_write_word(value)
     
 def write_i2c_data_list(values):
@@ -269,7 +272,7 @@ def write_i2c_data_list(values):
     """
     for i in range(len(values)):
         write_i2c_data_byte(values[i] & 0x00FF)
-        sleep(2*delay)
+        sleep(2*DELAY)
 
 def write_i2c_address(address):
     """
@@ -278,7 +281,7 @@ def write_i2c_address(address):
     :return: None
     """
     spi_write_word(0x0900)
-    sleep(delay)
+    sleep(DELAY)
     spi_write_word(address)
 
 def send_i2c(port):
@@ -300,14 +303,14 @@ def write_i2c(port, address, values):
     """
     write_i2c_data_list(values)
     write_i2c_address(address)
-    sleep(2*delay)
+    sleep(2*DELAY)
     send_i2c(port)
     
 def write_encoder_trigger(command, value):
     spi_write_word(command)
-    sleep(delay)
+    sleep(DELAY)
     spi_write_word(value)
-    sleep(delay)
+    sleep(DELAY)
 
 def set_encoder_trigger(channel, value):
     """
@@ -359,9 +362,9 @@ def set_trigger_radius(channel, value):
     """
     command_data = 0x0c00 | channel
     spi_write_word(command_data)
-    sleep(delay)
+    sleep(DELAY)
     spi_write_word(value)
-    sleep(delay)
+    sleep(DELAY)
 
 def set_pinmode(mode):
     """
@@ -370,7 +373,7 @@ def set_pinmode(mode):
     :return: None
     """
     spi_write_word(0x0d00)
-    sleep(delay)
+    sleep(DELAY)
     spi_write_word(mode)
 	
 def read_firmware_version():
@@ -393,7 +396,8 @@ def read_firmware_version():
     day = read_spi_command(0x0f04)
     year = read_spi_command(0x0f05)
 
-    return str(major) + "." + str(minor) + "." + str(patch) + " (" + str(month) + "/" + str(day) + "/" + str(year) + ")"
+    return str(major) + "." + str(minor) + "." + str(patch) + \
+           " (" + str(month) + "/" + str(day) + "/" + str(year) + ")"
 
 def no_command():
     """

@@ -16,10 +16,6 @@ from pidev import stepper
 from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 import Slush
 
-SERVO_MIN_SPEED = 1400
-SERVO_MAX_SPEED = 1600
-SERVO_MIN_POSITION = 300
-SERVO_MAX_POSITION = 2800
 MAX_SPEED = 50
 CLOCKWISE = 0
 COUNTERCLOCKWISE = 1
@@ -96,26 +92,6 @@ def gpioInputTest():
     sleep(0.1)
     checkGPIOValue(False)
 
-def pwmPositionTest(port):
-    printTitle(getFunctionName() + ": 3 positions on Port " + str(port))
-    cyprus.setup_servo(port)
-    cyprus.write_servo_position(port, 0)
-    sleep(1)
-    cyprus.write_servo_position(port, 0.5)
-    sleep(1)
-    cyprus.write_servo_position(port, 1.0)
-    sleep(1)
-    cyprus.write_servo_position(port, 0)
-        
-def pwmSpeedTest(port):
-    printTitle(getFunctionName() + ": 4 speeds on Port " + str(port))
-    cyprus.setup_servo(port)
-    for value in range(-20, 20, 1):
-        debug("Value = " + str(value*0.1))
-        cyprus.set_servo_speed(port, value*0.1)
-        sleep(1.0)
-    cyprus.set_servo_speed(port, 0)
-        
 def readEncoderTest(motorNumber):
     port, channel, portChannel = getEncoderInfo(motorNumber)
     encoder = readEncoder(port, channel)
@@ -236,7 +212,7 @@ def relativeMoveTest(motorNumber, value):
                getFunctionName() + " for motor " + str(motorNumber) + ". Start and end position are not the same.")
     motor.stop()
     
-#################################################
+#################### PWM Tests #############################
     
 def pwmAndStepperTest(pwmPort, stepperPort):
     printTitle(getFunctionName() + " PWM(port = " + str(pwmPort) + ") and Stepper(port = " + str(stepperPort) + ")")
@@ -252,6 +228,46 @@ def pwmAndStepperTest(pwmPort, stepperPort):
     debug("Stop PWM")
     cyprus.write_pwm(stepperPort, "period", 0)
     sleep(1)
+
+def testSetServoPosition(pwmPort):
+    printTitle(getFunctionName() + " PWM(port = " + str(pwmPort) + ")")
+    debug("Connect positional servo to port " + str(pwmPort))
+    cyprus.setup_servo(pwmPort)
+
+    debug("Set the position of the servo to start, middle and end positions.")
+    for i in range(1, 5, 1):
+        cyprus.set_servo_position(pwmPort, 0.0)
+        sleep(1)
+        cyprus.set_servo_position(pwmPort, 0.5)
+        sleep(1)
+        cyprus.set_servo_position(pwmPort, 1.0)
+        sleep(1)
+
+    cyprus.set_servo_position(pwmPort, 0.0)
+
+def testSetServoSpeed(pwmPort):
+    printTitle(getFunctionName() + " PWM(port = " + str(pwmPort) + ")")
+    debug("Connect continuous servo to port " + str(pwmPort))
+    cyprus.setup_servo(pwmPort)
+
+    debug("Set the 20 speeds of the servo. 10 in one direction and 10 in the other.")
+    for i in range(-10, 11, 1):
+        cyprus.set_servo_speed(pwmPort, i/10)
+        sleep(1)
+
+    cyprus.set_servo_speed(pwmPort, 0.0)
+
+def testSetPWMValues(pwmPort):
+    printTitle(getFunctionName() + " PWM(port = " + str(pwmPort) + ")")
+    debug("Connect motor controller with DC motor to port " + str(pwmPort))
+
+    period = 50000
+    for i in range(0, period+5000, 5000):
+        debug("Setting duty cycle to " + str(int((i/period)*100)) + "%")
+        cyprus.set_pwm_values(pwmPort, period, i)
+        sleep(1)
+
+    cyprus.set_pwm_values(pwmPort, period, 0)
 
 ########### Helpers Methods ###########################
     
@@ -394,43 +410,11 @@ def getVersion():
 initTests()
 getVersion()
 
-#pwmSpeedTest(2)
-#exit()
+testSetPWMValues(1)
+exit()
 
-#while(1):
-#   print(bin(cyprus.read_gpio()))
-#   sleep(0.2)
 
-#for i in range(0, 2000, 100):
-#    cyprus.write_pwm(1, cyprus.COMPARE, i)
-#    print(i)
-#    sleep(0.5)
-#for i in range(0, 1000, 10):
 
-#cyprus.setup_servo(1)
-#cyprus.setup_servo(2)
-#cyprus.set_servo_speed(2, 0.001)
-print("====================")
-sleep(1)
-#cyprus.set_servo_position(1, 0.001)
-#for i in range(0, 10, 1):
-#    cyprus.set_servo_position(1, i/10)
-#    cyprus.set_servo_speed(2, i/10)
-#cyprus.set_motor_speed(2, 0)
-
-period = 200000
-cyprus.write_pwm_values(2, period, 0)
-print("0")
-sleep(2)
-cyprus.write_pwm_values(2, period, 5000)
-print("5000")
-sleep(2)
-print("10000")
-cyprus.write_pwm_values(2, period, 10000)
-sleep(2)
-print("15000")
-cyprus.write_pwm_values(2, period, 15000)
-sleep(2)
 cyprus.write_pwm_values(2, period, 0)
 print("Done")
 sleep(1)
