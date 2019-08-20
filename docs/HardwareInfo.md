@@ -38,4 +38,16 @@ And finally here is where you attach the Raspberry Pi:
 ![](https://i.imgur.com/xuiFksD.png?1)
 
 
+## Software
+The easiest way to control the Slush engine is through [stepper.py](https://github.com/dpengineering/RaspberryPiCommon/blob/master/pidev/stepper.py), a wrapper for the slush engines existing library, found in RaspberryPiCommon.
+To use the stepper library you need to import it at the top of the file
+```
+from pidev import stepper
+
+```
+Next you need to creat a stepper object for each stepper in your project. You can see all of the constructor options in the code. But the most important ones are port, where the stepper is physically plugged in, speed, how fast the stepper will move, and micro_steps, smoother movement at the cost of torque and max speed (must be in base 2 (1,2,4,8,16,32,64,128))
+```
+STEPPER = stepper(port=2, speed=500, micro_steps=32)
+```
+Now you have a wide variety of options for controlling the stepper. They are all well documented in stepper.py so give some a try. Good Luck!
 
