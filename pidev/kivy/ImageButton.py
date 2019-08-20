@@ -2,7 +2,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
 import os.path
 
-dpea_logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "DPEALogoTransparent.png" )
+dpea_logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "DPEALogoTransparent.png")
 
 
 class ImageButton(ButtonBehavior, Image):

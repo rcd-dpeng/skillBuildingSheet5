@@ -6,6 +6,7 @@ There is no need to copy the .kv file into your project simply import this class
 
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
+from kivy.app import App
 import os.path
 
 PASSWORD = '7266'
@@ -27,6 +28,11 @@ class PassCodeScreen(Screen):
     """
     Class used to enter the PassCodeScreen to enter the admin screen
     """
+    def __init__(self, **kw):
+        super(PassCodeScreen, self).__init__(**kw)
+        self.running_app = App.get_running_app()
+
+
     def add_num(self, num):
         """
         Add a number to the current password entry
