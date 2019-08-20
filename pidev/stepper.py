@@ -63,7 +63,7 @@ class stepper(Slush.Motor):
                         kwargs.get("run_current", 20),
                         kwargs.get("accel_current", 20),
                         kwargs.get("deaccel_current", 20))
-        self.steps_per_unit = kwargs.get("steps_per_unit", 1)
+        self.steps_per_unit = kwargs.get("steps_per_unit", 200 / 25.4)
         self.speed = kwargs.get("speed", 1)
         self.set_speed(self.speed)
         self.getParam(LReg.CONFIG) == 0x2e88  # Allow for GPIO on the slushengine
