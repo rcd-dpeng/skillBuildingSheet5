@@ -325,13 +325,27 @@ class stepper(Slush.Motor):
         self.move(steps * self.micro_steps)
 
     def go_until_press(self, dir, speed):
+        """
+        Move the stepper until it hits a sensor
+        :param dir: The direction 1 or 0
+        :param speed: Speed in steps per second
+        :return: None
+        """
         if self.read_switch() is 0:
             self.goUntilPress(1, dir, speed)
 
     def is_busy(self):
+        """
+        Checks if the stepper is moving
+        :return: True or False
+        """
         return self.isBusy()
 
     def get_position(self):
+        """
+        Gets the position of the stepper
+        :return: position in steps
+        """
         return self.getPosition()
 
     @staticmethod
