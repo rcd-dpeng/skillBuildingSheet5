@@ -20,7 +20,7 @@ class PauseScreen(Screen):
         """
         Pause the UI for a given amount of time
         :param pause_scene_name: The name of the PauseScreen when added as a widget
-        :param transition_back_scene: The name of the scene to transition to when complete
+        :param transition_back_scene: The name of the scene (when added as a widget) to transition back to when complete
         :param text: The text to display on screen while paused
         :param pause_duration: The number of seconds to pause the UI for
         :return: None
