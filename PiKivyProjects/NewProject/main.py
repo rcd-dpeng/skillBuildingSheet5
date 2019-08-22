@@ -7,14 +7,18 @@ from pidev.kivy.PassCodeScreen import PassCodeScreen
 from pidev.kivy.PauseScreen import PauseScreen
 from pidev.kivy import DPEAButton
 
-PROJECT_TOKEN = "x"
-# MIXPANEL = MixPanel("Project Name", PROJECT_TOKEN)
+MIXPANEL_TOKEN = "x"
+MIXPANEL = MixPanel("Project Name", MIXPANEL_TOKEN)
 
 SCREEN_MANAGER = ScreenManager()
 
 
 class ProjectNameGUI(App):
     def build(self):
+        """
+        Build the application
+        :return: Kivy Screen Manager instance
+        """
         return SCREEN_MANAGER
 
 
@@ -28,14 +32,30 @@ class MainScreen(Screen):
 
     @staticmethod
     def exit_program():
+        """
+        On touch event for x button. Quits the program
+        :return: None
+        """
         quit()
 
     def pressed(self):
+        """
+        Function called on button touch event for button with id: testButton
+        :return: None
+        """
         PauseScreen.pause(pause_scene_name='pauseScene', transition_back_scene='main', text="Test", pause_duration=5)
-        print("pressed")
 
     def admin_action(self):
+        """
+        Hidden admin button touch event. Transitions to passCodeScreen
+        :return: None
+        """
         SCREEN_MANAGER.current = 'passCode'
+
+
+"""
+Widget additions
+"""
 
 Builder.load_file('main.kv')
 SCREEN_MANAGER.add_widget(MainScreen(name='main'))
@@ -55,9 +75,8 @@ def send_event(event_name):
     """
     global MIXPANEL
 
-    event = MixPanel("My Project", PROJECT_TOKEN)
-    event.set_event_name(event_name)
-    event.send_event()
+    MIXPANEL.set_event_name(event_name)
+    MIXPANEL.send_event()
 
 
 if __name__ == "__main__":
