@@ -67,7 +67,8 @@ class PassCodeScreen(Screen):
 
             if ADMIN_EVENTS_SCREEN is None:
                 print("Specify the admin screen name by calling PassCodeScreen.set_admin_events_screen")
-
+                return
+            
             self.parent.current = ADMIN_EVENTS_SCREEN
 
     def transition_back(self):
