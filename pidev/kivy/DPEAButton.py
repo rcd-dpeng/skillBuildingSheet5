@@ -30,14 +30,14 @@ class DPEAButton(Button):
         Overrides the Button default on_press to darken the color of the button.
         :return: None
         """
-        super(DPEAButton, self).on_press()
+        super().on_press()
         self.original_colors = self.color
         self.color = [i * 0.7 for i in self.original_colors]
 
-    def on_release(self):
+    def on_touch_up(self, touch):
         """
-        Overrides the Button default on_release to revert the buttons color back to its original color
+        Overrides the Button default on_touch_up to revert the buttons color back to its original color
         :return: None
         """
-        super(DPEAButton, self).on_release()
+        super().on_touch_up(touch)
         self.color = self.original_colors
