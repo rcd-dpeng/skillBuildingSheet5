@@ -6,6 +6,7 @@ from pidev import MixPanel
 from pidev.kivy.PassCodeScreen import PassCodeScreen
 from pidev.kivy.PauseScreen import PauseScreen
 from pidev.kivy import DPEAButton
+from pidev.kivy import ImageButton
 
 MIXPANEL_TOKEN = "x"
 MIXPANEL = MixPanel("Project Name", MIXPANEL_TOKEN)
@@ -26,9 +27,9 @@ Window.clearcolor = (1, 1, 1, 1)  # White
 
 
 class MainScreen(Screen):
-
-    def passcode_button_pressed(self):
-        SCREEN_MANAGER.current = 'passCode'
+    """
+    Class to handle the main screen and its associated touch events
+    """
 
     @staticmethod
     def exit_program():
@@ -47,7 +48,8 @@ class MainScreen(Screen):
 
     def admin_action(self):
         """
-        Hidden admin button touch event. Transitions to passCodeScreen
+        Hidden admin button touch event. Transitions to passCodeScreen.
+        This method is called from pidev/kivy/PassCodeScreen.kv
         :return: None
         """
         SCREEN_MANAGER.current = 'passCode'
@@ -80,5 +82,5 @@ def send_event(event_name):
 
 
 if __name__ == "__main__":
-    send_event("Project Initialized")
+    # send_event("Project Initialized")
     ProjectNameGUI().run()
