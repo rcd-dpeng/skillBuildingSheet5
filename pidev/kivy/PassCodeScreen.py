@@ -64,6 +64,11 @@ class PassCodeScreen(Screen):
         if PASSWORD == USERPW:
             self.ids.pw.text = ' '
             USERPW = ''
+
+            if ADMIN_EVENTS_SCREEN is None:
+                print("Specify the admin screen name by calling PassCodeScreen.set_admin_events_screen")
+                return
+            
             self.parent.current = ADMIN_EVENTS_SCREEN
 
     def transition_back(self):
@@ -74,13 +79,6 @@ class PassCodeScreen(Screen):
         self.ids.pw.text = ""
         self.parent.current = TRANSITION_BACK_SCREEN
 
-    def enter_button_down(self):
-        """
-        Enter button down pressed event
-        :return: None
-        """
-        self.ids.enter.color = 0.01, 0.168, .5, 1
-
     @staticmethod
     def set_admin_events_screen(screen):
         """
@@ -89,7 +87,7 @@ class PassCodeScreen(Screen):
         :return: None
         """
         global ADMIN_EVENTS_SCREEN
-        ADMIN_EVENTS_SCREEN= screen
+        ADMIN_EVENTS_SCREEN = screen
 
     @staticmethod
     def set_transition_back_screen(screen):
@@ -128,7 +126,7 @@ class PassCodeScreen(Screen):
 
         # This needs to be updated every time there are line changes in the PassCodeScreen.kv
         # TODO implement a better way to dynamically change the main screen name
-        data[137] = '<' + name + '>\n'
+        data[134] = '<' + name + '>\n'
 
         with open(passcode_screen_path, 'w') as file:
             file.writelines(data)

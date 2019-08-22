@@ -2,7 +2,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
-from pidev import MixPanel
+from pidev.MixPanel import MixPanel
 from pidev.kivy.PassCodeScreen import PassCodeScreen
 from pidev.kivy.PauseScreen import PauseScreen
 from pidev.kivy import DPEAButton
@@ -44,8 +44,8 @@ class MainScreen(Screen):
         Function called on button touch event for button with id: testButton
         :return: None
         """
-        PauseScreen.pause(pause_scene_name='pauseScene', transition_back_scene='main', text="Test", pause_duration=5)
-
+        # PauseScreen.pause(pause_scene_name='pauseScene', transition_back_scene='main', text="Test", pause_duration=5)
+        pass
     def admin_action(self):
         """
         Hidden admin button touch event. Transitions to passCodeScreen.

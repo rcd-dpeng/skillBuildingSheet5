@@ -10,8 +10,7 @@
             center_y: root.center_y + 260
             color: 0.019, 0.337, 1, 1
             size: 280, 80
-            on_press: root.back_button_down()
-            on_release: root.transition_back()
+            on_press: root.transition_back()
 
         Label:
             text: ' '
@@ -31,8 +30,7 @@
             center_y: root.center_y + 60
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(1)
-
+            on_press: root.add_num(1)
 
         DPEAButton:
             text: '2'
@@ -41,7 +39,7 @@
             center_y: root.center_y + 60
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(2)
+            on_press: root.add_num(2)
 
         DPEAButton:
             text: '3'
@@ -50,7 +48,7 @@
             center_y: root.center_y + 60
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(3)
+            on_press: root.add_num(3)
 
         DPEAButton:
             text: '4'
@@ -59,7 +57,7 @@
             center_y: root.center_y - 40
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(4)
+            on_press: root.add_num(4)
 
         DPEAButton:
             text: '5'
@@ -68,7 +66,7 @@
             center_y: root.center_y - 40
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(5)
+            on_press: root.add_num(5)
 
         DPEAButton:
             text: '6'
@@ -77,7 +75,7 @@
             center_y: root.center_y - 40
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(6)
+            on_press: root.add_num(6)
 
 
         DPEAButton:
@@ -87,7 +85,7 @@
             center_y: root.center_y - 140
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(7)
+            on_press: root.add_num(7)
 
         DPEAButton:
             text: '8'
@@ -96,7 +94,7 @@
             center_y: root.center_y - 140
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(8)
+            on_press: root.add_num(8)
 
         DPEAButton:
             text: '9'
@@ -105,7 +103,7 @@
             center_y: root.center_y - 140
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(9)
+            on_press: root.add_num(9)
 
         DPEAButton:
             text: '0'
@@ -114,7 +112,7 @@
             center_y: root.center_y - 240
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.add_num(0)
+            on_press: root.add_num(0)
 
         DPEAButton:
             text: 'Del'
@@ -123,7 +121,7 @@
             center_y: root.center_y - 240
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_release: root.remove_num()
+            on_press: root.remove_num()
 
         DPEAButton:
             text: 'Etr'
@@ -132,8 +130,7 @@
             center_y: root.center_y - 240
             color: 0.019, 0.337, 1, 1
             size: 80, 80
-            on_press: root.enter_button_down()
-            on_release: root.check_pass()
+            on_press: root.check_pass()
 
 <MainScreen>
     name: 'main'
@@ -148,4 +145,4 @@
         background_color: 0, 0, 0, 0
         background_normal: ''
         center: root.width - 5, 5
-        on_release: root.admin_action()
+        on_press: root.admin_action()
