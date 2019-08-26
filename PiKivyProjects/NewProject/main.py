@@ -126,5 +126,5 @@ def send_event(event_name):
 
 if __name__ == "__main__":
     # send_event("Project Initialized")
-    Window.fullscreen = 'auto'
+    # Window.fullscreen = 'auto'
     ProjectNameGUI().run()
