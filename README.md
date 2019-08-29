@@ -25,7 +25,7 @@ It is a good idea to familiarize yourself with Python syntax, etc. before embark
 #### Pidev
 There are python libraries made by the DPEA for use on projects in a python module named pidev. More information on python modules can be found [here](https://docs.python.org/3/tutorial/modules.html)
 
-To install pidev on Linux open a terminal and change directories to where RaspberryPiCommon exists. Then run the command ```pip3 install -e .``` you will then be able to access all of pidev's functionality.
+To install pidev on Linux open a terminal and change directories to where RaspberryPiCommon exists. Then run the command ```pip3 install -e .``` you will then be able to access all of pidev's functionality. If this command does not work run it with the --user option ```pip3 install -e . --user```.
 More info on pidev and it's functionality can be found [here.](https://dpengineering.github.io/RaspberryPiCommon/annotated.html)
 
 ### Kivy
