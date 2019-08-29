@@ -6,6 +6,7 @@ import sys
 from collections import OrderedDict
 import Slush
 from Slush.Devices import L6470Registers as LReg
+from Slush.Devices import L6480Registers as LReg6480
 from .slush_manager import slush_board as slush_board
 
 CHIP_STATUSES_XLT = OrderedDict([  # MSB to LSB of motor controller status and index of the associated bit (16 bit number)
@@ -70,7 +71,9 @@ class stepper(Slush.Motor):
         self.steps_per_unit = kwargs.get("steps_per_unit", 200 / 25.4)
         self.speed = kwargs.get("speed", 1)
         self.set_speed(self.speed)
-        self.getParam(LReg.CONFIG) == 0x2e88  # Allow for GPIO on the slushengine
+        if self.boardInUse == 1:
+            self.setParam(LReg6480.GATECFG1, 0x5F)
+            self.setParam(LReg6480.OCD_TH, 0x1F)
 
     def _get_status_byte(self):
         """
