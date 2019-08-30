@@ -163,7 +163,7 @@ def set_servo_speed(port, speed):
     elif(speed > 0):
         compare = servo_speed_minimum_positive + (speed * servo_speed_range)
     elif(speed == 0):
-	compare = (servo_speed_minmimum_positive + servo_speed_minmimum_negative) / 2
+        compare = (servo_speed_minmimum_positive + servo_speed_minmimum_negative) / 2
     write_pwm(port, COMPARE, compare)
 
 def read_gpio():
