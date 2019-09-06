@@ -2,7 +2,7 @@
 import re
 import sys
 try:
-    from pidev import stepper
+    from pidev.stepper import stepper
 except (ImportError, ModuleNotFoundError):
     sys.exit("Stepper libraries (pidev/slush) were not found. Install slushengine or pidev from RaspberryPiCommon")
 
