@@ -51,25 +51,31 @@ class stepper(Slush.Motor):
     """
     instances = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, port=0, micro_steps=64, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
+                 steps_per_unit=200/25.4, speed=1):
         """
-        Constructor for a stepper motor on the Slush Engine
-        he init function sets a range of parameters:
-        port, micro_steps, run_current, accel_current, deaccel_current
-        hold_current, steps_per_unit, speed
-        :param kwargs: Reference note on constructor summary
+        Constructor for the stepper class
+        :param port: port the stepper is connected to. 0-3 on XLT, 0-6 on D. Default:0
+        :param micro_steps: how much each step is subdivided. (1,2,4,8,16,32,64,128) Default:64
+        :param hold_current: amount of current when motor is holding in place. Default:20
+        :param run_current: amount of current when motor is moving at constant speed. Default:20
+        :param accel_current: amount of current when motor is accelerating. Default:20
+        :param deaccel_current: amount of current when motor is decelerating. Default:20
+        :param steps_per_unit: amount of steps per unit. used so you can control motors by linear distance (with lead
+               screws) or by revolutions if the motor rotates something Default:200/25.4 (used to move in mm on 8mm/turn lead screws)
+        :param speed: how fast the stepper moves in units
         """
-        super().__init__(kwargs.get("port", 0))
-        self.port = kwargs.get("port", 0)
+        super().__init__(port)
+        self.port = port
         self.resetDev()
-        self.micro_steps = kwargs.get("micro_steps", 64)
+        self.micro_steps = micro_steps
         self.set_micro_steps(self.micro_steps)
-        self.setCurrent(kwargs.get("hold_current", 20),
-                        kwargs.get("run_current", 20),
-                        kwargs.get("accel_current", 20),
-                        kwargs.get("deaccel_current", 20))
-        self.steps_per_unit = kwargs.get("steps_per_unit", 200 / 25.4)
-        self.speed = kwargs.get("speed", 1)
+        self.setCurrent(hold_current,
+                        run_current,
+                        accel_current,
+                        deaccel_current)
+        self.steps_per_unit = steps_per_unit
+        self.speed = speed
         self.set_speed(self.speed)
         if self.boardInUse == 1:
             self.setParam(LReg6480.GATECFG1, 0x5F)
@@ -159,15 +165,22 @@ class stepper(Slush.Motor):
         self.micro_steps = micro_steps
         self.setMicroSteps(micro_steps)
 
-    def set_speed(self, speed):
+    def set_speed(self, speed_in_units):
         """
-        Set the speed the stepper motor runs at
-        :param speed: Speed the motor will run at
+        Set the speed the stepper motor runs at in units
+        :param speed_in_units: Speed the motor will run at in units
         :return: None
         """
-        self.speed = speed * self.steps_per_unit
+        self.speed = speed_in_units * self.steps_per_unit
         self.set_max_speed(self.speed)
 
+    def set_speed_in_steps(self, speed):
+        """
+        set the speed the stepper motor runs at in steps
+        :param speed: Speed the motor will run at in steps
+        :return: None
+        """
+        self.set_max_speed(speed)
     def set_accel(self, acceleration):
         """
         Set the acceleration of the motor
@@ -208,43 +221,43 @@ class stepper(Slush.Motor):
         else:
             return 0
 
-    def relative_move(self, distance):
+    def relative_move(self, distance_in_units):
         """
-        Moves a certain distance with MOVEMENTS BLOCKED (synchronise)
-        :param distance:
+        Moves a certain distance in units (defined by steps_per_unit in constructor) with MOVEMENTS BLOCKED (synchronise)
+        :param distance_in_units: a distance in units
         :return:
         """
-        number_of_steps = distance * self.micro_steps * self.steps_per_unit
+        number_of_steps = distance_in_units * self.micro_steps * self.steps_per_unit
         self.move(int(number_of_steps))
         self.wait_move_finish()
 
-    def start_relative_move(self, distance):
+    def start_relative_move(self, distance_in_units):
         """
-        Starts moving a certain distance WITHOUT BLOCKING MOVEMENTS (a-synchronise)
-        :param distance:
+        Starts moving a certain distance in units (defined by steps_per_unit in constructor) WITHOUT BLOCKING MOVEMENTS (a-synchronise)
+        :param distance_in_units: a distance in units
         :return:
         """
-        number_of_steps = distance * self.micro_steps * self.steps_per_unit
+        number_of_steps = distance_in_units * self.micro_steps * self.steps_per_unit
         self.move(int(number_of_steps))
 
-    def go_to_position(self, distance):
+    def go_to_position(self, position_in_units):
         """
-        Goes to a set position WITH BLOCKING (synchronise)
-        :param distance: Distance to move to
+        Goes to a set position in units (defined by steps_per_unit in constructor) WITH BLOCKING (synchronise)
+        :param position_in_units: position to move to in units
         :return: None
         """
-        number_of_steps = distance * self.micro_steps * self.steps_per_unit
-        self.go_to(int(number_of_steps))
+        position_in_steps = position_in_units * self.micro_steps * self.steps_per_unit
+        self.go_to(int(position_in_steps))
         self.wait_move_finish()
 
-    def start_go_to_position(self, distance):
+    def start_go_to_position(self, position_in_units):
         """
-        begins going to a set position WITHOUT BLOCKING (a-synchronise)
-        :param distance: distance to move to
+        begins going to a set position in units (defined by steps_per_unit in constructor) WITHOUT BLOCKING (a-synchronise)
+        :param position_in_units: position to move to in units
         :return: None
         """
-        number_of_steps = distance * self.micro_steps * self.steps_per_unit
-        self.go_to(int(number_of_steps))
+        position_in_steps = position_in_units * self.micro_steps * self.steps_per_unit
+        self.go_to(int(position_in_steps))
 
     @staticmethod
     def get_GPIO_state(port, pin):
@@ -295,7 +308,7 @@ class stepper(Slush.Motor):
 
     def go_to(self, number_of_steps):
         """
-        Make the stepper go to a position
+        Make the stepper go to a position in steps
         :param number_of_steps: Number of steps to move
         :return: None
         """
@@ -350,10 +363,17 @@ class stepper(Slush.Motor):
 
     def get_position(self):
         """
-        Gets the position of the stepper
+        Gets the position of the stepper in steps
         :return: position in steps
         """
         return self.getPosition()
+
+    def get_position_in_units(self):
+        """
+        Gets the position of the stepper in units
+        :return: position in units
+        """
+        return self.get_position() / self.steps_per_unit / self.micro_steps
 
     @staticmethod
     def free_all():
