@@ -224,7 +224,7 @@ class stepper(Slush.Motor):
     def relative_move(self, distance_in_units):
         """
         Moves a certain distance in units (defined by steps_per_unit in constructor) with MOVEMENTS BLOCKED (synchronise)
-        :param distance_in_units:
+        :param distance_in_units: a distance in units
         :return:
         """
         number_of_steps = distance_in_units * self.micro_steps * self.steps_per_unit
@@ -234,7 +234,7 @@ class stepper(Slush.Motor):
     def start_relative_move(self, distance_in_units):
         """
         Starts moving a certain distance in units (defined by steps_per_unit in constructor) WITHOUT BLOCKING MOVEMENTS (a-synchronise)
-        :param distance_in_units:
+        :param distance_in_units: a distance in units
         :return:
         """
         number_of_steps = distance_in_units * self.micro_steps * self.steps_per_unit
@@ -243,7 +243,7 @@ class stepper(Slush.Motor):
     def go_to_position(self, position_in_units):
         """
         Goes to a set position in units (defined by steps_per_unit in constructor) WITH BLOCKING (synchronise)
-        :param position_in_units: Distance to move to
+        :param position_in_units: position to move to in units
         :return: None
         """
         position_in_steps = position_in_units * self.micro_steps * self.steps_per_unit
@@ -253,7 +253,7 @@ class stepper(Slush.Motor):
     def start_go_to_position(self, position_in_units):
         """
         begins going to a set position in units (defined by steps_per_unit in constructor) WITHOUT BLOCKING (a-synchronise)
-        :param position_in_units: distance to move to
+        :param position_in_units: position to move to in units
         :return: None
         """
         position_in_steps = position_in_units * self.micro_steps * self.steps_per_unit
@@ -373,7 +373,7 @@ class stepper(Slush.Motor):
         Gets the position of the stepper in units
         :return: position in units
         """
-        return self.get_position() / self.steps_per_unit
+        return self.get_position() / self.steps_per_unit / self.micro_steps
 
     @staticmethod
     def free_all():
