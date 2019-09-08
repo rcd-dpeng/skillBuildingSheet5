@@ -37,80 +37,17 @@ And finally here is where you attach the Raspberry Pi:
 
 ![](https://i.imgur.com/xuiFksD.png?1)
 
-## Software Overview
 
-Now on to controlling things!
-
-Before starting make sure you have installed the Slush python library on the Raspberry pi.
-
-The following sections will be about software not found in the examples. More information can be found in the example files.
-
-### Getting a motor running
-
-Start by opening the python shell and entering ```import Slush```. This gives you access to the Slush library. Next enter ```b = Slush.sBoard()``` this initializes the board and names it b. Next enter ```m = Slush.Motor(0)``` this initialises the motor in port zero with the name m. Finally enter ```m.move(1000)``` this will make the motor move 1000 steps. If that worked Congrats! otherwise go to the troubleshooting section.
-
-### Basic Motor Functions
-
-
-```m.setCurrent(hold,run,acc,decc)```: sets the amount of current going to the stepper. It takes 4 unitless inputs between 0-200. It controls Current when its holding, running, accelerrating, and deccelerating. For our purposes just use m.setCurrent(20,20,20,20).
-
-```m.setMicroSteps()```: Sets the microstepping for the stepper. can be between 1 and 128. NOTE this does not affect the the size of a step in any other function. SO moving 100 steps and full microstepping is the same at moving 200 at half microstepping.
-
-```m.isBusy()```: returns true is the motor is performing a move and false when it is not performing a move.
-
-```m.run(direction, speed)```: moves the motor indefinently in direction (0 or 1) at speed (in steps).
-
-```m.free()```: disables the stepper motor.
-
-```m.softStop()```: stops the motor with decceleration.
-
-```m.hardStop()```: immediatly stops the motor.
-
-```m.setAsHome()```: sets the current position as 0.
-
-```m.goHome()```: moves to the home position.'
-
-```m.goUntilPress(act, dir, speed)```: homes in dir at speed in steps until the switch on port act is pressed.
-
-```b.getIOState(row, pin)```: gets the state of pin in row A or B (0 or 1) of number 0-7. 1 for high, 0 for low.
-
-The rest of the commands can be found here: https://github.com/Roboteurs/slushengine/blob/master/Slush/Motor.py#L55
-
-### Homing Steppers using Proximity Sensors
-
-You can not use the default homing function if you need to home to a proximity sensor. You also need to do some different wiring.
-
-The signal and ground pins can be plugged into the GPIO pins on the board. The sensors we use are rated for 5v to 30v so it will need to be attached to an appropriate power source.
-When reading the data from the GPIO pin remember that the sensors are pullup so they will show low when sensed. So 1 = not sensed and 0 = sensed.
+## Software
+The easiest way to control the Slush engine is through [stepper.py](https://github.com/dpengineering/RaspberryPiCommon/blob/master/pidev/stepper.py), a wrapper for the slush engines existing library, found in RaspberryPiCommon.
+To use the stepper library you need to import it at the top of the file
+```
+from pidev import stepper
 
 ```
-m.run(0,50)
-while(b.getIOState(0,0) == 1):
-    continue
-m.hardStop()
-m.setAsHome()
+Next you need to creat a stepper object for each stepper in your project. You can see all of the constructor options in the code. But the most important ones are port, where the stepper is physically plugged in, speed, how fast the stepper will move, and micro_steps, smoother movement at the cost of torque and max speed (must be in base 2 (1,2,4,8,16,32,64,128))
 ```
-
-This code moves the motor slowly towards the sensor until it gets sensed. Once it is sensed it stops and sets the current position as home.
-
-If you need to home multiple steppers at the same time (tied to the same axis or not). you will need to add a few more lines.
-
+STEPPER = stepper(port=2, speed=500, micro_steps=32)
 ```
-m0.run(0,50)
-m1.run(0,50)
-m2.run(0,50)
-while(b.getIOState(0,0) == 1 or  b.getIOState(0,1) == 1 or b.getIOState(0,2) == 1 ):
-    if(b.getIOState(0,0) == 0):
-        m0.hardStop()
-    if(b.getIOState(0,1) == 0):
-        m1.hardStop()
-    if(b.getIOState(0,2) == 0):
-        m2.hardStop()
-m0.hardStop()
-m1.hardStop()
-m2.hardStop()
-m0.setAsHome()
-m1.setAsHome()
-m2.setAsHome()
-```
-This will start homing all of the motors and then stop each motor as it when it is sensed. When they are all sensed it sets their current position as home and continues with the rest of your program.
+Now you have a wide variety of options for controlling the stepper. They are all well documented in stepper.py so give some a try. Good Luck!
+

@@ -6,6 +6,7 @@ There is no need to copy the .kv file into your project simply import this class
 
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
+from kivy.app import App
 import os.path
 
 PASSWORD = '7266'
@@ -27,6 +28,13 @@ class PassCodeScreen(Screen):
     """
     Class used to enter the PassCodeScreen to enter the admin screen
     """
+    def __init__(self, **kw):
+        super(PassCodeScreen, self).__init__(**kw)
+
+    def initialize(self):
+        curr_app = App.get_running_app()
+        print("wait")
+
     def add_num(self, num):
         """
         Add a number to the current password entry
@@ -56,33 +64,12 @@ class PassCodeScreen(Screen):
         if PASSWORD == USERPW:
             self.ids.pw.text = ' '
             USERPW = ''
+
+            if ADMIN_EVENTS_SCREEN is None:
+                print("Specify the admin screen name by calling PassCodeScreen.set_admin_events_screen")
+                return
+            
             self.parent.current = ADMIN_EVENTS_SCREEN
-
-    def reset_colors(self):
-        """
-        Reset all of the colors
-        :return: None
-        """
-        self.ids.back.color = 0.019, 0.337, 1, 1
-        self.ids.one.color = 0.019, 0.337, 1, 1
-        self.ids.two.color = 0.019, 0.337, 1, 1
-        self.ids.three.color = 0.019, 0.337, 1, 1
-        self.ids.four.color = 0.019, 0.337, 1, 1
-        self.ids.five.color = 0.019, 0.337, 1, 1
-        self.ids.six.color = 0.019, 0.337, 1, 1
-        self.ids.seven.color = 0.019, 0.337, 1, 1
-        self.ids.eight.color = 0.019, 0.337, 1, 1
-        self.ids.nine.color = 0.019, 0.337, 1, 1
-        self.ids.zero.color = 0.019, 0.337, 1, 1
-        self.ids.backspace.color = 0.019, 0.337, 1, 1
-        self.ids.enter.color = 0.019, 0.337, 1, 1
-
-    def back_button_down(self):
-        """
-        back button pressed event, changes the color of the button
-        :return: None
-        """
-        self.ids.back.color = 0.01, 0.168, .5, 1
 
     def transition_back(self):
         """
@@ -92,90 +79,6 @@ class PassCodeScreen(Screen):
         self.ids.pw.text = ""
         self.parent.current = TRANSITION_BACK_SCREEN
 
-    def one_button_down(self):
-        """
-        One button down pressed
-        :return: None
-        """
-        self.ids.one.color = 0.01, 0.168, .5, 1
-
-    def two_button_down(self):
-        """
-        Two button down pressed
-        :return: None
-        """
-        self.ids.two.color = 0.01, 0.168, .5, 1
-
-    def three_button_down(self):
-        """
-        Three button down pressed event
-        :return: None
-        """
-        self.ids.three.color = 0.01, 0.168, .5, 1
-
-    def four_button_down(self):
-        """
-        Four button down pressed event
-        :return: None
-        """
-        self.ids.four.color = 0.01, 0.168, .5, 1
-
-    def five_button_down(self):
-        """
-        Five button down pressed event
-        :return: None
-        """
-        self.ids.five.color = 0.01, 0.168, .5, 1
-
-    def six_button_down(self):
-        """
-        Size button down pressed event
-        :return: None
-        """
-        self.ids.six.color = 0.01, 0.168, .5, 1
-
-    def seven_button_down(self):
-        """
-        Seven button down pressed event
-        :return: None
-        """
-        self.ids.seven.color = 0.01, 0.168, .5, 1
-
-    def eight_button_down(self):
-        """
-        Eight button down pressed event
-        :return: None
-        """
-        self.ids.eight.color = 0.01, 0.168, .5, 1
-
-    def nine_button_down(self):
-        """
-        Nine button down pressed event
-        :return: None
-        """
-        self.ids.nine.color = 0.01, 0.168, .5, 1
-
-    def zero_button_down(self):
-        """
-        Zero button down pressed event
-        :return: None
-        """
-        self.ids.zero.color = 0.01, 0.168, .5, 1
-
-    def backspace_button_down(self):
-        """
-        Backspace button down pressed event
-        :return: None
-        """
-        self.ids.backspace.color = 0.01, 0.168, .5, 1
-
-    def enter_button_down(self):
-        """
-        Enter button down pressed event
-        :return: None
-        """
-        self.ids.enter.color = 0.01, 0.168, .5, 1
-
     @staticmethod
     def set_admin_events_screen(screen):
         """
@@ -184,7 +87,7 @@ class PassCodeScreen(Screen):
         :return: None
         """
         global ADMIN_EVENTS_SCREEN
-        ADMIN_EVENTS_SCREEN= screen
+        ADMIN_EVENTS_SCREEN = screen
 
     @staticmethod
     def set_transition_back_screen(screen):
@@ -221,7 +124,9 @@ class PassCodeScreen(Screen):
         with open(passcode_screen_path) as file:
             data = file.readlines()
 
-        data[198] = '<' + name + '>\n'
+        # This needs to be updated every time there are line changes in the PassCodeScreen.kv
+        # TODO implement a better way to dynamically change the main screen name
+        data[134] = '<' + name + '>\n'
 
         with open(passcode_screen_path, 'w') as file:
             file.writelines(data)
