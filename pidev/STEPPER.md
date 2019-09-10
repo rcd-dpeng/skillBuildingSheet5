@@ -1,13 +1,13 @@
-#Stepper
+# Stepper
 This file will give a basic overview of the functionality and uses of the stepper class
 
-##Importing
+## Importing
 Make sure you have pidev installed and then use this import statement.
 ```
 from pidev.stepper import stepper
 ```
 
-##Constructor
+## Constructor
 
 ```
 STEPPER = stepper()
@@ -40,22 +40,22 @@ If you want to control in terms of steps set this to 1.
 **speed:** How fast the stepper moves in terms of units Default: 1
 
 
-##Setting steps_per_unit
-###Control by revolutions
+## Setting steps_per_unit
+### Control by revolutions
 Most (Pretty sure all) of the steppers we use in the academy have 200 steps per revolutions. They are often paired with 
 gearboxes or a transmission to give them more torque. 
 Locate the gearing ratio and multiply that value by 200 to get your steps_per_unit
-###Control by distance
+### Control by distance
 Lead screws have a measurement of distance traveled per turn which will most likely be given in inches or millimeters. 
 Now we just use basic unit conversion to get our steps_per_unit.
 For this example we wil use a lead screw that has .5" per turn, and we want to control it using millimeters as our unit.
 
 (200 steps/1 ~~rev~~) * (1 ~~rev~~/0.5 ~~in~~) * (1 ~~in~~/25.4mm)
 which simplifies to 15.75 steps/mm giving us 15.75 for out steps_per_unit value
-###Control by steps
+### Control by steps
 If you want to control your motor using steps, set steps_per_unit to 1
 
-##Homing the stepper
+## Homing the stepper
 ```STEPPER.home(direction)```
 
 ```direction``` can be either 0 or 1
@@ -65,7 +65,7 @@ your 0 position you can move to the position you want as 0 and the use the comma
 
 If you project has a continuously rotating device controlled by a stepper, by default the stepper will stop when the limit
 switch or proximity sensor are triggered. To disable this behavior run ```STEPPER.set_limit_hardstop(False)```
-##Moving the stepper
+## Moving the stepper
 
 There are a lot of different functions built in to move the stepper. Most of them will be listed below
 
@@ -85,7 +85,7 @@ slushengine has been given a movement command, you can not give it another comma
  finishes
  
 
-##Other useful commands
+## Other useful commands
 
 ```STEPPER.stop()``` This will stop the motor in the middle of its motion. Will not decelerate.
 
