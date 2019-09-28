@@ -61,7 +61,6 @@ typedef enum {
     read_firmware_date
 } command;
 
-
 uint16 ReadWriteSPIM1(uint8, uint8);
 uint16 ReadWriteSPIM2(uint8, uint16);
 uint16 ReadEncoder(uint8, uint8);
@@ -74,7 +73,6 @@ uint8 i2c_byte_count = 0;
 uint16 spi_trigger_value[4] = {TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF};
 uint8  spi_trigger_reset[4] = {0x0, 0x0, 0x0, 0x0};
 uint16 spi_trigger_radius[4] = {DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS};
-
 
 uint8_t firmwareVersionDate[] = {3, 0, 0, 7, 11, 19};
 
@@ -134,7 +132,6 @@ uint8 isRPiCommand(command rpiCommand) {
         case add_i2c_address:
         case set_spi_trigger:
         case set_trigger_radius:
-//        case set_pinmode:
         case read_firmware_date:
             return 1;
             break;
@@ -320,25 +317,28 @@ int main() {
                     }
                     break;    
                 
-                case write_pwm:
-                    if ((RPi_Command_Data & PARAMETER_MASK) == 0x0010) {
-                        if ((RPi_Command_Data & DATA_MASK) == 0x0000) {
+                case write_pwm: {
+                    uint16 port = RPi_Command_Data & PORT_MASK;
+                    uint16 parameter = RPi_Command_Data & 0x000F;
+                    if (port == 0x0010) {
+                        if (parameter == 0x0000) {
                             PWM_1_SetCompareMode(RPi_Data);
-                        } else if ((RPi_Command_Data & DATA_MASK) == 0x0001) {
+                        } else if (parameter == 0x0001) {
                             PWM_1_WritePeriod(RPi_Data);
-                        } else if ((RPi_Command_Data & DATA_MASK) == 0x0002) {
+                        } else if (parameter == 0x0002) {
                             PWM_1_WriteCompare(RPi_Data);
                         }
-                    } else if ((RPi_Command_Data & PARAMETER_MASK) == 0x0020) {
-                        if ((RPi_Command_Data & DATA_MASK) == 0x0000) {
+                    } else if (port == 0x0020) {
+                        if (parameter == 0x0000) {
                             PWM_2_SetCompareMode(RPi_Data);
-                        } else if ((RPi_Command_Data & DATA_MASK) == 0x0001) {
+                        } else if (parameter == 0x0001) {
                             PWM_2_WritePeriod(RPi_Data);
-                        } else if ((RPi_Command_Data & DATA_MASK) == 0x0002) {
+                        } else if (parameter == 0x0002) {
                             PWM_2_WriteCompare(RPi_Data);
                         }
                     }
-                    break;
+                }
+                break;
                     
                 case read_i2c: {
                         uint8 i2c_data_read;
