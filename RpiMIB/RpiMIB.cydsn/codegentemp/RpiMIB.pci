@@ -1,0 +1,41 @@
+# RpiMIB
+# 2019-09-27 02:14:23Z
+
+# IO_0@[IOP=(1)][IoId=(0)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 0
+# IO_1@[IOP=(1)][IoId=(1)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 1
+# IO_3@[IOP=(1)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 3
+set_io "MISO_1(0)" iocell 3 6
+set_io "SCLK_1(0)" iocell 3 4
+set_io "MOSI_1(0)" iocell 3 5
+set_io "cs_1a(0)" iocell 12 2
+set_io "enable_battery(0)" iocell 2 7
+set_io "Supply_monitor(0)" iocell 3 1
+set_io "en_level_shift(0)" iocell 12 7
+set_io "rpi_inta(0)" iocell 12 6
+set_io "rpi_intb(0)" iocell 12 5
+set_io "cs_1b(0)" iocell 12 1
+set_io "cs_1c(0)" iocell 12 0
+set_io "Rpi_ss(0)" iocell 2 6
+set_io "Rpi_sclk(0)" iocell 2 5
+set_io "Rpi_mosi(0)" iocell 2 3
+set_io "Rpi_miso(0)" iocell 2 4
+set_io "SDA_2(0)" iocell 3 3
+set_io "SCL_2(0)" iocell 3 0
+set_io "MISO_2(0)" iocell 0 1
+set_io "MOSI_2(0)" iocell 0 0
+set_io "SCLK_2(0)" iocell 15 5
+set_io "cs_2a(0)" iocell 0 7
+set_io "cs_2b(0)" iocell 0 6
+set_io "cs_2c(0)" iocell 0 5
+set_io "pwm_a(0)" iocell 1 4
+set_io "pwm_b(0)" iocell 1 5
+set_io "GPIO_0(0)" iocell 15 0
+set_io "GPIO_3(0)" iocell 15 4
+set_io "GPIO_2(0)" iocell 15 3
+set_io "GPIO_1(0)" iocell 15 2
+set_io "SDA_1(0)" iocell 2 0
+set_io "SCL_1(0)" iocell 2 1
+set_location "\Comp_1:ctComp\" comparatorcell -1 -1 1
