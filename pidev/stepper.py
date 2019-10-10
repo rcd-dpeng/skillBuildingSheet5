@@ -51,8 +51,8 @@ class stepper(Slush.Motor):
     """
     instances = []
 
-    def __init__(self, port=0, micro_steps=64, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
-                 steps_per_unit=200/25.4, speed=1):
+    def __init__(self, port: int = 0, micro_steps: int = 64, hold_current: float = 20.0, run_current: float = 20, accel_current: float = 20, deaccel_current: float = 20,
+                 steps_per_unit: float = 200/25.4, speed: float = 1):
         """
         Constructor for the stepper class
         :param port: port the stepper is connected to. 0-3 on XLT, 0-6 on D. Default:0
@@ -81,7 +81,7 @@ class stepper(Slush.Motor):
             self.setParam(LReg6480.GATECFG1, 0x5F)
             self.setParam(LReg6480.OCD_TH, 0x1F)
 
-    def _get_status_byte(self):
+    def _get_status_byte(self) -> str:
         """
         Get the status byte as a String
         :return: String of the status byte
@@ -119,7 +119,7 @@ class stepper(Slush.Motor):
                 else:
                     print(status + " " + str(byte[byte_index]))
 
-    def get_specific_status(self, status_register):
+    def get_specific_status(self, status_register: str):
         """
         Get the specific status of a register
         :param status_register: The register status you want to check
@@ -146,14 +146,14 @@ class stepper(Slush.Motor):
             else:
                 return str(byte[data])
 
-    def get_micro_steps(self):
+    def get_micro_steps(self) -> float:
         """
         Get the number of microsteps the stepper motor is running at
         :return:
         """
         return self.micro_steps
 
-    def set_micro_steps(self, micro_steps):
+    def set_micro_steps(self, micro_steps: int):
         """
         Set the number of microsteps the stepper motor runs at
         :param micro_steps: Number of microsteps of base 2 up to a maximum of 128
@@ -165,7 +165,7 @@ class stepper(Slush.Motor):
         self.micro_steps = micro_steps
         self.setMicroSteps(micro_steps)
 
-    def set_speed(self, speed_in_units):
+    def set_speed(self, speed_in_units: float):
         """
         Set the speed the stepper motor runs at in units
         :param speed_in_units: Speed the motor will run at in units
@@ -174,14 +174,15 @@ class stepper(Slush.Motor):
         self.speed = speed_in_units * self.steps_per_unit
         self.set_max_speed(self.speed)
 
-    def set_speed_in_steps(self, speed):
+    def set_speed_in_steps(self, speed: float):
         """
         set the speed the stepper motor runs at in steps
         :param speed: Speed the motor will run at in steps
         :return: None
         """
         self.set_max_speed(speed)
-    def set_accel(self, acceleration):
+
+    def set_accel(self, acceleration: float):
         """
         Set the acceleration of the motor
         :param acceleration: Acceleration amount
@@ -189,7 +190,7 @@ class stepper(Slush.Motor):
         """
         self.setAccel(acceleration)
 
-    def set_deaccel(self, deceleration):
+    def set_deaccel(self, deceleration: float):
         """
         Set the deceleration for the motor
         :param deceleration: Deceleration amount
@@ -197,7 +198,7 @@ class stepper(Slush.Motor):
         """
         self.setDecel(deceleration)
 
-    def home(self, direction):
+    def home(self, direction: int):
         """
         Home the motor
         :param direction: Direction (0 or 1) the motor should spin when homing 0-clockwise
@@ -211,7 +212,7 @@ class stepper(Slush.Motor):
         self.hard_stop()
         self.set_as_home()
 
-    def read_switch(self):
+    def read_switch(self) -> int:
         """
         Read the stepper motors corresponding switch
         :return: None
@@ -221,17 +222,17 @@ class stepper(Slush.Motor):
         else:
             return 0
 
-    def relative_move(self, distance_in_units):
+    def relative_move(self, distance_in_units: float):
         """
         Moves a certain distance in units (defined by steps_per_unit in constructor) with MOVEMENTS BLOCKED (synchronise)
         :param distance_in_units: a distance in units
-        :return:
+        :return: None
         """
         number_of_steps = distance_in_units * self.micro_steps * self.steps_per_unit
         self.move(int(number_of_steps))
         self.wait_move_finish()
 
-    def start_relative_move(self, distance_in_units):
+    def start_relative_move(self, distance_in_units: float):
         """
         Starts moving a certain distance in units (defined by steps_per_unit in constructor) WITHOUT BLOCKING MOVEMENTS (a-synchronise)
         :param distance_in_units: a distance in units
@@ -240,7 +241,7 @@ class stepper(Slush.Motor):
         number_of_steps = distance_in_units * self.micro_steps * self.steps_per_unit
         self.move(int(number_of_steps))
 
-    def go_to_position(self, position_in_units):
+    def go_to_position(self, position_in_units: float):
         """
         Goes to a set position in units (defined by steps_per_unit in constructor) WITH BLOCKING (synchronise)
         :param position_in_units: position to move to in units
@@ -250,7 +251,7 @@ class stepper(Slush.Motor):
         self.go_to(int(position_in_steps))
         self.wait_move_finish()
 
-    def start_go_to_position(self, position_in_units):
+    def start_go_to_position(self, position_in_units: float):
         """
         begins going to a set position in units (defined by steps_per_unit in constructor) WITHOUT BLOCKING (a-synchronise)
         :param position_in_units: position to move to in units
@@ -306,7 +307,7 @@ class stepper(Slush.Motor):
         """
         self.hardStop()
 
-    def go_to(self, number_of_steps):
+    def go_to(self, number_of_steps: int):
         """
         Make the stepper go to a position in steps
         :param number_of_steps: Number of steps to move
@@ -328,7 +329,7 @@ class stepper(Slush.Motor):
         """
         self.setAsHome()
 
-    def set_max_speed(self, speed):
+    def set_max_speed(self, speed: float):
         """
         Set the max speed the stepper motor can run at
         :param speed: The maximum speed
@@ -336,7 +337,7 @@ class stepper(Slush.Motor):
         """
         self.setMaxSpeed(speed)
 
-    def move_steps(self, steps):
+    def move_steps(self, steps: int):
         """
         Move the stepper motor a set amount of steps including microstepping. Forwards the call to Slush Motor move()
         :param steps: Number of steps to move (multiplied by microstepping amount)
@@ -344,7 +345,7 @@ class stepper(Slush.Motor):
         """
         self.move(steps * self.micro_steps)
 
-    def go_until_press(self, dir, speed):
+    def go_until_press(self, dir: int, speed: int):
         """
         Move the stepper until it hits a sensor
         :param dir: The direction 1 or 0
@@ -384,7 +385,7 @@ class stepper(Slush.Motor):
         for stp in stepper.instances:
             stp.free()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Returns string representation of the stepper object
         :return: "stepper on port" with the corresponding port number
