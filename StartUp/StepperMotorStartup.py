@@ -9,6 +9,7 @@ import os
 from time import sleep
 import RPi.GPIO as GPIO
 from pidev.stepper import stepper
+from Slush.Devices import L6470Registers
 spi = spidev.SpiDev()
 
 # Init a 200 steps per revolution stepper on Port 0
@@ -129,8 +130,20 @@ s0.goTo(6400)
 # For example try creating stepper instance s1
 # Init a 1036 steps per revolution stepper on Port 1 - this is for a stepper with a 5.18:1 planetary transmission
 # https://www.omc-stepperonline.com/economy-planetary-gearbox/nema-17-stepper-motor-bipolar-l48mm-w-gear-raio-51-planetary-gearbox-17hs19-1684s-pg5.html?mfp=161-motor-nema-size%5BNema%2017%5D
-s1 = stepper(port=1, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
+
+s1 = stepper(port=1, micro_steps=32, hold_current=8, run_current=10, accel_current=10, deaccel_current=10,
              steps_per_unit=1038, speed=8)
+s1.setAccel(0x50)
+s1.setDecel(0x100)
+s1.setMaxSpeed(525)
+s1.setMinSpeed(0)
+s1.setThresholdSpeed(1000)
+s1.setOverCurrent(2000)
+s1.setStallCurrent(2187.5)
+s1.setLowSpeedOpt(False)
+s1.setSlope(0x562, 0x010, 0x01F, 0x01F)
+s1.setParam(L6470Registers.CONFIG, 0x3688)
+s1.free()
 
 # Now try using the s1 instance to move it back and forth, and back to hose as you did with the s0 instance.
 
@@ -139,8 +152,20 @@ s1 = stepper(port=1, micro_steps=32, hold_current=20, run_current=20, accel_curr
 # Init a 200 steps per revolution stepper on Port 2 with a lead screw that moves 8mm per revolution
 # (200 steps/1 rev)* (1 rev/8 mm) which simplifies to 25 steps/mm giving us 25 for our steps_per_unit value
 # https://www.pololu.com/product/2268
+
 s2 = stepper(port=2, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
              steps_per_unit=25, speed=8)
+s2.setAccel(0x50)
+s2.setDecel(0x100)
+s2.setMaxSpeed(525)
+s2.setMinSpeed(0)
+s2.setThresholdSpeed(1000)
+s2.setOverCurrent(2000)
+s2.setStallCurrent(2187.5)
+s2.setLowSpeedOpt(False)
+s2.setSlope(0x562, 0x010, 0x01F, 0x01F)
+s2.setParam(L6470Registers.CONFIG, 0x3688)
+s2.free()
 
 # Now try using the s2 instance to move it back and forth, and back to hose as you did with the s0 and s1 instances.
 
@@ -158,7 +183,6 @@ s2 = stepper(port=2, micro_steps=32, hold_current=20, run_current=20, accel_curr
 # s0.goTo()
 #
 # So you don't have to keep track of the micro stepping and any gear reduction and linear translation!
-
 
 # One last thing! Before you exit the console session (or your python script if you exit your code) you need to do
 # the following: De-allocate the RPi resources that are attached to this process, we need to run the following
