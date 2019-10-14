@@ -36,7 +36,7 @@
     <register name="I2C_1_DATA" address="0x4000640A" bitWidth="8" desc="I2C Data Register" hidden="false">
       <field name="data" from="7" to="0" access="RW" resetVal="" desc="Read received data or write data to transmit." hidden="false" />
     </register>
-    <register name="I2C_1_CSR" address="0x4000646B" bitWidth="8" desc="I2C Status Register" hidden="false">
+    <register name="I2C_1_CSR" address="0x40006467" bitWidth="8" desc="I2C Status Register" hidden="false">
       <field name="lost_arb" from="6" to="6" access="R" resetVal="" desc="If set, indicates arbitration was lost (multi-master and multi-master-slave modes)." hidden="false" />
       <field name="stop_status" from="5" to="5" access="R" resetVal="" desc="If set, indicates a Stop condition was detected on the bus." hidden="false" />
       <field name="bus_busy" from="4" to="4" access="R" resetVal="" desc="If set, indicates the bus is busy. Data is currently being transmitted or received." hidden="false" />
@@ -45,15 +45,7 @@
       <field name="lrb" from="1" to="1" access="R" resetVal="" desc="Last Received Bit. Indicates the state of the last received bit, which is the ACK/NAK received for the last byte transmitted. Cleared = ACK and set = NAK." hidden="false" />
       <field name="byte_complete" from="0" to="0" access="R" resetVal="" desc="Transmit or receive status since the last read of this register. In Transmit mode this bit indicates that eight bits of data plus ACK/NAK have been transmitted since the last read. In Receive mode this bit indicates that eight bits of data have been received since the last read of this register." hidden="false" />
     </register>
-    <register name="I2C_1_CFG" address="0x4000647A" bitWidth="8" desc="I2C Configuration Register" hidden="false">
-      <field name="start_gen" from="7" to="7" access="RW" resetVal="" desc="Set to 1 to generate a Start condition on the bus. This bit must be cleared by firmware before initiating the next transaction." hidden="false" />
-      <field name="stop_gen" from="6" to="6" access="RW" resetVal="" desc="Set to 1 to generate a Stop condition on the bus. This bit must be cleared by firmware before initiating the next transaction." hidden="false" />
-      <field name="restart_gen" from="5" to="5" access="RW" resetVal="" desc="Set to 1 to generate a Restart condition on the bus. This bit must be cleared by firmware after a Restart condition is generated." hidden="false" />
-      <field name="nack" from="4" to="4" access="RW" resetVal="" desc="Set to 1 to NAK the next read byte. Clear to ACK next read byte. This bit must be cleared by firmware between bytes." hidden="false" />
-      <field name="transmit" from="2" to="2" access="RW" resetVal="" desc="Set to 1 to set the current mode to transmit or clear to 0 to receive a byte of data. This bit must be cleared by firmware before starting the next transmit or receive transaction." hidden="false" />
-      <field name="master_en" from="1" to="1" access="RW" resetVal="" desc="Set to 1 to enable the master functionality." hidden="false" />
-    </register>
-    <register name="I2C_1_INT_MASK" address="0x4000648B" bitWidth="8" desc="I2C Interrupt Enable Mask" hidden="false">
+    <register name="I2C_1_INT_MASK" address="0x40006487" bitWidth="8" desc="I2C Interrupt Enable Mask" hidden="false">
       <field name="lost_arb" from="6" to="6" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
       <field name="stop_status" from="5" to="5" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
       <field name="bus_busy" from="4" to="4" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
@@ -61,6 +53,14 @@
       <field name="master_mode" from="2" to="2" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
       <field name="lrb" from="1" to="1" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
       <field name="byte_complete" from="0" to="0" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
+    </register>
+    <register name="I2C_1_CFG" address="0x40006578" bitWidth="8" desc="I2C Configuration Register" hidden="false">
+      <field name="start_gen" from="7" to="7" access="RW" resetVal="" desc="Set to 1 to generate a Start condition on the bus. This bit must be cleared by firmware before initiating the next transaction." hidden="false" />
+      <field name="stop_gen" from="6" to="6" access="RW" resetVal="" desc="Set to 1 to generate a Stop condition on the bus. This bit must be cleared by firmware before initiating the next transaction." hidden="false" />
+      <field name="restart_gen" from="5" to="5" access="RW" resetVal="" desc="Set to 1 to generate a Restart condition on the bus. This bit must be cleared by firmware after a Restart condition is generated." hidden="false" />
+      <field name="nack" from="4" to="4" access="RW" resetVal="" desc="Set to 1 to NAK the next read byte. Clear to ACK next read byte. This bit must be cleared by firmware between bytes." hidden="false" />
+      <field name="transmit" from="2" to="2" access="RW" resetVal="" desc="Set to 1 to set the current mode to transmit or clear to 0 to receive a byte of data. This bit must be cleared by firmware before starting the next transmit or receive transaction." hidden="false" />
+      <field name="master_en" from="1" to="1" access="RW" resetVal="" desc="Set to 1 to enable the master functionality." hidden="false" />
     </register>
   </block>
   <block name="SCLK_2" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
@@ -131,10 +131,18 @@
     <block name="OneTerminal_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
     <block name="IntClock" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
     <block name="bI2C_UDB" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
-    <register name="I2C_2_DATA" address="0x40006407" bitWidth="8" desc="I2C Data Register" hidden="false">
+    <register name="I2C_2_CFG" address="0x40006474" bitWidth="8" desc="I2C Configuration Register" hidden="false">
+      <field name="start_gen" from="7" to="7" access="RW" resetVal="" desc="Set to 1 to generate a Start condition on the bus. This bit must be cleared by firmware before initiating the next transaction." hidden="false" />
+      <field name="stop_gen" from="6" to="6" access="RW" resetVal="" desc="Set to 1 to generate a Stop condition on the bus. This bit must be cleared by firmware before initiating the next transaction." hidden="false" />
+      <field name="restart_gen" from="5" to="5" access="RW" resetVal="" desc="Set to 1 to generate a Restart condition on the bus. This bit must be cleared by firmware after a Restart condition is generated." hidden="false" />
+      <field name="nack" from="4" to="4" access="RW" resetVal="" desc="Set to 1 to NAK the next read byte. Clear to ACK next read byte. This bit must be cleared by firmware between bytes." hidden="false" />
+      <field name="transmit" from="2" to="2" access="RW" resetVal="" desc="Set to 1 to set the current mode to transmit or clear to 0 to receive a byte of data. This bit must be cleared by firmware before starting the next transmit or receive transaction." hidden="false" />
+      <field name="master_en" from="1" to="1" access="RW" resetVal="" desc="Set to 1 to enable the master functionality." hidden="false" />
+    </register>
+    <register name="I2C_2_DATA" address="0x40006507" bitWidth="8" desc="I2C Data Register" hidden="false">
       <field name="data" from="7" to="0" access="RW" resetVal="" desc="Read received data or write data to transmit." hidden="false" />
     </register>
-    <register name="I2C_2_CSR" address="0x40006467" bitWidth="8" desc="I2C Status Register" hidden="false">
+    <register name="I2C_2_CSR" address="0x40006567" bitWidth="8" desc="I2C Status Register" hidden="false">
       <field name="lost_arb" from="6" to="6" access="R" resetVal="" desc="If set, indicates arbitration was lost (multi-master and multi-master-slave modes)." hidden="false" />
       <field name="stop_status" from="5" to="5" access="R" resetVal="" desc="If set, indicates a Stop condition was detected on the bus." hidden="false" />
       <field name="bus_busy" from="4" to="4" access="R" resetVal="" desc="If set, indicates the bus is busy. Data is currently being transmitted or received." hidden="false" />
@@ -143,7 +151,7 @@
       <field name="lrb" from="1" to="1" access="R" resetVal="" desc="Last Received Bit. Indicates the state of the last received bit, which is the ACK/NAK received for the last byte transmitted. Cleared = ACK and set = NAK." hidden="false" />
       <field name="byte_complete" from="0" to="0" access="R" resetVal="" desc="Transmit or receive status since the last read of this register. In Transmit mode this bit indicates that eight bits of data plus ACK/NAK have been transmitted since the last read. In Receive mode this bit indicates that eight bits of data have been received since the last read of this register." hidden="false" />
     </register>
-    <register name="I2C_2_INT_MASK" address="0x40006487" bitWidth="8" desc="I2C Interrupt Enable Mask" hidden="false">
+    <register name="I2C_2_INT_MASK" address="0x40006587" bitWidth="8" desc="I2C Interrupt Enable Mask" hidden="false">
       <field name="lost_arb" from="6" to="6" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
       <field name="stop_status" from="5" to="5" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
       <field name="bus_busy" from="4" to="4" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
@@ -151,14 +159,6 @@
       <field name="master_mode" from="2" to="2" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
       <field name="lrb" from="1" to="1" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
       <field name="byte_complete" from="0" to="0" access="RW" resetVal="" desc="Enables interrupt from the corresponding bit in status register." hidden="false" />
-    </register>
-    <register name="I2C_2_CFG" address="0x40006578" bitWidth="8" desc="I2C Configuration Register" hidden="false">
-      <field name="start_gen" from="7" to="7" access="RW" resetVal="" desc="Set to 1 to generate a Start condition on the bus. This bit must be cleared by firmware before initiating the next transaction." hidden="false" />
-      <field name="stop_gen" from="6" to="6" access="RW" resetVal="" desc="Set to 1 to generate a Stop condition on the bus. This bit must be cleared by firmware before initiating the next transaction." hidden="false" />
-      <field name="restart_gen" from="5" to="5" access="RW" resetVal="" desc="Set to 1 to generate a Restart condition on the bus. This bit must be cleared by firmware after a Restart condition is generated." hidden="false" />
-      <field name="nack" from="4" to="4" access="RW" resetVal="" desc="Set to 1 to NAK the next read byte. Clear to ACK next read byte. This bit must be cleared by firmware between bytes." hidden="false" />
-      <field name="transmit" from="2" to="2" access="RW" resetVal="" desc="Set to 1 to set the current mode to transmit or clear to 0 to receive a byte of data. This bit must be cleared by firmware before starting the next transmit or receive transaction." hidden="false" />
-      <field name="master_en" from="1" to="1" access="RW" resetVal="" desc="Set to 1 to enable the master functionality." hidden="false" />
     </register>
   </block>
   <block name="cy_boot" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
@@ -285,23 +285,23 @@
   <block name="Clock_2" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="pwm_b" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="GPIO_Control_Reg" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="GPIO_Control_Reg_CONTROL_REG" address="0x40006576" bitWidth="8" desc="" hidden="false" />
+    <register name="GPIO_Control_Reg_CONTROL_REG" address="0x40006476" bitWidth="8" desc="" hidden="false" />
   </block>
   <block name="GPIO_0" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="cy_constant_7" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="Clock_3" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="SCL_2" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="RpiInterrupts" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="RpiInterrupts_CONTROL_REG" address="0x4000657A" bitWidth="8" desc="" hidden="false" />
+    <register name="RpiInterrupts_CONTROL_REG" address="0x40006479" bitWidth="8" desc="" hidden="false" />
   </block>
   <block name="en_level_shift" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="Supply_monitor" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="GlitchFilter_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="cy_constant_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="Status_Reg_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="Status_Reg_1_STATUS_REG" address="0x40006567" bitWidth="8" desc="" hidden="false" />
-    <register name="Status_Reg_1_MASK_REG" address="0x40006587" bitWidth="8" desc="" hidden="false" />
-    <register name="Status_Reg_1_STATUS_AUX_CTL_REG" address="0x40006597" bitWidth="8" desc="" hidden="false">
+    <register name="Status_Reg_1_STATUS_REG" address="0x40006565" bitWidth="8" desc="" hidden="false" />
+    <register name="Status_Reg_1_MASK_REG" address="0x40006585" bitWidth="8" desc="" hidden="false" />
+    <register name="Status_Reg_1_STATUS_AUX_CTL_REG" address="0x40006595" bitWidth="8" desc="" hidden="false">
       <field name="FIFO0" from="5" to="5" access="RW" resetVal="" desc="FIFO0 clear" hidden="false">
         <value name="ENABLED" value="1" desc="Enable counter" />
         <value name="DISABLED" value="0" desc="Disable counter" />
@@ -548,7 +548,7 @@
   </block>
   <block name="vRef_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="EnableBattery" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="EnableBattery_CONTROL_REG" address="0x40006479" bitWidth="8" desc="" hidden="false" />
+    <register name="EnableBattery_CONTROL_REG" address="0x4000657A" bitWidth="8" desc="" hidden="false" />
   </block>
   <block name="enable_battery" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="Rpi_sclk" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
@@ -563,14 +563,14 @@
     <block name="BSPIS" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
     <register name="SPIS_RX_DATA" address="0x4000640C" bitWidth="16" desc="SPIS RX Data" hidden="false" />
     <register name="SPIS_TX_DATA" address="0x4000640C" bitWidth="16" desc="SPIS TX Data" hidden="false" />
-    <register name="SPIS_TXSTATUS" address="0x4000646E" bitWidth="8" desc="SPIS TX Status Register" hidden="false">
+    <register name="SPIS_TXSTATUS" address="0x40006463" bitWidth="8" desc="SPIS TX Status Register" hidden="false">
       <field name="SPI_Done" from="0" to="0" access="R" resetVal="" desc="Set when all of the data in the transmit FIFO has been sent. Set when Byte/Word Complete                           has been set and TX Data FIFO is empty" hidden="false" />
       <field name="TX_FIFO_Not_Full" from="1" to="1" access="R" resetVal="" desc="Set when the TX Data FIFO is not full" hidden="false" />
       <field name="TX_FIFO_Empty" from="2" to="2" access="R" resetVal="" desc="Set when the TX Data FIFO is empty" hidden="false" />
       <field name="Byte_Word_Complete" from="6" to="6" access="R" resetVal="" desc="Set when a byte/word transmit has completed" hidden="false" />
       <field name="Interrupt" from="7" to="7" access="R" resetVal="" desc="Set when interrupt occurs" hidden="false" />
     </register>
-    <register name="SPIS_RXSTATUS" address="0x40006569" bitWidth="8" desc="SPIS RX Status Register" hidden="false">
+    <register name="SPIS_RXSTATUS" address="0x4000646B" bitWidth="8" desc="SPIS RX Status Register" hidden="false">
       <field name="RX_FIFO_Not_Empty" from="3" to="3" access="R" resetVal="" desc="Set when the RX Data FIFO is not empty. That is, at least one byte/word is in the RX FIFO" hidden="false" />
       <field name="RX_FIFO_Empty" from="4" to="4" access="R" resetVal="" desc="Set when the RX Data FIFO is empty" hidden="false" />
       <field name="RX_Buf_Overrun" from="5" to="5" access="R" resetVal="" desc="Set when RX Data has overrun the 4 byte/word FIFO without being moved to the RX buffer                           cmemory array (if one exists)" hidden="false" />
@@ -586,7 +586,7 @@
   <block name="demux_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="rpi_intb" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="Control_Reg_SS_1" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false">
-    <register name="Control_Reg_SS_1_CONTROL_REG" address="0x40006474" bitWidth="8" desc="" hidden="false" />
+    <register name="Control_Reg_SS_1_CONTROL_REG" address="0x40006576" bitWidth="8" desc="" hidden="false" />
   </block>
   <block name="cs_1c" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
   <block name="not_3" BASE="0x0" SIZE="0x0" desc="" visible="true" hidden="false" />
