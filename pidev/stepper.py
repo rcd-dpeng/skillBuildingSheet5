@@ -66,6 +66,7 @@ CHIP_STATUSES_D = OrderedDict([ # MSB to LSB of motor controller status and the 
     ])
 """
 
+
 class stepper(Slush.Motor):
     """
     DPEA stepper implementation, extended from Slush.Motor
@@ -102,6 +103,7 @@ class stepper(Slush.Motor):
         if self.boardInUse == 1:
             self.setParam(LReg6480.GATECFG1, 0x5F)
             self.setParam(LReg6480.OCD_TH, 0x1F)
+        stepper.instances.append(self)
 
     def _get_status_byte(self) -> str:
         """
@@ -115,7 +117,7 @@ class stepper(Slush.Motor):
             byte = "0" * diff + byte
         return byte
 
-    def print_status(self):
+    def print_status(self) -> None:
         """
         Print all of the registers status for the L6470 chipset, if a status has a \ means it is active low
         :return: None
@@ -175,6 +177,14 @@ class stepper(Slush.Motor):
         """
         return self.micro_steps
 
+    def setMicroSteps(self, microSteps: int) -> None:
+        """
+        Overrides Motor.setMicroSteps to properly set microstep field
+        :param microSteps: number of microsteps
+        :return: None
+        """
+        self.set_micro_steps(micro_steps=microSteps)
+
     def set_micro_steps(self, micro_steps: int):
         """
         Set the number of microsteps the stepper motor runs at
@@ -185,7 +195,15 @@ class stepper(Slush.Motor):
             sys.exit("ERROR: Slush Engine only supports microstepping values of base 2 up to a maximum of 128")
 
         self.micro_steps = micro_steps
-        self.setMicroSteps(micro_steps)
+        super().setMicroSteps(microSteps=micro_steps)  # Super this call as we override setMicroSteps
+
+    def setMaxSpeed(self, speed: float) -> None:
+        """
+        Overrides Motor.setMaxSpeed
+        :param speed: steppper motor max speed
+        :return: None
+        """
+        self.set_max_speed(speed=speed)
 
     def set_speed(self, speed_in_units: float):
         """
@@ -195,6 +213,7 @@ class stepper(Slush.Motor):
         """
         self.speed = speed_in_units * self.steps_per_unit
         self.set_max_speed(self.speed)
+        super().setMaxSpeed(speed=self.speed)  # Super this call as we override setMaxSpeed
 
     def set_speed_in_steps(self, speed: float):
         """
@@ -283,7 +302,7 @@ class stepper(Slush.Motor):
         self.go_to(int(position_in_steps))
 
     @staticmethod
-    def get_GPIO_state(port, pin):
+    def get_GPIO_state(port: int, pin: int):
         """
         Get the state of one of the GPIO pins
         :param port: GPIO port a=0, b=1
@@ -293,7 +312,7 @@ class stepper(Slush.Motor):
         return slush_board.getIOState(port, pin)
 
     @staticmethod
-    def set_GPIO_state(port, pin, state):
+    def set_GPIO_state(port: int, pin: int, state):
         """
         Set the state of one of the GPIO pins
         :param port: GPIO port a=0, b=1
@@ -303,7 +322,7 @@ class stepper(Slush.Motor):
         """
         return slush_board.setIOState(port, pin, state)
 
-    def set_limit_hardstop(self, stop):
+    def set_limit_hardstop(self, stop: bool) -> None:
         """
         Set whether the Slush Engine should stop moving the stepper motor when it hits the limit switch
         :param stop: True motor with stop when sensor is high (Should be used in cases where there is a mechanical stop)
@@ -315,21 +334,21 @@ class stepper(Slush.Motor):
         except AttributeError:
             sys.exit("Update SlushEngine Code (DPEA Fork), this feature is only on recent versions")
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Stops the motor, same as performing a hard stop
         :return: None
         """
         self.hard_stop()
 
-    def hard_stop(self):
+    def hard_stop(self) -> None:
         """
         Hard stop the motor
         :return: None
         """
         self.hardStop()
 
-    def go_to(self, number_of_steps: int):
+    def go_to(self, number_of_steps: int) -> None:
         """
         Make the stepper go to a position in steps
         :param number_of_steps: Number of steps to move
@@ -337,29 +356,29 @@ class stepper(Slush.Motor):
         """
         self.goTo(number_of_steps)
 
-    def wait_move_finish(self):
+    def wait_move_finish(self) -> None:
         """
         Wait for the move to finish
         :return: None
         """
         self.waitMoveFinish()
 
-    def set_as_home(self):
+    def set_as_home(self) -> None:
         """
         Set the current position as home
         :return: None
         """
         self.setAsHome()
 
-    def set_max_speed(self, speed: float):
+    def set_max_speed(self, speed: float) -> None:
         """
         Set the max speed the stepper motor can run at
         :param speed: The maximum speed
         :return: None
         """
-        self.setMaxSpeed(speed)
+        super().setMaxSpeed(speed)
 
-    def move_steps(self, steps: int):
+    def move_steps(self, steps: int) -> None:
         """
         Move the stepper motor a set amount of steps including microstepping. Forwards the call to Slush Motor move()
         :param steps: Number of steps to move (multiplied by microstepping amount)
@@ -367,7 +386,7 @@ class stepper(Slush.Motor):
         """
         self.move(steps * self.micro_steps)
 
-    def go_until_press(self, dir: int, speed: int):
+    def go_until_press(self, dir: int, speed: int) -> None:
         """
         Move the stepper until it hits a sensor
         :param dir: The direction 1 or 0
@@ -377,21 +396,21 @@ class stepper(Slush.Motor):
         if self.read_switch() is 0:
             self.goUntilPress(1, dir, speed)
 
-    def is_busy(self):
+    def is_busy(self) -> bool:
         """
         Checks if the stepper is moving
         :return: True or False
         """
         return self.isBusy()
 
-    def get_position(self):
+    def get_position(self) -> int:
         """
         Gets the position of the stepper in steps
         :return: position in steps
         """
         return self.getPosition()
 
-    def get_position_in_units(self):
+    def get_position_in_units(self) -> float:
         """
         Gets the position of the stepper in units
         :return: position in units
@@ -399,7 +418,7 @@ class stepper(Slush.Motor):
         return self.get_position() / self.steps_per_unit / self.micro_steps
 
     @staticmethod
-    def free_all():
+    def free_all() -> None:
         """
         Free all of the instantiated stepper motors
         :return: None
