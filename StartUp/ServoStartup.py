@@ -68,17 +68,17 @@ cyprus.close()
 # To get a RC servo motor CONTROLLER signal out of P5 of the RPiMIB do the following:
 cyprus.initialize()  # initialize the RPiMIB and establish communication
 cyprus.setup_servo(2)  # sets up P5 on the RPiMIB as a RC servo motor controller style output
-# for loop will set speed all the way from -1-full reverse to 0-halt to 1-full forward then halt with half second delays
-for i in range(-10, 10, 1):
-    cyprus.set_servo_speed(2, i/10.0)  # 2 specifies port P5, i is a float that specifies speed
+# for loop will set speed all the way from 0-full reverse to 0.5-halt to 1-full forward then halt with half second delays
+for i in range(5, 10, 1):
+    cyprus.set_servo_position(2, i/10.0)  # 2 specifies port P5, i is a float that specifies speed
     sleep(0.5)
-cyprus.set_servo_speed(1, 0.0)  # halt the motor
+cyprus.set_servo_position(1, 0.5)  # halt the motor
 cyprus.close()  # when done disconnect the RPiMIB communication
 
 # To get a Industrial PWM output on P5 to control something like a Cytron Motor Controller do the following:
 cyprus.initialize()  # initialize the RPiMIB and establish communication
 # the following command will set up port 2 (P5) to put out a 100000HZ (100KHz) signal with a 50% high time or duty cycle
-cyprus.set_pwm_values(2, period_value=100000, compare_value=50000, compare_mode=LESS_THAN_OR_EQUAL)
+cyprus.set_pwm_values(2, period_value=100000, compare_value=50000, compare_mode=cyprus.LESS_THAN_OR_EQUAL)
 # Motor controller Ex. Cytron MD10C connected to P5, the connected motor would be running ~50% max rpm
-cyprus.set_pwm_values(2, period_value=100000, compare_value=0, compare_mode=LESS_THAN_OR_EQUAL) #  Motor OFF
+cyprus.set_pwm_values(2, period_value=100000, compare_value=0, compare_mode=cyprus.LESS_THAN_OR_EQUAL) #  Motor OFF
 cyprus.close()
