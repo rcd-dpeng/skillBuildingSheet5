@@ -12,15 +12,10 @@ from datetime import datetime
 import random
 
 import RPi.GPIO as GPIO 
-#sys.path.insert(0, "/home/pi/packages/RaspberryPiCommon/pidev")
 from pidev import stepper
-from pidev import Cyprus_Commands_RPi as cyprus
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 import Slush
 
-SERVO_MIN_SPEED = 1400
-SERVO_MAX_SPEED = 1600
-SERVO_MIN_POSITION = 300
-SERVO_MAX_POSITION = 2800
 MAX_SPEED = 50
 CLOCKWISE = 0
 COUNTERCLOCKWISE = 1
@@ -40,10 +35,10 @@ if (args.motor != -1):
     args.motorCount = 0
     
 def initTests():
-    cyprus.open_spi()
+    cyprus.initialize()
 
 def homeTest(motorNumber):
-    printTitle("Home Test motor " + str(motorNumber))
+    printTitle(getFunctionName() + " for motor " + str(motorNumber))
     motor = stepper(port = motorNumber, speed = MAX_SPEED/2, micro_steps = 2)
     motor.resetDev()
         
@@ -58,7 +53,7 @@ def homeTest(motorNumber):
     moveOffSwitch(motor, COUNTERCLOCKWISE)
     motor.home(COUNTERCLOCKWISE)
 
-    port, channel = encoderInfo(motorNumber)
+    port, channel, portChannel = getEncoderInfo(motorNumber)
     homePosition = readEncoder(port, channel)
     debug("Home Position: " + hex(homePosition))
     
@@ -72,27 +67,24 @@ def homeTest(motorNumber):
     lastPosition = readEncoder(port, channel)
     debug("Last Position: " + hex(lastPosition))
     debug("Delta Position: " + hex(motorPositionDelta(homePosition, lastPosition)))
-    assertTrue(assertEqualsWithDelta(homePosition, lastPosition, 0xf),
+    assertTrue(assertEqualsWithDelta(homePosition, lastPosition, 0x10),
                "Home Test. Encoder value is not at the home position.")
-    motor.stop()
-    motor.free()
+    freeMotor(motorNumber)
 
 def speedTest(motorNumber):
-    printTitle("Speed Test motor " + str(motorNumber))
+    printTitle(getFunctionName() + " for motor " + str(motorNumber))
     debug("Increase speed in 5 increaments")
     motor = stepper(port = motorNumber, speed = MAX_SPEED)
-    motor.set_speed(3000)
 
-    for speed in range(200, 1200, 200):
+    for speed in range(100, 600, 100):
         debug("Speed = " + str(speed))
         motor.run(1, speed)
-        sleep(1)
-        assertTrue(testSwitch(motor), "speedTest motor " + str(motorNumber))
-        motor.stop()
-        motor.free()
+        sleep(2)
+        #assertTrue(testSwitch(motor), "speedTest motor " + str(motorNumber))
+        #freeMotor(motorNumber)
         
 def gpioInputTest():
-    printTitle("GPIO Test A and B output")
+    printTitle(getFunctionName() + " for A and B output")
     setGPIOValue(True)
     sleep(0.1)
     checkGPIOValue(True)
@@ -100,39 +92,15 @@ def gpioInputTest():
     sleep(0.1)
     checkGPIOValue(False)
 
-def pwmPositionTest(port):
-    printTitle("# Send PWM test 4 speeds (or positions) on Port " + str(port))
-    cyprus.initialize_pwm(1, 5000, 1)
-    for value in range(0, 10, 1):
-        debug("Value = " + str(value*0.1))
-        cyprus.set_servo_position(port, value*0.1)
-        sleep(1.5)
-    cyprus.set_servo_position(port, 0)
-    #debug(cyprus.read_spi(port, channel))
-        
-def pwmSpeedTest(port):
-    printTitle("# Send PWM test 4 speeds (or positions) on Port " + str(port))
-    cyprus.initialize_pwm(1, 5000, 1)
-    for value in range(-10, 10, 1):
-        cyprus.open_spi()
-        debug("Value = " + str(value*0.1))
-        cyprus.set_servo_speed(port, value*0.1)
-        sleep(0.5)
-    cyprus.set_servo_speed(port, 0)
-
-        
 def readEncoderTest(motorNumber):
-    port, channel = encoderInfo(motorNumber)
-    portChannel = motorEncoderMessage(motorNumber, port, channel)
-
+    port, channel, portChannel = getEncoderInfo(motorNumber)
     encoder = readEncoder(port, channel)
     print("Encoder: " + hex(encoder))
 
 def encoderTest(motorNumber):
-    port, channel = encoderInfo(motorNumber)
-    portChannel = motorEncoderMessage(motorNumber, port, channel)
+    port, channel, portChannel = getEncoderInfo(motorNumber)
     
-    printTitle("Encoder Test " + portChannel)
+    printTitle(getFunctionName() + " " + portChannel)
     encoder1 = readEncoder(port, channel)
               
     motor = stepper(port = motorNumber, speed = MAX_SPEED)
@@ -143,23 +111,24 @@ def encoderTest(motorNumber):
         return
     
     motor.hardStop()
-    motor.free()
+    motor.relative_move(1.0)
+    motor.hardStop()
 
     encoder2 = readEncoder(port, channel)
     result = motorPositionDelta(encoder1, encoder2)
 
-    debug("Encoder1: " + hex(encoder1) + " Encoder2: " + hex(encoder2) + " Difference: " + hex(result))
+    debug("Initial Encoder Value: " + hex(encoder1) + " End Encoder Value: " + hex(encoder2) + " Difference: " + hex(result))
     
     # Adjust for the rolling over of the encoder
     result = motorPositionDelta(encoder1, encoder2)
 
-    assertTrue(assertEqualsWithDelta(0xa0, result, 0xf),
-               "Encoder Test " + portChannel + " Failed! Out of range (difference should be 0x9f)")
+    assertTrue(assertEqualsWithDelta(encoder1, encoder2, 0x30),
+               "Encoder Test " + portChannel + " Failed! Out of range (difference should be less than 0x30)")
+    cyprus.reset_all_encoder_triggers()
 
 def encoderTriggerTest(motorNumber, value):
-    port, channel = encoderInfo(motorNumber)   
-    portChannel = motorEncoderMessage(motorNumber, port, channel)
-    printTitle("Encoder Trigger Test with value: " + hex(value))
+    port, channel, portChannel = getEncoderInfo(motorNumber)   
+    printTitle(getFunctionName() + " on port: " + portChannel + " with value: " + hex(value))
     
     motor = stepper(port = motorNumber, speed = 10)
     motor.relative_move(1)
@@ -167,23 +136,65 @@ def encoderTriggerTest(motorNumber, value):
     cyprus.set_encoder_trigger(channel, value)
 
     motor.relative_move(50)
-    debug("Encoder value: " + hex(readEncoder(port, channel)))
     result = readEncoder(port, channel)
+    debug("Encoder value: " + hex(result))
     
-    assertTrue(assertEqualsWithDelta(value, result, 0xf),
-               "Encoder Trigger Test " + portChannel + ". Out of range")
-    cyprus.set_encoder_trigger(channel, 0xffff)
+    assertTrue(assertEqualsWithDelta(value, result, 0x10),
+               getFunctionName() + ", expected: " + hex(value) + " actual: " + hex(result) + ". Not within range 0x10")
+    cyprus.reset_all_encoder_triggers()
+    freeMotor(motorNumber)
+
+def encoderTriggerAutoResetTest(motorNumber, value):
+    port, channel, portChannel = getEncoderInfo(motorNumber)
+    printTitle(getFunctionName() + " on port: " + portChannel + " with value: " + hex(value))
     
-    motor.stop()
-    motor.free()
-    motor.resetDev()
+    motor = stepper(port = motorNumber, speed = 10)
+    motor.relative_move(1)
+    
+    cyprus.set_encoder_trigger_auto_reset(channel, value)
+
+    motor.relative_move(50)
+    result = readEncoder(port, channel)
+    debug("Encoder value for motor " + str(motorNumber) + " is " + hex(result))
+    
+    assertTrue(assertEqualsWithDelta(value, result, 0x10),
+               getFunctionName() + ", expected: " + hex(value) + " actual: " + hex(result) + ". Not within range 0x10")
+    
+    motor.relative_move(40)
+
+    result = readEncoder(port, channel)
+    debug("Encoder value after auto reset: " + hex(result))
+    assertTrue(assertDoesNotEqualsWithDelta(value, result, 0x10), "Trigger did not reset on " + portChannel)
+    cyprus.reset_all_encoder_triggers()
+    freeMotor(motorNumber)
+
+def encoderTriggerRadiusTest(motorNumber, radius, value):
+    port, channel, portChannel = getEncoderInfo(motorNumber)   
+    printTitle(getFunctionName() + " on port: " + portChannel + " with value: " + hex(value))
+    
+    motor = stepper(port = motorNumber, speed = 10)
+    motor.relative_move(1)
+    
+    cyprus.set_encoder_trigger(channel, value)
+    sleep(1)
+    cyprus.set_trigger_radius(channel, radius)
+
+    motor.relative_move(50)
+    result = readEncoder(port, channel)
+    debug("Encoder value: " + hex(result))
+    
+    assertTrue(assertEqualsWithDelta(value, result, radius + 0x10),
+               getFunctionName() + ", expected: " + hex(value) + " actual: " + hex(result) + ". " + 
+               hex(value-result) + " not within range 0x10")
+    cyprus.reset_all_encoder_triggers()
+    freeMotor(motorNumber)
 
 def relativeMoveTest(motorNumber, value):
-    printTitle("Relative Move Test motor " + str(motorNumber) + " with value = " + str(value))
+    printTitle(getFunctionName() + " motor " + str(motorNumber) + " with value = " + str(value))
     motor = stepper(port = motorNumber, speed = MAX_SPEED)
     debug("Relative move Counter Clockwise.")
     sleep(0.1)
-    port, channel = encoderInfo(motorNumber)
+    port, channel, portChannel = getEncoderInfo(motorNumber)
     startPosition = readEncoder(port, channel)
     motor.relative_move(value)
     debug("Relative move Clockwise.")
@@ -197,28 +208,68 @@ def relativeMoveTest(motorNumber, value):
           ", End Position: " + hex(endPosition) +
           ", Delta: " + hex(delta))
 
-    assertTrue(assertEqualsWithDelta(startPosition, endPosition, 0xf),
-               "Relative move Test for motor " + str(motorNumber) + ". Start and end position are not the same.")
+    assertTrue(assertEqualsWithDelta(startPosition, endPosition, 0x10),
+               getFunctionName() + " for motor " + str(motorNumber) + ". Start and end position are not the same.")
     motor.stop()
-    motor.resetDev()
     
-#################################################
+#################### PWM Tests #############################
     
 def pwmAndStepperTest(pwmPort, stepperPort):
-    printTitle("PWM(port = " + str(pwmPort) + ") and Stepper(port = " + str(stepperPort) + ") test")
+    printTitle(getFunctionName() + " PWM(port = " + str(pwmPort) + ") and Stepper(port = " + str(stepperPort) + ")")
     motor = stepper(port = stepperPort, speed = MAX_SPEED)
+
     debug("Stepper Run Until Stop for 2 seconds. NOTE: PWM should not be running.")
     motor.run(1, 500)
     sleep(2)
     motor.stop()
     debug("PWM 4000 for 2 seconds")
-    cyprus.write_pwm(stepperPort, "period", 1000)
+    cyprus.write_pwm(stepperPort, cyprus.PERIOD, 1000)
     sleep(2)
     debug("Stop PWM")
     cyprus.write_pwm(stepperPort, "period", 0)
     sleep(1)
 
-#### Helpers
+def testSetServoPosition(pwmPort):
+    printTitle(getFunctionName() + " PWM(port = " + str(pwmPort) + ")")
+    debug("Connect positional servo to port " + str(pwmPort))
+    cyprus.setup_servo(pwmPort)
+
+    debug("Set the position of the servo to start, middle and end positions.")
+    for i in range(1, 5, 1):
+        cyprus.set_servo_position(pwmPort, 0.0)
+        sleep(1)
+        cyprus.set_servo_position(pwmPort, 0.5)
+        sleep(1)
+        cyprus.set_servo_position(pwmPort, 1.0)
+        sleep(1)
+
+    cyprus.set_servo_position(pwmPort, 0.0)
+
+def testSetServoSpeed(pwmPort):
+    printTitle(getFunctionName() + " PWM(port = " + str(pwmPort) + ")")
+    debug("Connect continuous servo to port " + str(pwmPort))
+    cyprus.setup_servo(pwmPort)
+
+    debug("Set the 20 speeds of the servo. 10 in one direction and 10 in the other.")
+    for i in range(-10, 11, 1):
+        cyprus.set_servo_speed(pwmPort, i/10)
+        sleep(1)
+
+    cyprus.set_servo_speed(pwmPort, 0.0)
+
+def testSetPWMValues(pwmPort):
+    printTitle(getFunctionName() + " PWM(port = " + str(pwmPort) + ")")
+    debug("Connect motor controller with DC motor to port " + str(pwmPort))
+
+    period = 50000
+    for i in range(0, period+5000, 5000):
+        debug("Setting duty cycle to " + str(int((i/period)*100)) + "%")
+        cyprus.set_pwm_values(pwmPort, period, i)
+        sleep(1)
+
+    cyprus.set_pwm_values(pwmPort, period, 0)
+
+########### Helpers Methods ###########################
     
 def setGPIOValue(value):
     slushEngine = Slush.sBoard()
@@ -257,7 +308,7 @@ def readEncoder(port, index):
     encoderValue = cyprus.read_encoder(port, index)
     return(encoderValue)
 
-def encoderInfo(motorNumber):
+def getEncoderInfo(motorNumber):
     if motorNumber == 0:
         port = 1
         channel = 0
@@ -271,7 +322,9 @@ def encoderInfo(motorNumber):
         port = 2
         channel = 0
         
-    return port, channel
+    portChannel = motorEncoderMessage(motorNumber, port, channel)
+
+    return port, channel, portChannel
 
 def motorPositionDelta(start, end):
     result = end - start
@@ -290,11 +343,19 @@ def testSwitch(motor):
         sleep(0.01)
     return switchSet
 
+################## Assert Helpers #################
+
 def assertEqualsWithDelta(expected, result, delta):
     if (result >= expected - delta):
         if (result <= expected + delta):
             return True
     return False
+
+def assertDoesNotEqualsWithDelta(expected, result, delta):
+    if (result >= expected - delta):
+        if (result <= expected + delta):
+            return False
+    return True
 
 def assertTrue(condition, message, errorOnly = True):
     if (condition == True):
@@ -302,6 +363,8 @@ def assertTrue(condition, message, errorOnly = True):
             printPassed(message)
     else:
         printFailed(message)
+
+################## Print Helpers #################
 
 def motorEncoderMessage(motorNumber, port, channel):
     return "motor " + str(motorNumber) + ", port " + str(port) + ", channel " + str(channel)
@@ -322,27 +385,59 @@ def debug(message):
     if (args.verbose == True):
         print("# " + message)
 
+def getTestName():
+    return sys._getframe().f_code.co_name
+
+def freeMotor(motorNumber):
+    motor = stepper(port = motorNumber, speed = 10)
+    motor.stop()
+    motor.free()
+
 def endTests():
     debug("Ending tests, freeing motors")
     for i in range(0, 4):
-        motor = stepper(port = i, speed = 10)
-        motor.stop()
-        motor.free()
-    cyprus.close_spi()
+        freeMotor(i)
+    cyprus.close()
     
-########################### Tests #########################################
+def getFunctionName():
+    return eval('sys._getframe({}).f_code.co_name'.format(2))
+
+def getVersion():
+    printTitle(cyprus.read_firmware_version())
+
+########################### Test Execution #########################################
 
 initTests()
+getVersion()
 
-pwmAndStepperTest(4, 0)
-gpioInputTest()
+testSetPWMValues(1)
+exit()
+
+
+
+cyprus.write_pwm_values(2, period, 0)
+print("Done")
+sleep(1)
+
+
+
+#cyprus.set_motor_speed(2, 0.05)
+#pwmAndStepperTest(4, 0)
+#gpioInputTest()
+#sleep(1)
+#cyprus.set_motor_speed(2, 0)
+cyprus.close()
+exit()
 
 for i in range(0, args.motorCount):
     homeTest(i)
     speedTest(i)
     relativeMoveTest(i, 20)
     encoderTest(i)
-    encoderTriggerTest(i, 0x0F0)
+    encoderTriggerTest(i, 0x500)
+    encoderTriggerAutoResetTest(i, 0x500)
+    encoderTriggerRadiusTest(i, 0x50, 0x500)
+    freeMotor(i)
 
 if args.motor != -1:
     homeTest(args.motor)
@@ -350,13 +445,12 @@ if args.motor != -1:
     relativeMoveTest(args.motor, 20)
     readEncoderTest(args.motor)
     encoderTest(args.motor)
-    encoderTriggerTest(args.motor, 0x0F0)
+    encoderTriggerTest(args.motor, 0x500)
+    encoderTriggerAutoResetTest(args.motor, 0x500)
+    encoderTriggerRadiusTest(args.motor, 0x50, 0x500)
 
-pwmAndStepperTest(4, 0)
-readEncoderTest(0);
-
-pwmSpeedTest(1)
-pwmPositionTest(1)
+#pwmSpeedTest(1)
+#pwmPositionTest(1)
     
 endTests()
 

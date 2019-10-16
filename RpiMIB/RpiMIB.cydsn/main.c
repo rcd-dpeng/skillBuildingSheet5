@@ -25,6 +25,19 @@
 *******************************************************************************/
 #include <project.h>
 
+#define COMMAND_MASK 0xFF00
+#define PORT_MASK 0x00F0
+#define PARAMETER_MASK 0x00F0
+#define CHANNEL_MASK 0x000F
+#define DATA_MASK 0x00F0
+#define READ_ENCODER 0x10
+#define ENCODER_IDLE 0xA5
+#define ORDINAL_MASK 0x000F
+#define TRIGGER_OFF 0xFFFF
+#define TRIGGER_RESET_MASK 0x00F0
+#define TRIGGER_RESET 0x1
+#define DEFAULT_TRIGGER_RADIUS 0x5
+
 typedef enum {
     idle_state,
     listening_state,
@@ -45,35 +58,23 @@ typedef enum {
     set_spi_trigger,
     read_encoder,
     set_trigger_radius,
-    set_pinmode,
-    write_firmware_date,
     read_firmware_date
 } command;
 
 uint16 ReadWriteSPIM1(uint8, uint8);
 uint16 ReadWriteSPIM2(uint8, uint16);
 uint16 ReadEncoder(uint8, uint8);
-int abs(int x);
 command InterpretCommand(uint16);
 uint16 RPi_Command_Data;
 uint16 RPi_Data;
 uint8 i2c_address = 0;
 uint8 i2c_data_to_write[8];
 uint8 i2c_byte_count = 0;
-uint16 spi_trigger_value[] = {0x800,0x800,0x800,0x800};
-uint16 spi_trigger_radius[] = {25,25,25,25};
-uint16 COMMAND_MASK = 0xFF00;
-uint16 PORT_MASK = 0x00F0;
-uint16 PARAMETER_MASK = 0x00F0;
-uint16 CHANNEL_MASK = 0x000F;
-uint16 DATA_MASK = 0x00F0;
-uint8 READ_ENCODER = 0x10;
-uint8 ENCODER_IDLE = 0xA5;
-uint8 GPIO_MODE = 0;
-uint8 TRIGGER_MODE = 1;
-uint8 pinmode;
-uint16 firmware_date[] = {13, 3, 2019};
-uint16 ORDINAL_MASK = 0x000F;
+uint16 spi_trigger_value[4] = {TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF};
+uint8  spi_trigger_reset[4] = {0x0, 0x0, 0x0, 0x0};
+uint16 spi_trigger_radius[4] = {DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS};
+
+uint8_t firmwareVersionDate[] = {3, 0, 0, 7, 11, 19};
 
 state PSOC_state;
 command RPi_Command;
@@ -83,7 +84,14 @@ CY_ISR(SS_Rise_Handler) {
         RPi_Command_Data = SPIS_ReadRxData();
         RPi_Command = InterpretCommand(RPi_Command_Data);
         SPIS_ClearRxBuffer();
-        if((RPi_Command == write_gpio) || (RPi_Command == write_spi) || (RPi_Command == write_pwm) || (RPi_Command == read_i2c) || (RPi_Command == add_i2c_data) || (RPi_Command == add_i2c_address) || (RPi_Command == set_spi_trigger) || (RPi_Command == set_trigger_radius) || (RPi_Command == set_pinmode) || (RPi_Command == write_firmware_date)) {
+        if((RPi_Command == write_gpio) || 
+           (RPi_Command == write_spi) || 
+           (RPi_Command == write_pwm) || 
+           (RPi_Command == read_i2c) ||
+           (RPi_Command == add_i2c_data) || 
+           (RPi_Command == add_i2c_address) || 
+           (RPi_Command == set_spi_trigger) ||
+           (RPi_Command == set_trigger_radius)) {
             PSOC_state = listening_state;
         } else {
             PSOC_state = execution_state;
@@ -108,6 +116,34 @@ uint8 temp1;
 uint8 temp2;
 uint8 i;
 uint16 shutdown_count;
+
+
+uint8 isRPiCommand(command rpiCommand) {
+    switch (rpiCommand) {
+        case read_gpio:
+        case write_gpio:
+        case read_spi:
+        case write_spi:
+        case write_pwm:
+        case read_i2c:
+        case write_i2c:
+        case read_encoder:
+        case add_i2c_data:
+        case add_i2c_address:
+        case set_spi_trigger:
+        case set_trigger_radius:
+        case read_firmware_date:
+            return 1;
+            break;
+        
+        case no_command:
+        default:
+            return 0;
+            break;
+    }
+
+    return 0;
+}
 
 /*Command Structure: 0x0CPQ --> execute command C with parameters P and Q
  *Some commands take no parameters, and are of the form 0x0C00
@@ -154,12 +190,6 @@ command InterpretCommand(uint16 data)
             break;
         case 0x0c00:
             result = set_trigger_radius;
-            break;
-        case 0x0d00:
-            result = set_pinmode;
-            break;
-        case 0x0e00:
-            result = write_firmware_date;
             break;
         case 0x0f00:
             result = read_firmware_date;
@@ -239,24 +269,26 @@ int main() {
            shutdown_count = 0u;
         }
     
-        pinmode = TRIGGER_MODE;
         // Writes correspondign GPIO high if encoder value is within specified range of trigger value
-        if (pinmode == TRIGGER_MODE) {
-            for (int i = 0; i < 4; i++) {
-                int encoderValue;
+        for (int i = 0; i < 4; i++) {
+            uint16 encoderValue;
             
-                if (i == 3) {
-                    encoderValue = (int)ReadEncoder(2, 0);
-                } else {
-                    encoderValue = (int)ReadEncoder(1, i);
-                }
-            
-                if (abs(encoderValue - spi_trigger_value[i]) < spi_trigger_radius[i]) {
-                    GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
-                } else {
-                    GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
-                } 
+            if (i == 3) {
+                encoderValue = ReadEncoder(2, 0);
+            } else {
+                encoderValue = ReadEncoder(1, i);
             }
+            
+            if ((spi_trigger_value[i] - spi_trigger_radius[i] < encoderValue) && 
+                (spi_trigger_value[i] + spi_trigger_radius[i] > encoderValue)) {
+                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
+                if (spi_trigger_reset[i] == TRIGGER_RESET) {
+                    spi_trigger_reset[i] = 0x0;
+                    spi_trigger_value[i] = TRIGGER_OFF;
+                }
+            } else {
+                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
+            } 
         }
     
         if (PSOC_state == execution_state) {
@@ -285,25 +317,28 @@ int main() {
                     }
                     break;    
                 
-                case write_pwm:
-                    if ((RPi_Command_Data & PARAMETER_MASK) == 0x0010) {
-                        if ((RPi_Command_Data & CHANNEL_MASK) == 0x0000) {
+                case write_pwm: {
+                    uint16 port = RPi_Command_Data & PORT_MASK;
+                    uint16 parameter = RPi_Command_Data & 0x000F;
+                    if (port == 0x0010) {
+                        if (parameter == 0x0000) {
                             PWM_1_SetCompareMode(RPi_Data);
-                        } else if ((RPi_Command_Data & CHANNEL_MASK) == 0x0001) {
+                        } else if (parameter == 0x0001) {
                             PWM_1_WritePeriod(RPi_Data);
-                        } else if ((RPi_Command_Data & CHANNEL_MASK) == 0x0002) {
+                        } else if (parameter == 0x0002) {
                             PWM_1_WriteCompare(RPi_Data);
                         }
-                    } else if ((RPi_Command_Data & PARAMETER_MASK) == 0x0020) {
-                        if ((RPi_Command_Data & CHANNEL_MASK) == 0x0000) {
+                    } else if (port == 0x0020) {
+                        if (parameter == 0x0000) {
                             PWM_2_SetCompareMode(RPi_Data);
-                        } else if ((RPi_Command_Data & CHANNEL_MASK) == 0x0001) {
+                        } else if (parameter == 0x0001) {
                             PWM_2_WritePeriod(RPi_Data);
-                        } else if ((RPi_Command_Data & CHANNEL_MASK) == 0x0002) {
+                        } else if (parameter == 0x0002) {
                             PWM_2_WriteCompare(RPi_Data);
                         }
                     }
-                    break;
+                }
+                break;
                     
                 case read_i2c: {
                         uint8 i2c_data_read;
@@ -340,9 +375,16 @@ int main() {
                     break; 
                 
                 case set_spi_trigger:
-                    spi_trigger_value[RPi_Command_Data & CHANNEL_MASK] = RPi_Data;
+                    spi_trigger_value[RPi_Command_Data & ORDINAL_MASK] = RPi_Data;
+                    if ((RPi_Command_Data & TRIGGER_RESET_MASK) == 0x10) {
+                        spi_trigger_reset[RPi_Command_Data & ORDINAL_MASK] = TRIGGER_RESET;
+                    }
                     break;
-                
+
+                case set_trigger_radius:
+                    spi_trigger_radius[RPi_Command_Data & ORDINAL_MASK] = RPi_Data;
+                    break;
+                    
                 case read_encoder: {
                     uint8 port = (RPi_Command_Data & PORT_MASK) >> 0x4;
                     uint8 channel = RPi_Command_Data & CHANNEL_MASK;
@@ -351,22 +393,11 @@ int main() {
                     break;
                 }
                 
-                case set_trigger_radius:
-                    spi_trigger_radius[RPi_Command_Data & CHANNEL_MASK] = RPi_Data;
+                case read_firmware_date: {
+                    SPIS_WriteTxDataZero(firmwareVersionDate[RPi_Command_Data & ORDINAL_MASK]);
                     break;
-                    
-                case set_pinmode:
-                    pinmode = RPi_Data;
-                    break;
-                    
-                case write_firmware_date:
-                    firmware_date[RPi_Command_Data & ORDINAL_MASK] = RPi_Data;
-                    break;
+                }
                 
-                case read_firmware_date:
-                    SPIS_WriteTxDataZero(firmware_date[RPi_Command_Data & ORDINAL_MASK]);
-                    break;
-                    
                 case no_command:
                 default:
                     break;
@@ -406,17 +437,15 @@ uint16 ReadEncoder(uint8 port, uint8 ChannelNumber) {
         ReadWriteSPIM1(ChannelNumber, READ_ENCODER);
         while (ReadWriteSPIM1(ChannelNumber, 0x00) == ENCODER_IDLE){}
         MSB = ReadWriteSPIM1(ChannelNumber, 0x00);
-        //CyDelayUs(2000);
         LSB = ReadWriteSPIM1(ChannelNumber, 0x00);
-    } else if (port == 0x02) {
+   } else if (port == 0x02) {
         ReadWriteSPIM2(ChannelNumber, READ_ENCODER);
         while (ReadWriteSPIM2(ChannelNumber, 0x00) == ENCODER_IDLE){}
         MSB = ReadWriteSPIM2(ChannelNumber, 0x00);
-        CyDelayUs(2000);
         LSB = ReadWriteSPIM2(ChannelNumber, 0x00);
-    }
-    CyDelayUs(2000);
-    return (uint16)(LSB + (MSB << 8));
+   }
+
+   return (uint16)(LSB + (MSB << 8));
 }
 
 /* QWJvbGlzaCB3YWdliGxhYm9yIG5vdyE= */

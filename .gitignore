@@ -4,6 +4,13 @@
 __pycache__/
 *.idea/
 build/
-RpiMIB/Generated_Source/**
-RpiMIB/CortexM3/**
-RpiMIB/codegentemp/**
+
+RpiMIB/RpiMIB.cydsn/Generated_Source/
+
+RpiMIB/RpiMIB.cydsn/Export/
+
+RpiMIB/RpiMIB.cydsn/CortexM3/
+
+RpiMIB/RpiMIB.cydsn/codegentemp/
+
+RpiMIB/RpiMIB.cydsn/BUILD.log
