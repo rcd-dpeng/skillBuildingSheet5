@@ -107,3 +107,13 @@ cyprus.close()
 #         return (cyprus.read_gpio() & 0b0001) == 1
 #
 # Checks to see if gpio read and bitwise AND are equal to 1. If so returns TRUE otherwise returns FALSE
+
+
+# Exercises:
+# 1. Connect a servo motor to P4 and make it go from 0 degrees to 180 degrees as two binary states.
+# 1a. Connect a limit switch to P6 and make servo on P4 be at 0deg when limit switch is pressed (closed) and 180deg when open
+# 2. Connect a Talon motor controller to P4. Turn on a DC motor at full speed clockwise. Stop 5 seconds then Full speed counterclockwise
+# 2a. Make DC motor connected to Talon ramp up from 0rpm to full speed over 20 seconds in equal intervals.
+# 2b. Connect a limit switch to P6 and make DC motor connected to talon on P4 be at full speed clockwise when limit switch is pressed (closed) and stopped when open
+# 3. Connect a Cytron motor controller and a dc motor to P5. Turn on a DC motor at full speed clockwise. Stop 5 seconds then Full speed counterclockwise
+# 3a. Connect a proximity sensor to P7 and make the cytron motor controller on P5 be at full speed clockwise when the proximity sensor is detecting metal and stopped when it is not detecting metal
