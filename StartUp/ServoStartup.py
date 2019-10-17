@@ -20,7 +20,7 @@ spi = spidev.SpiDev()
 # More info on that later - but here is a sneak peak if you are interested
 # https://learn.adafruit.com/16-channel-pwm-servo-driver?view=all
 #
-# The RPiMIB was a hardware and software project developed in conjuction with DPEA mentors, teachers and students.
+# The RPiMIB was a hardware and software project developed in conjunction with DPEA mentors, teachers and students.
 # Joe Kleeburg a mentor for the DPEA, did the mechanical design of the circuit and PCB.
 # Doug Whetter has taken the lead on firmware and software development.
 # The RPiMIB has a couple of very specific goals:
@@ -84,3 +84,26 @@ cyprus.set_pwm_values(2, period_value=100000, compare_value=0, compare_mode=cypr
 cyprus.close()
 
 # To get sensors and other I/O to work with RPiMIB
+# The RPiMIB has four multipurpose I/O ports. Ports P6, P7, P8 and P9
+#
+# The command to read is cyprus.read_gpio() which will return 4 bits which represents ALL GPIO pins (P6-P9)
+# To get the actual value of a particular port one needs to do a bitwise AND as per example below
+
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
+
+cyprus.initialize()
+if (cyprus.read_gpio() & 0b0001):    # binary bitwise AND of the value returned from read.gpio()
+    print("GPIO on port P6 is HIGH")
+elif (cyprus.read_gpio() & 0b0010):
+    print("GPIO on port P7 is HIGH")
+elif (cyprus.read_gpio() & 0b0100):
+    print("GPIO on port P8 is HIGH")
+else (cyprus.read_gpio() & 0b1000):
+    print("GPIO on port P9 is HIGH")
+cyprus.close()
+
+# To get the status of a GPIO pin one could create a method like this:
+#     def isGPIO_P6_HIGH(self):
+#         return (cyprus.read_gpio() & 0b0001) == 1
+#
+# Checks to see if gpio read and bitwise AND are equal to 1. If so returns TRUE otherwise returns FALSE
