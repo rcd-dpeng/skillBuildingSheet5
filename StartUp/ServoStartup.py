@@ -45,7 +45,7 @@ spi = spidev.SpiDev()
 #    resides in RaspberryPiCommon Github repo which is something you should always keep up tp date.
 #
 # As mentioned, the Software library is in RaspberryPiCommon/pidev/Cyprus_Commands/Cyprus_Commands.py
-# The code is readable - and there is a very well written readme with example usage in the same folder as the library.
+# The code is readable - and there is a very well written README.md with example usage in the same folder as the library.
 #
 # The PWM Ports on the RPiMIB are P4 and P5. The software library can be used to control both servo motors and motor
 # controllers like the Talon that use a servo motor input and convert that to a high current drive that can control
