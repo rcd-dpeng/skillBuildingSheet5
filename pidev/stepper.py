@@ -4,9 +4,9 @@ File containing stepper class to interface with stepper motors on the Slush Engi
 """
 from collections import OrderedDict
 import Slush
-from Slush.Devices import L6470Registers as LReg
 from Slush.Devices import L6480Registers as LReg6480
 from .slush_manager import slush_board as slush_board  # https://elcodis.com/parts/5983789/L6470_p49.html
+from threading import Thread
 
 
 CHIP_STATUSES_XLT = OrderedDict([  # MSB to LSB of motor controller status and index of the associated bit (16 bit number)
@@ -230,10 +230,21 @@ class stepper(Slush.Motor):
         self.hard_stop()
         self.set_as_home()
 
+    def home_threaded(self, direction: int) -> Thread:
+        """
+        Home the stepper motor in a thread.
+        :param direction: Direction to move the stepper motor, 0-clockwise 1-ccw
+        :return: Thread object handling the home action
+        """
+        thread = self._create_thread(target=self.home(direction))
+        thread.start()
+
+        return thread
+
     def read_switch(self) -> int:
         """
         Read the stepper motors corresponding switch
-        :return: None
+        :return: 1 if switch is depressed, 0 otherwise
         """
         if self.getStatus() & 0x4:
             return 1
@@ -246,8 +257,7 @@ class stepper(Slush.Motor):
         :param distance_in_units: a distance in units
         :return: None
         """
-        number_of_steps = distance_in_units * self.micro_steps * self.steps_per_unit
-        self.move(int(number_of_steps))
+        self.relative_move(distance_in_units=distance_in_units)
         self.wait_move_finish()
 
     def start_relative_move(self, distance_in_units: float) -> None:
@@ -258,6 +268,17 @@ class stepper(Slush.Motor):
         """
         number_of_steps = distance_in_units * self.micro_steps * self.steps_per_unit
         self.move(int(number_of_steps))
+
+    def relative_move_threaded(self, distance_in_units: float) -> Thread:
+        """
+        Perform a relative move in a thread
+        :param distance_in_units: Distance in units to relatively move the stepper
+        :return: Thread object handling the relative move
+        """
+
+        thread = self._create_thread(target=self.start_relative_move(distance_in_units))
+        thread.start()
+        return thread
 
     def go_to_position(self, position_in_units: float) -> None:
         """
@@ -271,12 +292,22 @@ class stepper(Slush.Motor):
 
     def start_go_to_position(self, position_in_units: float) -> None:
         """
-        begins going to a set position in units (defined by steps_per_unit in constructor) WITHOUT BLOCKING (a-synchronise)
+        Begins going to a set position in units (defined by steps_per_unit in constructor) WITHOUT BLOCKING (a-synchronise)
         :param position_in_units: position to move to in units
         :return: None
         """
         position_in_steps = position_in_units * self.micro_steps * self.steps_per_unit
         self.go_to(int(position_in_steps))
+
+    def go_to_position_threaded(self, position_in_units):
+        """
+        Begin a go to position threaded
+        :param position_in_units: Position in units to go to
+        :return: Thread object handling this method call
+        """
+        thread = self._create_thread(target=self.start_go_to_position(position_in_units))
+        thread.start()
+        return thread
 
     @staticmethod
     def get_GPIO_state(port: int, pin: int) -> bool:
@@ -410,3 +441,12 @@ class stepper(Slush.Motor):
         :return: "stepper on port" with the corresponding port number
         """
         return "stepper on port " + str(self.port)
+
+    def _create_thread(self, target):
+        """
+        Create a thread. Threads are used in multiple methods throughout stepper.py, this
+        method allows for a standard thread creation implementation
+        :param target: Threads target method
+        :return: Thread object with the given target, daemon set to true
+        """
+        return Thread(target=target, daemon=True)
