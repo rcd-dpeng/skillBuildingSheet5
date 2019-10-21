@@ -13,7 +13,7 @@ from Slush.Devices import L6470Registers
 from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 spi = spidev.SpiDev()
 
-# For this example we will use the RPiMIB to create the PWM signals to talk to Servo Motors motor controllers.
+# For this example we will use the RPiMIB to create the PWM signals to talk to Servo motors and motor controllers.
 #
 # The RPiMIB (Raspberry Pi Multi Interface Board) has two PWM outputs, which will be sufficient for this example. If
 # need more than 2 PWM outputs we typically use the Adafruit 16 Channel PWM module that uses the I2C bus on the RPi.
@@ -21,7 +21,7 @@ spi = spidev.SpiDev()
 # https://learn.adafruit.com/16-channel-pwm-servo-driver?view=all
 #
 # The RPiMIB was a hardware and software project developed in conjunction with DPEA mentors, teachers and students.
-# Joe Kleeburg a mentor for the DPEA, did the mechanical design of the circuit and PCB.
+# Joe Kleeburg a mentor for the DPEA, did the electrical and mechanical design of the circuit and PCB.
 # Doug Whetter has taken the lead on firmware and software development.
 # The RPiMIB has a couple of very specific goals:
 # 1. Expand the available I/O on the Raspberry Pi, while the RPi is connected to a Slush engine which uses 99% of the
@@ -42,7 +42,7 @@ spi = spidev.SpiDev()
 #    python library and print it to the screen, so you always know which version of the firmware you are using
 # 3. The RPiMIB needs to be correctly assembled and plugged in to the RPi, Slush Engine and associated power supplies
 # 4. The Software library needs to be correctly installed and kept up to date with updates. Fortunately the software
-#    resides in RaspberryPiCommon Github repo which is something you should always keep up tp date.
+#    resides in RaspberryPiCommon Github repo which is something you should always keep up to date.
 #
 # As mentioned, the Software library is in RaspberryPiCommon/pidev/Cyprus_Commands/Cyprus_Commands.py
 # The code is readable - and there is a very well written README.md with example usage in the same folder as the library.
