@@ -13,15 +13,15 @@ from Slush.Devices import L6470Registers
 from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 spi = spidev.SpiDev()
 
-# For this example we will use the RPiMIB to create the PWM signals to talk to Servo Motors motor controllers.
+# For this example we will use the RPiMIB to create the PWM signals to talk to Servo motors and motor controllers.
 #
 # The RPiMIB (Raspberry Pi Multi Interface Board) has two PWM outputs, which will be sufficient for this example. If
 # need more than 2 PWM outputs we typically use the Adafruit 16 Channel PWM module that uses the I2C bus on the RPi.
 # More info on that later - but here is a sneak peak if you are interested
 # https://learn.adafruit.com/16-channel-pwm-servo-driver?view=all
 #
-# The RPiMIB was a hardware and software project developed in conjuction with DPEA mentors, teachers and students.
-# Joe Kleeburg a mentor for the DPEA, did the mechanical design of the circuit and PCB.
+# The RPiMIB was a hardware and software project developed in conjunction with DPEA mentors, teachers and students.
+# Joe Kleeburg a mentor for the DPEA, did the electrical and mechanical design of the circuit and PCB.
 # Doug Whetter has taken the lead on firmware and software development.
 # The RPiMIB has a couple of very specific goals:
 # 1. Expand the available I/O on the Raspberry Pi, while the RPi is connected to a Slush engine which uses 99% of the
@@ -42,10 +42,10 @@ spi = spidev.SpiDev()
 #    python library and print it to the screen, so you always know which version of the firmware you are using
 # 3. The RPiMIB needs to be correctly assembled and plugged in to the RPi, Slush Engine and associated power supplies
 # 4. The Software library needs to be correctly installed and kept up to date with updates. Fortunately the software
-#    resides in RaspberryPiCommon Github repo which is something you should always keep up tp date.
+#    resides in RaspberryPiCommon Github repo which is something you should always keep up to date.
 #
 # As mentioned, the Software library is in RaspberryPiCommon/pidev/Cyprus_Commands/Cyprus_Commands.py
-# The code is readable - and there is a very well written readme with example usage in the same folder as the library.
+# The code is readable - and there is a very well written README.md with example usage in the same folder as the library.
 #
 # The PWM Ports on the RPiMIB are P4 and P5. The software library can be used to control both servo motors and motor
 # controllers like the Talon that use a servo motor input and convert that to a high current drive that can control
@@ -82,3 +82,38 @@ cyprus.set_pwm_values(2, period_value=100000, compare_value=50000, compare_mode=
 # Motor controller Ex. Cytron MD10C connected to P5, the connected motor would be running ~50% max rpm
 cyprus.set_pwm_values(2, period_value=100000, compare_value=0, compare_mode=cyprus.LESS_THAN_OR_EQUAL) #  Motor OFF
 cyprus.close()
+
+# To get sensors and other I/O to work with RPiMIB
+# The RPiMIB has four multipurpose I/O ports. Ports P6, P7, P8 and P9
+#
+# The command to read is cyprus.read_gpio() which will return 4 bits which represents ALL GPIO pins (P6-P9)
+# To get the actual value of a particular port one needs to do a bitwise AND as per example below
+
+from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
+
+cyprus.initialize()
+if (cyprus.read_gpio() & 0b0001):    # binary bitwise AND of the value returned from read.gpio()
+    print("GPIO on port P6 is HIGH")
+elif (cyprus.read_gpio() & 0b0010):
+    print("GPIO on port P7 is HIGH")
+elif (cyprus.read_gpio() & 0b0100):
+    print("GPIO on port P8 is HIGH")
+else (cyprus.read_gpio() & 0b1000):
+    print("GPIO on port P9 is HIGH")
+cyprus.close()
+
+# To get the status of a GPIO pin one could create a method like this:
+#     def isGPIO_P6_HIGH(self):
+#         return (cyprus.read_gpio() & 0b0001) == 1
+#
+# Checks to see if gpio read and bitwise AND are equal to 1. If so returns TRUE otherwise returns FALSE
+
+
+# Exercises:
+# 1. Connect a servo motor to P4 and make it go from 0 degrees to 180 degrees as two binary states.
+# 1a. Connect a limit switch to P6 and make servo on P4 be at 0deg when limit switch is pressed (closed) and 180deg when open
+# 2. Connect a Talon motor controller to P4. Turn on a DC motor at full speed clockwise. Stop 5 seconds then Full speed counterclockwise
+# 2a. Make DC motor connected to Talon ramp up from 0rpm to full speed over 20 seconds in equal intervals.
+# 2b. Connect a limit switch to P6 and make DC motor connected to talon on P4 be at full speed clockwise when limit switch is pressed (closed) and stopped when open
+# 3. Connect a Cytron motor controller and a dc motor to P5. Turn on a DC motor at full speed clockwise. Stop 5 seconds then Full speed counterclockwise
+# 3a. Connect a proximity sensor to P7 and make the cytron motor controller on P5 be at full speed clockwise when the proximity sensor is detecting metal and stopped when it is not detecting metal

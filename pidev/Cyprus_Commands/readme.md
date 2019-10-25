@@ -30,7 +30,7 @@ cyprus.initialize()
 cyprus.close()
 ```
 
-### write_pwm(port, period_value, compare_value, compare_mode)
+### set_pwm_values(port, period_value, compare_value, compare_mode)
 Write the **PERIOD**, **COMPARE** value and the **COMPARE_MODE** to the given Cyprus PWM port. This function can be used if the PWM value once is only to be set once. If the PWM value needs to be set more than once then think of using the functions in the **Related Functions** section. For more information on PWM refer to https://en.wikipedia.org/wiki/Pulse-width_modulation.
 * Parameters:
     - **port** (valid values 1 or 2):
@@ -80,6 +80,7 @@ Write a 16 bit word to the given Cyprus PWM port. There are several functions th
     - setup_servo()
     - write_servo_position()
     - set_servo_speed()
+    - set_pwm_values()
 ```
 from pidev.Cyprus_Commands import Cyprus_Commands_RPi as cyprus
 

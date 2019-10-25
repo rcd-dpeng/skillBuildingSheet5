@@ -257,7 +257,7 @@ class stepper(Slush.Motor):
         :param distance_in_units: a distance in units
         :return: None
         """
-        self.relative_move(distance_in_units=distance_in_units)
+        self.start_relative_move(distance_in_units=distance_in_units)
         self.wait_move_finish()
 
     def start_relative_move(self, distance_in_units: float) -> None:
