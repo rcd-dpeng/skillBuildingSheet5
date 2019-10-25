@@ -1,5 +1,8 @@
 import os
 
+os.environ['DISPLAY'] = ":0.0"
+os.environ['KIVY_WINDOW'] = 'egl_rpi'
+
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
@@ -10,6 +13,11 @@ from pidev.kivy.PassCodeScreen import PassCodeScreen
 from pidev.kivy.PauseScreen import PauseScreen
 from pidev.kivy import DPEAButton
 from pidev.kivy import ImageButton
+from pidev.kivy.selfupdatinglabel import SelfUpdatingLabel
+
+from datetime import datetime
+
+time = datetime
 
 MIXPANEL_TOKEN = "x"
 MIXPANEL = MixPanel("Project Name", MIXPANEL_TOKEN)
@@ -45,7 +53,7 @@ class MainScreen(Screen):
         Function called on button touch event for button with id: testButton
         :return: None
         """
-        PauseScreen.pause(pause_scene_name='pauseScene', transition_back_scene='main', text="Test", pause_duration=5)
+        print("Callback from MainScreen.pressed()")
 
     def admin_action(self):
         """
@@ -97,6 +105,8 @@ class AdminScreen(Screen):
         :return: None
         """
         quit()
+
+
 """
 Widget additions
 """
