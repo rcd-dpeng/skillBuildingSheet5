@@ -5,6 +5,7 @@
 from kivy.uix.label import Label
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty
+from threading import Thread
 
 
 class SelfUpdatingLabel(Label):
@@ -22,7 +23,9 @@ class SelfUpdatingLabel(Label):
         self.update_frequency = ObjectProperty(defaultvalue=0.25)
 
         """Call update_text with the user given update_frequency"""
-        Clock.schedule_interval(lambda args: self.update_text(), self.update_frequency)
+        # Clock.schedule_interval(lambda args: self.update_text(), self.update_frequency)
+        self.update_text_thread = Thread(target=self.update_text(), daemon=True)
+        self.update_text_thread.start()
 
     def update_text(self) -> None:
         """
@@ -31,12 +34,13 @@ class SelfUpdatingLabel(Label):
         If the function you are calling includes parameters specify them in update_property_parameters
         :return: None
         """
-        if self.update_property is None:
-            return
-        elif callable(self.update_property):  # if the update_property is a method to call
-            if self.update_property_parameters is not None:  # call with given parameters
-                self.text = str(self.update_property(self.update_property_parameters))
-            else:
-                self.text = str(self.update_property())
-        else:  # Set to whatever was given
-            self.text = str(self.update_property)
+        while True:
+            if self.update_property is None:
+                return
+            elif callable(self.update_property):  # if the update_property is a method to call
+                if self.update_property_parameters is not None:  # call with given parameters
+                    self.text = str(self.update_property(self.update_property_parameters))
+                else:
+                    self.text = str(self.update_property())
+            else:  # Set to whatever was given
+                self.text = str(self.update_property)

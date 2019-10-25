@@ -1,15 +1,26 @@
 import os
+from threading import Thread
+
+os.environ['DISPLAY'] = ":0.0"
+os.environ['KIVY_WINDOW'] = 'egl_rpi'
 
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.properties import ObjectProperty, StringProperty
+from kivy.clock import Clock
 
 from pidev.MixPanel import MixPanel
 from pidev.kivy.PassCodeScreen import PassCodeScreen
 from pidev.kivy.PauseScreen import PauseScreen
 from pidev.kivy import DPEAButton
 from pidev.kivy import ImageButton
+from pidev.kivy.selfupdatinglabel import SelfUpdatingLabel
+
+from datetime import datetime
+
+time = datetime.today()
 
 MIXPANEL_TOKEN = "x"
 MIXPANEL = MixPanel("Project Name", MIXPANEL_TOKEN)
@@ -39,13 +50,21 @@ class MainScreen(Screen):
     """
     Class to handle the main screen and its associated touch events
     """
+    thread = Thread
+
+    def run_motor_thread(self):
+        pass
 
     def pressed(self):
         """
         Function called on button touch event for button with id: testButton
         :return: None
         """
-        PauseScreen.pause(pause_scene_name='pauseScene', transition_back_scene='main', text="Test", pause_duration=5)
+        print("here")
+
+    def stop_motor(self):
+        MainScreen.thread.join()
+        print(MainScreen.thread.is_alive())
 
     def admin_action(self):
         """
@@ -54,7 +73,6 @@ class MainScreen(Screen):
         :return: None
         """
         SCREEN_MANAGER.current = 'passCode'
-
 
 class AdminScreen(Screen):
     """
