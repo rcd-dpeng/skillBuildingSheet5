@@ -3,29 +3,33 @@
 """
 
 from kivy.uix.label import Label
-from kivy.clock import Clock
 from kivy.properties import ObjectProperty
 from threading import Thread
 
 
 class SelfUpdatingLabel(Label):
     """
-    Class to update a label's text in a given frequency
+    Class to constantly refresh a label's text
     """
+    thread_instances = list()
 
     def __init__(self, **kwargs):
+        """
+        Construct a SelfUpdatingLabel which constantly updates the label's text based upon a given update_property
+        :param kwargs: Labels default arguments
+        """
         """Super the Label constructor to ensure the Label functions properly"""
         super(SelfUpdatingLabel, self).__init__(**kwargs)
 
-        """Set update_property and update_frequency to be appropriate kivy properties"""
+        """Declare update_property and update_property_parameters"""
         self.update_property = ObjectProperty(defaultvalue=None)
         self.update_property_parameters = ObjectProperty(defaultvalue=None)
-        self.update_frequency = ObjectProperty(defaultvalue=0.25)
 
-        """Call update_text with the user given update_frequency"""
-        # Clock.schedule_interval(lambda args: self.update_text(), self.update_frequency)
-        self.update_text_thread = Thread(target=self.update_text(), daemon=True)
+        """Start a thread to constantly update the label"""
+        self.update_text_thread = Thread(target=self.update_text, daemon=True)
         self.update_text_thread.start()
+
+        SelfUpdatingLabel.thread_instances.append(self.update_text_thread)
 
     def update_text(self) -> None:
         """
@@ -44,3 +48,26 @@ class SelfUpdatingLabel(Label):
                     self.text = str(self.update_property())
             else:  # Set to whatever was given
                 self.text = str(self.update_property)
+
+    def stop_updating(self) -> None:
+        """
+        Stop updating the label
+        :return: None
+        """
+        self.update_text_thread.join()
+
+    def start_updating(self) -> None:
+        """
+        Begin updating the label
+        :return: None
+        """
+        self.update_text_thread.start()
+
+    @staticmethod
+    def get_all_threads() -> list:
+        """
+        Get all of the instantiated threads associated with each SelfUpdatingLabel
+        :rtype: list
+        :return: list of instantiated threads
+        """
+        return SelfUpdatingLabel.thread_instances

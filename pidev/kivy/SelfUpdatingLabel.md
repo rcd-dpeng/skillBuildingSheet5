@@ -27,7 +27,6 @@ SelfUpdatingLabel:
         text: str(root.stepper_property.get_position())
         update_property: JOY.get_position_in_units
         update_property_parameters: "x"
-        update_frequency: 0.1
         center_x: root.width * 0.5
         center_y: root.height * 0.5
         color: 1, 1, 1, 1
@@ -37,5 +36,3 @@ SelfUpdatingLabel:
 it will call the function once and never update, therefore we must call it with JOY.get_axis which is a reference to the method
 
 * The update_property_parameters are parameters you would like to pass to the method you are calling
-
-* the update_frequency is how often you would like to update the label
