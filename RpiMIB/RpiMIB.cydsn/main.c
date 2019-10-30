@@ -74,7 +74,7 @@ uint16 spi_trigger_value[4] = {TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OF
 uint8  spi_trigger_reset[4] = {0x0, 0x0, 0x0, 0x0};
 uint16 spi_trigger_radius[4] = {DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS};
 
-uint8_t firmwareVersionDate[] = {3, 1, 2, 10, 29, 19};
+uint8_t firmwareVersionDate[] = {3, 1, 1, 10, 29, 19};
 
 state PSOC_state;
 command RPi_Command;
