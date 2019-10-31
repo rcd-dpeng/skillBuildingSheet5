@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 # Check to see if user executed this script as root, if not exit
-if [ "$UEID" -ne 0 ]
+if [ "$EUID" -ne 0 ]
   then echo "Please excute this script as root simply run \"sudo !!\""
   exit 1
 fi
@@ -39,7 +39,7 @@ apt-get upgrade -y
 echo "Updating the RPi Kernel this may take a few mintues"
 
 # Update the RPi kernel
-rpi-update -y
+#rpi-update -y
 
 # Navigate to the home directory
 cd /home/pi || exit 1
