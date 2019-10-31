@@ -10,14 +10,29 @@ It is recommended you back up any important documents in the unlikely event your
 There is a script located in the RaspberryPiCommon/Scripts named install-power-shutdown.sh.
 
 Run this script with sudo. This will install all of the necessary dependencies, however the Pi needs to be rebooted in order for these changes
-to take effect. Please note that upon running the script for the first time it will create a file named "part_1_complete.txt" please do not remove this file
-the script will remove it upon the second run of the script. Additionally you may receive an error stating "", don't worry about this continue with the installation.
+to take effect. 
+* Please note that you may receive an error stating "", don't worry about this continue with the installation.
+* Additionally note that upon running the script for the first time it will create a file named "part_1_complete.txt" please do not remove this file.
+The script will remove the file upon the second run of the script. 
 
-Upon reboot you need to re-run this script. This will now make and install the power_shutdown into the linux kernel.
+Upon reboot you need to re-run this script. This will now make and install the power_shutdown module into the linux kernel.
+
+After running the install script the second time and rebooted the installation process is complete.
 
 ## Test that power_shutdown functions properly
- 0. Cut power to the Pi
- 1. The Red power LED (LED1) on the RPiMIB stays illuminated after the RPiMIB looses power
- 2. The Green status LED on the RPi next to the red power LED flickers for a few seconds after power is turned off
- 3. Then about 8 seconds after the Green status LED on the RPi goes off the red power LED turn off
- 4. Then about 30 seconds after removing power from the RPiMIB the Red power LED (LED1) on the RPiMIB goes off.
+It is important to understand that testing this module includes removing power to the Pi while the os is still mounted.
+If the power_shutdown module didn't install correctly your os may become corrupt due to a power loss event. 
+
+Please backup all important files before testing.
+
+ 0. Cut power to the Pi and RPMIB
+ 1. Verify the Red power LED (LED1) on the RPiMIB stays illuminated after the RPiMIB  and Pi looses power
+ 2. Verify the Green status LED on the RPi next to the red power LED flickers for a few seconds after power is turned off
+ 3. Verify after about 8 seconds after the Green status LED on the RPi goes off the red power LED turn off
+ 4. Verify after about 30 seconds after removing power from the RPiMIB the Red power LED (LED1) on the RPiMIB goes off.
+ 
+If all of these steps executed successfully the power_shutdown module was installed and is working correctly.
+ 
+## Troubleshooting
+In the event of a bug/install script isn't working correctly read through install-power-shutdown.sh and manually run all commands as root.
+This [StackExchange post](https://raspberrypi.stackexchange.com/questions/39845/how-compile-a-loadable-kernel-module-without-recompiling-kernel) inspired the majority of the install script.
