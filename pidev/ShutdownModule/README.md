@@ -11,8 +11,7 @@ There is a script located in the RaspberryPiCommon/Scripts named install-power-s
 
 Run this script with sudo. This will install all of the necessary dependencies, however the Pi needs to be rebooted in order for these changes
 to take effect. 
-* Please note that you may receive an error stating "", don't worry about this continue with the installation.
-* Additionally note that upon running the script for the first time it will create a file named "part_1_complete.txt" please do not remove this file.
+* Please note that upon running the script for the first time it will create a file named "part_1_complete.txt" please do not remove this file.
 The script will remove the file upon the second run of the script. 
 
 Upon reboot you need to re-run this script. This will now make and install the power_shutdown module into the linux kernel.
