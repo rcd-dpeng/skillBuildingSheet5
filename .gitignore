@@ -4,6 +4,9 @@
 __pycache__/
 *.idea/
 build/
+pidev/ShutdownModule/power_shutdown/*
+!pidev/ShutdownModule/power_shutdown/power_shutdown.c
+!pidev/ShutdownModule/power_shutdown/Makefile
 
 RpiMIB/RpiMIB.cydsn/Generated_Source/
 
