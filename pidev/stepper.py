@@ -395,15 +395,17 @@ class stepper(Slush.Motor):
         """
         self.move(steps * self.micro_steps)
 
-    def go_until_press(self, dir: int, speed: int) -> None:
+    def go_until_press(self, dir: int, speed: int, act: int = 0) -> None:
         """
-        Move the stepper until it hits a sensor
+        Move the stepper until it hits a sensor.
+        Forwards the call to Motor.goUntilPress
         :param dir: The direction 1 or 0
         :param speed: Speed in steps per second
+        :param act: Act parameter in Slush.Motor.goUntilPress(). This defaults to 0 to ensure proper functionality
         :return: None
         """
         if self.read_switch() is 0:
-            self.goUntilPress(1, dir, speed)
+            self.goUntilPress(act=act, dir=dir, spd=speed)
 
     def is_busy(self) -> bool:
         """
