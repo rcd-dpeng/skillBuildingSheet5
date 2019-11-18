@@ -67,7 +67,6 @@ class stepper(Slush.Motor):
         """
         super().__init__(port)
         self.port = port
-        self.resetDev()
         self.micro_steps = micro_steps
         self.set_micro_steps(self.micro_steps)
         self.setCurrent(hold_current,
