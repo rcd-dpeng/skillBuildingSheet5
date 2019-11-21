@@ -2,11 +2,14 @@
 @file stepper.py
 File containing stepper class to interface with stepper motors on the Slush Engine
 """
+from threading import Thread
+
 import Slush
 from Slush.Devices import L6480Registers as LReg6480
+from Slush.Boards.BoardUtilities import BoardTypes as Board
+
 from .slush_manager import slush_board as slush_board  # https://elcodis.com/parts/5983789/L6470_p49.html
 from .stepperutilities import *
-from threading import Thread
 
 
 class stepper(Slush.Motor):
@@ -16,8 +19,9 @@ class stepper(Slush.Motor):
     """
     instances = []
 
-    def __init__(self, port: int = 0, micro_steps: int = 64, hold_current: float = 20.0, run_current: float = 20, accel_current: float = 20, deaccel_current: float = 20,
-                 steps_per_unit: float = 200/25.4, speed: float = 1, stepper_type: dict = None):
+    def __init__(self, port: int = 0, micro_steps: int = 64, hold_current: float = 20.0, run_current: float = 20,
+                 accel_current: float = 20, deaccel_current: float = 20,
+                 steps_per_unit: float = 200 / 25.4, speed: float = 1, stepper_type: dict = None):
         """
         Constructor for the stepper class
         :param port: port the stepper is connected to. 0-3 on XLT, 0-6 on D. Default:0
@@ -32,8 +36,8 @@ class stepper(Slush.Motor):
         """
         super().__init__(port)
         self.port = port
-        
-        if stepper_type is None:
+
+        if stepper_type is None or not isinstance(stepper_type, dict):
             self.micro_steps = micro_steps
             self.set_micro_steps(self.micro_steps)
             self.setCurrent(hold_current,
@@ -48,17 +52,23 @@ class stepper(Slush.Motor):
             self.setup_predefined_stepper(stepper_type=stepper_type)
 
         """self.bordInUse is 1 when using model D, 0 when using model XLT"""
-        if self.boardInUse == 1:  # a model D is being used
+        if self.boardInUse == Board.D:  # a model D is being used
             self.setParam(LReg6480.GATECFG1, 0x5F)
             self.setParam(LReg6480.OCD_TH, 0x1F)
 
         stepper.instances.append(self)
 
     def setup_predefined_stepper(self, stepper_type: dict) -> None:
-        if stepper_type not in STEPPER_TYPES:
-            raise ValueError("The given stepper type isn't valid must be of type {}".format(STEPPER_TYPES))
+        """
+        Setup a predefined stepper motor.
+        :param stepper_type: A dictionary containing all of the stepper motor's settings
+        :return: None
+        """
 
-        self.setCurrent(stepper_type['hold_current'], stepper_type['run_current'], stepper_type['acc_current'], stepper_type['dec_current'])
+        """Go through all of the stepper settings and apply them"""
+
+        self.setCurrent(stepper_type['hold_current'], stepper_type['run_current'], stepper_type['acc_current'],
+                        stepper_type['dec_current'])
         self.setAccel(stepper_type['accel'])
         self.setDecel(stepper_type['decel'])
         self.setMaxSpeed(stepper_type['max_speed'])
@@ -401,7 +411,7 @@ class stepper(Slush.Motor):
         """
         return self.isBusy()
 
-    def get_position(self) -> int:
+    def get_position(self) -> float:
         """
         Gets the position of the stepper in steps
         :return: position in steps
