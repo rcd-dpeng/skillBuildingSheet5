@@ -2,46 +2,14 @@
 @file stepper.py
 File containing stepper class to interface with stepper motors on the Slush Engine
 """
-from collections import OrderedDict
-import Slush
-from Slush.Devices import L6480Registers as LReg6480
-from .slush_manager import slush_board as slush_board  # https://elcodis.com/parts/5983789/L6470_p49.html
 from threading import Thread
 
+import Slush
+from Slush.Devices import L6480Registers as LReg6480
+from Slush.Boards.BoardUtilities import BoardTypes as Board
 
-CHIP_STATUSES_XLT = OrderedDict([  # MSB to LSB of motor controller status and index of the associated bit (16 bit number)
-        ('SCK_MOD:     Step Clock Mode is an active high flag indicating that the device is working in Step-clock mode.\n\t\t\t In this case the step-clock signal should be provided through the STCK input pin.', 0),
-        ('STEP_LOSS_B: Step Loss B is forced low when a stall is detected on bridge B.', 1),
-        ('STEP_LOSS_A: Step Loss A is forced low when a stall is detected on bridge A.', 2),
-        ('OCD:         Over Current is active low and indictes a overcurrent detection event.', 3),
-        ('TH_SD:       Thermal Shutdown is active low and indicates a thermal shutdown event.', 4),
-        ('TH_WRN:      Thermal Warning is active low and indicates a thermal warning event.', 5),
-        ('UVLO:        Under Voltage Lock Out is active low and is set by an undervoltage lockout or reset events (power-up included).', 6),
-        ('WRONG_CMD:   Wrong Command is active high and indicates that the command received by SPI does not exist.', 7),
-        ('NOTPERF_CMD: Not Performed Command is active high and indicates that the command received by SPI cannot be performed.', 8),
-        ('MOT_STATUS:  Motor Status (1 and 2) indicates the current motor status\n\t\t\t(0b00 = stopped, 0b01 = acceleration, 0b10 = deceleration, 0b11 = constant speed.', (9, 10)),
-        ('DIR:         Direction indicates the current motor direction (1 = Forward, 0 = Reverse).', 11),
-        ('SW_EVN:      Switch Turn On Event is active high and indicates a switch turn-on event (SW input falling edge).', 12),
-        ('SW_F:        Switch Input Status reports the switch input status (low for open and high for closed).', 13),
-        ('BUSY:        Device Busy is low when a constant speed, positioning or motion command is\n\t\t\tunder execution and is released (high) after the command has been completed.', 14),
-        ('HiZ:         High Z (Impedance) State flag is high, it indicates that the bridges are in high impedance state.', 15)])
-
-CHIP_STATUSES_D = OrderedDict([  # MSB to LSB of motor controller status and index of the associated bit (16 bit number)
-        ('STEP_LOSS_B: Step Loss B is forced low when a stall is detected on bridge B.', 0),
-        ('STEP_LOSS_A: Step Loss A is forced low when a stall is detected on bridge A.', 1),
-        ('OCD:         Over Current is active low and indictes a overcurrent detection event.', 2),
-        ('TH_STATUS:   Thermal Shutdown (bit 3) is active low and indicates a thermal shutdown event.\nThermal Warning (bit 4) is active low and indicates a thermal warning event.', (3,4)),
-        ('UVLO_ADC\\', 5),
-        ('UVLO:        Under Voltage Lock Out is active low and is set by an undervoltage lockout or reset events (power-up included).', 6),
-        ('SCK_MOD:     Step Clock Mode is an active high flag indicating that the device is working in Step-clock mode.\n\t\t\t In this case the step-clock signal should be provided through the STCK input pin.', 7),
-
-        ('CMD_ERROR:   Wrong Command is active high and indicates that the command received by SPI does not exist.', 8),
-        ('MOT_STATUS:  Motor Status (1 and 2) indicates the current motor status\n\t\t\t(0b00 = stopped, 0b01 = acceleration, 0b10 = deceleration, 0b11 = constant speed.', (9, 10)),
-        ('DIR:         Direction indicates the current motor direction (1 = Forward, 0 = Reverse).', 11),
-        ('SW_EVN:      Switch Turn On Event is active high and indicates a switch turn-on event (SW input falling edge).', 12),
-        ('SW_F:        Switch Input Status reports the switch input status (low for open and high for closed).', 13),
-        ('BUSY:        Device Busy is low when a constant speed, positioning or motion command is\n\t\t\tunder execution and is released (high) after the command has been completed.', 14),
-        ('HiZ:         High Z (Impedance) State flag is high, it indicates that the bridges are in high impedance state.', 15)])
+from .slush_manager import slush_board as slush_board  # https://elcodis.com/parts/5983789/L6470_p49.html
+from .stepperutilities import *
 
 
 class stepper(Slush.Motor):
@@ -51,8 +19,9 @@ class stepper(Slush.Motor):
     """
     instances = []
 
-    def __init__(self, port: int = 0, micro_steps: int = 64, hold_current: float = 20.0, run_current: float = 20, accel_current: float = 20, deaccel_current: float = 20,
-                 steps_per_unit: float = 200/25.4, speed: float = 1):
+    def __init__(self, port: int = 0, micro_steps: int = 64, hold_current: float = 20.0, run_current: float = 20,
+                 accel_current: float = 20, deaccel_current: float = 20,
+                 steps_per_unit: float = 200 / 25.4, speed: float = 1, stepper_type: dict = None):
         """
         Constructor for the stepper class
         :param port: port the stepper is connected to. 0-3 on XLT, 0-6 on D. Default:0
@@ -67,22 +36,51 @@ class stepper(Slush.Motor):
         """
         super().__init__(port)
         self.port = port
-        self.micro_steps = micro_steps
-        self.set_micro_steps(self.micro_steps)
-        self.setCurrent(hold_current,
-                        run_current,
-                        accel_current,
-                        deaccel_current)
-        self.steps_per_unit = steps_per_unit
-        self.speed = speed
-        self.set_speed(self.speed)
+
+        if stepper_type is None or not isinstance(stepper_type, dict):
+            self.micro_steps = micro_steps
+            self.set_micro_steps(self.micro_steps)
+            self.setCurrent(hold_current,
+                            run_current,
+                            accel_current,
+                            deaccel_current)
+            self.steps_per_unit = steps_per_unit
+            self.speed = speed
+            self.set_speed(self.speed)
+
+        else:
+            self.setup_predefined_stepper(stepper_type=stepper_type)
 
         """self.bordInUse is 1 when using model D, 0 when using model XLT"""
-        if self.boardInUse == 1:  # a model D is being used
+        if self.boardInUse == Board.D:  # a model D is being used
             self.setParam(LReg6480.GATECFG1, 0x5F)
             self.setParam(LReg6480.OCD_TH, 0x1F)
 
         stepper.instances.append(self)
+
+    def setup_predefined_stepper(self, stepper_type: dict) -> None:
+        """
+        Setup a predefined stepper motor.
+        :param stepper_type: A dictionary containing all of the stepper motor's settings
+        :return: None
+        """
+
+        """Go through all of the stepper settings and apply them"""
+
+        self.setCurrent(stepper_type['hold_current'], stepper_type['run_current'], stepper_type['acc_current'],
+                        stepper_type['dec_current'])
+        self.setAccel(stepper_type['accel'])
+        self.setDecel(stepper_type['decel'])
+        self.setMaxSpeed(stepper_type['max_speed'])
+        self.setMinSpeed(stepper_type['min_speed'])
+        self.setMicroSteps(stepper_type['micro_steps'])
+        self.setThresholdSpeed(stepper_type['threshold_speed'])
+        self.setOverCurrent(stepper_type['over_current'])
+        self.setStallCurrent(stepper_type['stall_current'])
+        self.setLowSpeedOpt(stepper_type['low_speed_opt'])
+
+        slope = stepper_type['slope']
+        self.setSlope(slope[0], slope[1], slope[2], slope[3])
 
     def _get_status_byte(self) -> str:
         """
@@ -413,7 +411,7 @@ class stepper(Slush.Motor):
         """
         return self.isBusy()
 
-    def get_position(self) -> int:
+    def get_position(self) -> float:
         """
         Gets the position of the stepper in steps
         :return: position in steps
