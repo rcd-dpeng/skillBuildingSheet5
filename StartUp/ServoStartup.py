@@ -16,7 +16,18 @@ spi = spidev.SpiDev()
 # For this example we will use the RPiMIB to create the PWM signals to talk to Servo motors and motor controllers.
 #
 # The RPiMIB (Raspberry Pi Multi Interface Board) has two PWM outputs, which will be sufficient for this example. If
-# need more than 2 PWM outputs we typically use the Adafruit 16 Channel PWM module that uses the I2C bus on the RPi.
+# need more thanimport spidev
+import os
+from time import sleep
+import RPi.GPIO as GPIO
+from pidev.stepper import stepper
+from Slush.Devices import L6470Registers
+spi = spidev.SpiDev()
+
+# Init a 200 steps per revolution stepper on Port 0
+s0 = stepper(port=0, micro_steps=32, hold_current=20, run_current=20, accel_current=20, deaccel_current=20,
+             steps_per_unit=200, speed=8)
+ 2 PWM outputs we typically use the Adafruit 16 Channel PWM module that uses the I2C bus on the RPi.
 # More info on that later - but here is a sneak peak if you are interested
 # https://learn.adafruit.com/16-channel-pwm-servo-driver?view=all
 #

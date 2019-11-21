@@ -32,6 +32,7 @@ class stepper(Slush.Motor):
         """
         super().__init__(port)
         self.port = port
+        
         if stepper_type is None:
             self.micro_steps = micro_steps
             self.set_micro_steps(self.micro_steps)
