@@ -19,7 +19,7 @@
 * by and subject to worldwide patent and copyright laws and treaties.
 * Therefore, you may use this software only as provided in the license agreement
 * accompanying the software package from which you obtained this software.
-* CYPRESS AND ITS SUPPLI                                         ERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+* CYPRESS AND ITS SUPPLIERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 * WITH REGARD TO THIS SOFTWARE, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT,
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 *******************************************************************************/
@@ -36,9 +36,12 @@
 #define TRIGGER_OFF 0xFFFF
 #define TRIGGER_RESET_MASK 0x00F0
 #define DEFAULT_TRIGGER_RADIUS 0x5
-
 #define GPIO_MODE 0x0 
 #define TRIGGER_MODE 0x1
+#define NOT_READY 0x0000
+#define READY 0xFFFF
+#define TRUE 0x1
+#define FALSE 0x0
 
 typedef enum { 
     NA, 
@@ -75,28 +78,25 @@ uint16 ReadWriteSPIM1(uint8, uint8);
 uint16 ReadWriteSPIM2(uint8, uint16);
 uint16 ReadEncoder(uint8, uint8);
 command InterpretCommand(uint16);
+int abs(int);
+
 uint16 RPi_Command_Data;
 uint16 RPi_Data;
-uint8 i2c_address = 0;
+state PSOC_state;
+command RPi_Command;
+uint16 shutdown_count;
 uint8 i2c_data_to_write[8];
+uint8 i2c_address = 0;
 uint8 i2c_byte_count = 0;
-const uint8 TRUE = 0x1;
-const uint8 FALSE = 0x0;
 uint16 spi_trigger_value[4] = {TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF};
 uint8  spi_trigger_reset[4] = {FALSE, FALSE, FALSE, FALSE};
 uint16 spi_trigger_radius[4] = {DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS};
 uint8  spi_trigger_hit[4] = {FALSE, FALSE, FALSE, FALSE};
 uint8 pinmode = TRIGGER_MODE;
-uint8_t firmwareVersionDate[] = {3, 1, 1, 10, 29, 19};
- 
-uint16 NOT_READY = 0x0000;
-uint16 READY = 0xFFFF;
- 
 readiness_state readiness = not_ready; 
 uint16 response_value = 0x0;
 
-state PSOC_state;
-command RPi_Command;
+uint8_t firmwareVersionDate[] = {3, 1, 2, 11, 29, 19};
 
 CY_ISR(SS_Rise_Handler) { 
     if (PSOC_state == idle_state) { 
@@ -150,13 +150,6 @@ CY_ISR(SS_Rise_Handler) {
 /* The txBuffer size is equal (BUFFER_SIZE-1) because for SPI Mode where CPHA == 0 and
 * CPOL == 0 one byte writes directly in SPI TX FIFO using SPIS_WriteTxDataZero() API.
 */
-
-uint16 rxBuffer [4];
-uint8 temp1;
-uint8 temp2;
-uint8 i;
-uint16 shutdown_count;
-
 
 uint8 isRPiCommand(command rpiCommand) {
     switch (rpiCommand) {
