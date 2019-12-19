@@ -38,6 +38,19 @@ If you want to control in terms of steps set this to 1.
 
 
 **speed:** How fast the stepper moves in terms of units Default: 1
+### Predefined Stepper Motors
+There are times when a standard stepper motor is being used where all of the stepper motors settings have been determined and optimized.
+If you are using a predefined stepper motor you can simply specify the stepper type. All predefined stepper motors have been defined in pidev.stepperutilities,
+please refer to this file for any documentation on the predefined stepper motors.
+
+
+To specify the stepper type simply specify the stepper type in the stepper_type parameter. Example usage:
+```python
+from pidev.stepper import stepper
+from pidev.stepperutilities import NEMA_23
+
+stepper_motor_0 = stepper(port=0, stepper_type=NEMA_23)
+```
 
 
 ## Setting steps_per_unit
