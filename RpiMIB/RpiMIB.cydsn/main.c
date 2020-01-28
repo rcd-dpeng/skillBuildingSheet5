@@ -122,10 +122,11 @@ CY_ISR(SS_Rise_Handler) {
             (RPi_Command == read_i2c) || 
             (RPi_Command == read_encoder) || 
             (RPi_Command == read_firmware_date)) { 
-            readiness = not_ready; 
+            readiness = not_ready;
         } else { 
             readiness = NA; 
-        } 
+        }
+
         SPIS_WriteTxDataZero(NOT_READY); 
     } else if (PSOC_state == listening_state) { 
         RPi_Data = SPIS_ReadRxData(); 
@@ -150,7 +151,6 @@ CY_ISR(SS_Rise_Handler) {
 /* The txBuffer size is equal (BUFFER_SIZE-1) because for SPI Mode where CPHA == 0 and
 * CPOL == 0 one byte writes directly in SPI TX FIFO using SPIS_WriteTxDataZero() API.
 */
-
 uint8 isRPiCommand(command rpiCommand) {
     switch (rpiCommand) {
         case read_gpio:
@@ -182,7 +182,6 @@ uint8 isRPiCommand(command rpiCommand) {
 /*Command Structure: 0x0CPQ --> execute command C with parameters P and Q
  *Some commands take no parameters, and are of the form 0x0C00
  */
-
 command InterpretCommand(uint16 data)
 {
     command result = no_command;
@@ -440,7 +439,7 @@ int main() {
                     pinmode = RPi_Data; 
                     break; 
                  
-                case read_firmware_date: { 
+                case read_firmware_date: {
                     response_value = firmwareVersionDate[RPi_Command_Data & ORDINAL_MASK]; 
                     break; 
                 }
@@ -451,7 +450,7 @@ int main() {
             }
         
             if (readiness == not_ready) { 
-                readiness = ready; 
+                readiness = ready;
                 SPIS_WriteTxDataZero(READY); 
             } else if (readiness == NA) { 
                 PSOC_state = idle_state; 
