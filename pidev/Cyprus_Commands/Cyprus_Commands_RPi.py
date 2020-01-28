@@ -69,12 +69,23 @@ def spi_write_word(word):
     """
     spi.xfer(break_into_list(word), SPI_FREQUENCY)
 
-def spi_read_word():
+def spi_read_tx():
     """
-    reads the spi value sent to the RPi as a 16 bit word
+    reads the current value in the tx register
     :return:
     """
     return form_word(spi.xfer([0x00, 0x00], SPI_FREQUENCY, 1))
+
+def spi_read_word():
+    """
+    reads a word from the Cyprus when it is ready
+    :return:
+    """
+    sleep(DELAY)
+    while True:
+        sleep(DELAY)
+        if (spi_read_tx() == READY):
+            return spi_read_tx()
 
 def open_spi():
     """
