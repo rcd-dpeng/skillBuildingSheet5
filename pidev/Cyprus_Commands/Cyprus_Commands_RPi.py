@@ -5,10 +5,11 @@ File containing the commands to interface with the cyprus
 import spidev
 import os
 from time import sleep
+print("Hello World 1111")
 
 spi = spidev.SpiDev()
 
-DELAY = .001
+DELAY = .0001
 SPI_FREQUENCY = 1000000
 PWM_CLOCK_FREQUENCY = 1000000
 
@@ -33,7 +34,6 @@ SERVO_SPEED_CLOCKWISE = 1650
 TRIGGER_MODE = 1 
 GPIO_MODE = 0
 READY = 0xFFFF
-
 currentPeriod = DEFAULT_PERIOD
 
 def initialize():
@@ -82,12 +82,19 @@ def spi_read_word():
     reads a word from the Cyprus when it is ready
     :return:
     """
-    print("HERE")
+    count = 0
+
     sleep(DELAY)
     while True:
         sleep(DELAY)
+        #value = spi_read_tx()
         if (spi_read_tx() == READY):
-            return spi_read_tx()
+            return READY
+        #print(hex(value))
+        count += 1
+        if count > 1000:
+            print("Ready not found " + str(count))
+            break
 
 def open_spi():
     """
@@ -114,6 +121,7 @@ def read_spi_command(command):
 def read_spi(port, channel):
     """
     Read SPI on a given port and channel
+
     :param port: SPI port to read from
     :param channel: SPI channel on port to read from
     :return: returns the response received by the cyprus from the given port and channel
@@ -141,6 +149,7 @@ def write_pwm(port, parameter, value):
     changes the given parameter, either COMPARE_MODE, PERIOD, or COMPARE,
     of the given port to the given value. 
     Compare modes: LESS_THAN, LESS_THAN_OR_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, EQUAL
+
     :param port: PWM Port
     :param parameter: PWM parameter to change
     :param value: value to change the parameter to
@@ -391,11 +400,14 @@ def read_firmware_version():
     """
     reads the firmware version from the cyprus
     :return: list in the form of [major, minor, patch]
+
     MAJOR version when you make incompatible API changes,
     MINOR version when you add functionality in a backwards-compatible manner, and
     PATCH version when you make backwards-compatible bug fixes.
+
     Displayed in the following format: MAJOR.MINOR.PATCH (MM/DD/YY)
     """
+    print("FIRMWARE...")
 
     major = read_spi_command(0x0f00)
     minor = read_spi_command(0x0f01)
