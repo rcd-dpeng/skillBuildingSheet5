@@ -17,11 +17,10 @@ class stepper(Slush.Motor):
     DPEA stepper implementation, extended from Slush.Motor
     Reference Slush.Motor for additional functionality
     """
-    instances = []
 
     def __init__(self, port: int = 0, micro_steps: int = 64, hold_current: float = 20.0, run_current: float = 20,
                  accel_current: float = 20, deaccel_current: float = 20,
-                 steps_per_unit: float = 200 / 25.4, speed: float = 1, stepper_type: dict = None, debug_level: str = "LOW"):
+                 steps_per_unit: float = 200 / 25.4, speed: float = 1, stepper_type: dict = None):
         """
         Constructor for the stepper class
         :param port: port the stepper is connected to. 0-3 on XLT, 0-6 on D. Default:0
@@ -34,9 +33,8 @@ class stepper(Slush.Motor):
                screws) or by revolutions if the motor rotates something Default:200/25.4 (used to move in mm on 8mm/turn lead screws)
         :param speed: how fast the stepper moves in units
         :param stepper_type: A dict holding all of the necessary motor parameters see pidev.stepperutilities for an example
-        :param debug_level: Debugging level for the stepper motor, please refer to Motor.py and Board.py in SlushEngine
         """
-        super().__init__(port, debug_level)
+        super().__init__(port)
         self.port = port
 
         if stepper_type is None or not isinstance(stepper_type, dict):
