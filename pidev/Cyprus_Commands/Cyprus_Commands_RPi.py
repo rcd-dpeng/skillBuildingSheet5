@@ -5,11 +5,10 @@ File containing the commands to interface with the cyprus
 import spidev
 import os
 from time import sleep
-print("Hello World 1111")
 
 spi = spidev.SpiDev()
 
-DELAY = .0001
+DELAY = .001
 SPI_FREQUENCY = 1000000
 PWM_CLOCK_FREQUENCY = 1000000
 
@@ -33,7 +32,9 @@ SERVO_SPEED_CLOCKWISE = 1650
 
 TRIGGER_MODE = 1 
 GPIO_MODE = 0
+
 READY = 0xFFFF
+
 currentPeriod = DEFAULT_PERIOD
 
 def initialize():
@@ -46,6 +47,7 @@ def initialize():
         set_pwm_values(i, currentPeriod, 0, compare_mode = LESS_THAN_OR_EQUAL)
 
     reset_all_encoder_triggers()
+    sleep(DELAY * 100)
 
 def close():
     reset_all_encoder_triggers()
@@ -75,26 +77,18 @@ def spi_read_tx():
     reads the current value in the tx register
     :return:
     """
-    return form_word(spi.xfer([0x00, 0x00], SPI_FREQUENCY, 1))
+    return form_word(spi.xfer([0x00, 0x00], 1000000, 1))
 
 def spi_read_word():
     """
     reads a word from the Cyprus when it is ready
     :return:
     """
-    count = 0
-
     sleep(DELAY)
     while True:
         sleep(DELAY)
-        #value = spi_read_tx()
         if (spi_read_tx() == READY):
-            return READY
-        #print(hex(value))
-        count += 1
-        if count > 1000:
-            print("Ready not found " + str(count))
-            break
+            return spi_read_tx()
 
 def open_spi():
     """
@@ -407,7 +401,6 @@ def read_firmware_version():
 
     Displayed in the following format: MAJOR.MINOR.PATCH (MM/DD/YY)
     """
-    print("FIRMWARE...")
 
     major = read_spi_command(0x0f00)
     minor = read_spi_command(0x0f01)
