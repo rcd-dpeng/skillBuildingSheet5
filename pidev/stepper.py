@@ -17,7 +17,6 @@ class stepper(Slush.Motor):
     DPEA stepper implementation, extended from Slush.Motor
     Reference Slush.Motor for additional functionality
     """
-    instances = []
 
     def __init__(self, port: int = 0, micro_steps: int = 64, hold_current: float = 20.0, run_current: float = 20,
                  accel_current: float = 20, deaccel_current: float = 20,
@@ -33,6 +32,7 @@ class stepper(Slush.Motor):
         :param steps_per_unit: amount of steps per unit. used so you can control motors by linear distance (with lead
                screws) or by revolutions if the motor rotates something Default:200/25.4 (used to move in mm on 8mm/turn lead screws)
         :param speed: how fast the stepper moves in units
+        :param stepper_type: A dict holding all of the necessary motor parameters see pidev.stepperutilities for an example
         """
         super().__init__(port)
         self.port = port
@@ -50,6 +50,7 @@ class stepper(Slush.Motor):
 
         else:
             self.setup_predefined_stepper(stepper_type=stepper_type)
+            self.steps_per_unit = steps_per_unit
 
         """self.bordInUse is 1 when using model D, 0 when using model XLT"""
         if self.boardInUse == Board.D:  # a model D is being used
@@ -81,67 +82,6 @@ class stepper(Slush.Motor):
 
         slope = stepper_type['slope']
         self.setSlope(slope[0], slope[1], slope[2], slope[3])
-
-    def _get_status_byte(self) -> str:
-        """
-        Get the status byte as a String
-        :return: String of the status byte
-        """
-        byte = '{0:b}'.format(self.getStatus())
-
-        if len(byte) != 16:  # Add leading zeroes to the byte to make it 16 bits
-            diff = 16 - len(byte)
-            byte = "0" * diff + byte
-        return byte
-
-    def print_status(self) -> None:
-        """
-        Print all of the registers status for the L6470 chipset, if a status has a \ means it is active low
-        :return: None
-        """
-        byte = self._get_status_byte()
-
-        print("The byte for ", self, "is: ", byte)
-        """Assign chip_status dict according to board type using ternary operator"""
-        chip_status = CHIP_STATUSES_D if self.boardInUse else CHIP_STATUSES_XLT
-
-        """Loop through all statuses and print the corresponding bit data"""
-        for status in chip_status:
-            byte_index = CHIP_STATUSES_XLT.get(status)
-
-            if isinstance(byte_index, tuple):
-                print("    " + str(byte[byte_index[0]]) + str(byte[byte_index[1]]) + " " + status + " " + str(
-                    byte[byte_index[0]]) + str(byte[byte_index[1]]))
-            else:
-                print("    " + str(byte[byte_index]) + "  " + status)
-
-    def get_specific_status(self, status_register: str) -> str:
-        """
-        Get the specific status of a register
-        :param status_register: The register status you want to check
-            refer to https://elcodis.com/parts/5983789/L6470_p49.html or stepper.CHIP_STATUS_D or stepper.CHIP_STATUS_XLT
-            for more information
-        :return: String of the status. This is necessary as some statuses are 2 bits and a string ensures no truncation
-        """
-        byte = self._get_status_byte()
-
-        """Assign chip_status dict according to board type using ternary operator"""
-        chip_status = CHIP_STATUSES_D if self.boardInUse else CHIP_STATUSES_XLT
-
-        for key in chip_status.keys():  # Go through all keys and check if the status is contained in any of the keys
-            if str.find(key, status_register.upper()) >= 0:
-                status_register = key
-                break
-
-        data = CHIP_STATUSES_XLT.get(status_register)
-
-        if data is None:
-            raise ValueError("Invalid status register please double check your given status register")
-
-        if isinstance(data, tuple):
-            return str(byte[data[0]]) + str(byte[data[1]])
-        else:
-            return str(byte[data])
 
     def get_micro_steps(self) -> float:
         """
@@ -424,15 +364,6 @@ class stepper(Slush.Motor):
         :return: position in units
         """
         return self.get_position() / self.steps_per_unit / self.micro_steps
-
-    @staticmethod
-    def free_all() -> None:
-        """
-        Free all of the instantiated stepper motors
-        :return: None
-        """
-        for stp in stepper.instances:
-            stp.free()
 
     def __repr__(self) -> str:
         """
