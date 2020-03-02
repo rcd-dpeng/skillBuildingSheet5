@@ -40,7 +40,7 @@ def admin_action(self):
  After following the steps outlined above there should be a hidden button in the bottom right corner of your main UI screen. Upon press of this button
  it should transition the screen to the passcode screen where if you enter the correct password (7266) it will transition to your admin screen.
  
- ## Troubleshootingset_admin_events_screen
+ ## Troubleshooting
  Here is one [example](https://github.com/dpengineering/RaspberryPiCommon/blob/master/PiKivyProjects/NewProject/main.py) and [another.](https://github.com/dpengineering/SandTablePi2.0/blob/master/sandtable/ui/GUI.py)
  Additionally, there are the docs for [PassCodeScreen](https://dpengineering.github.io/RaspberryPiCommon/classpidev_1_1kivy_1_1_pass_code_screen_1_1_pass_code_screen.html)
  

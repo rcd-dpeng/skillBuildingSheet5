@@ -31,10 +31,6 @@ class PassCodeScreen(Screen):
     def __init__(self, **kw):
         super(PassCodeScreen, self).__init__(**kw)
 
-    def initialize(self):
-        curr_app = App.get_running_app()
-        print("wait")
-
     def add_num(self, num):
         """
         Add a number to the current password entry

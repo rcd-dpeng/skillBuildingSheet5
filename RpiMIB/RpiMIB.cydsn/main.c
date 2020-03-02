@@ -19,7 +19,7 @@
 * by and subject to worldwide patent and copyright laws and treaties.
 * Therefore, you may use this software only as provided in the license agreement
 * accompanying the software package from which you obtained this software.
-* CYPRESS AND ITS SUPPLI                                         ERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+* CYPRESS AND ITS SUPPLIERS MAKE NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 * WITH REGARD TO THIS SOFTWARE, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT,
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 *******************************************************************************/
@@ -35,13 +35,25 @@
 #define ORDINAL_MASK 0x000F
 #define TRIGGER_OFF 0xFFFF
 #define TRIGGER_RESET_MASK 0x00F0
-#define TRIGGER_RESET 0x1
 #define DEFAULT_TRIGGER_RADIUS 0x5
+#define GPIO_MODE 0x0 
+#define TRIGGER_MODE 0x1
+#define NOT_READY 0x0000
+#define READY 0xFFFF
+#define TRUE 0x1
+#define FALSE 0x0
 
-typedef enum {
-    idle_state,
-    listening_state,
-    execution_state,
+typedef enum { 
+    NA, 
+    ready, 
+    not_ready 
+} readiness_state; 
+ 
+typedef enum { 
+    idle_state, 
+    listening_state, 
+    execution_state, 
+    responding_state 
 } state;
 
 typedef enum {
@@ -58,6 +70,7 @@ typedef enum {
     set_spi_trigger,
     read_encoder,
     set_trigger_radius,
+    set_pinmode,
     read_firmware_date
 } command;
 
@@ -65,59 +78,79 @@ uint16 ReadWriteSPIM1(uint8, uint8);
 uint16 ReadWriteSPIM2(uint8, uint16);
 uint16 ReadEncoder(uint8, uint8);
 command InterpretCommand(uint16);
+int abs(int);
+
 uint16 RPi_Command_Data;
 uint16 RPi_Data;
-uint8 i2c_address = 0;
-uint8 i2c_data_to_write[8];
-uint8 i2c_byte_count = 0;
-uint16 spi_trigger_value[4] = {TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF};
-uint8  spi_trigger_reset[4] = {0x0, 0x0, 0x0, 0x0};
-uint16 spi_trigger_radius[4] = {DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS};
-
-uint8_t firmwareVersionDate[] = {3, 1, 1, 10, 29, 19};
-
 state PSOC_state;
 command RPi_Command;
+uint16 shutdown_count;
+uint8 i2c_data_to_write[8];
+uint8 i2c_address = 0;
+uint8 i2c_byte_count = 0;
+uint16 spi_trigger_value[4] = {TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF, TRIGGER_OFF};
+uint8  spi_trigger_reset[4] = {FALSE, FALSE, FALSE, FALSE};
+uint16 spi_trigger_radius[4] = {DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS, DEFAULT_TRIGGER_RADIUS};
+uint8  spi_trigger_hit[4] = {FALSE, FALSE, FALSE, FALSE};
+uint8 pinmode = TRIGGER_MODE;
+readiness_state readiness = not_ready; 
+uint16 response_value = 0x0;
 
-CY_ISR(SS_Rise_Handler) {
-    if (PSOC_state == idle_state) {
-        RPi_Command_Data = SPIS_ReadRxData();
-        RPi_Command = InterpretCommand(RPi_Command_Data);
-        SPIS_ClearRxBuffer();
-        if((RPi_Command == write_gpio) || 
-           (RPi_Command == write_spi) || 
-           (RPi_Command == write_pwm) || 
-           (RPi_Command == read_i2c) ||
-           (RPi_Command == add_i2c_data) || 
-           (RPi_Command == add_i2c_address) || 
-           (RPi_Command == set_spi_trigger) ||
-           (RPi_Command == set_trigger_radius)) {
-            PSOC_state = listening_state;
-        } else {
-            PSOC_state = execution_state;
+uint8_t firmwareVersionDate[] = {3, 1, 2, 11, 29, 19};
+
+CY_ISR(SS_Rise_Handler) { 
+    if (PSOC_state == idle_state) { 
+        RPi_Command_Data = SPIS_ReadRxData(); 
+        RPi_Command = InterpretCommand(RPi_Command_Data); 
+        SPIS_ClearRxBuffer(); 
+        if((RPi_Command == write_gpio) ||  
+           (RPi_Command == write_spi) ||  
+           (RPi_Command == write_pwm) ||  
+           (RPi_Command == read_i2c) || 
+           (RPi_Command == add_i2c_data) ||  
+           (RPi_Command == add_i2c_address) ||  
+           (RPi_Command == set_spi_trigger) || 
+           (RPi_Command == set_trigger_radius) || 
+           (RPi_Command == set_pinmode)) { 
+            PSOC_state = listening_state; 
+        } else { 
+            PSOC_state = execution_state; 
+        } 
+ 
+        if ((RPi_Command == read_gpio) || 
+            (RPi_Command == read_spi) || 
+            (RPi_Command == read_i2c) || 
+            (RPi_Command == read_encoder) || 
+            (RPi_Command == read_firmware_date)) { 
+            readiness = not_ready;
+        } else { 
+            readiness = NA; 
         }
-    } else if (PSOC_state == listening_state) {
-        RPi_Data = SPIS_ReadRxData();
-        PSOC_state = execution_state;
-        SPIS_ClearRxBuffer();
-    }
-    
-    SPIS_ReadRxStatus();
-    SPIS_ClearRxBuffer();
-    isr_SS_Rise_ClearPending();
-}
+
+        SPIS_WriteTxDataZero(NOT_READY); 
+    } else if (PSOC_state == listening_state) { 
+        RPi_Data = SPIS_ReadRxData(); 
+        PSOC_state = execution_state; 
+        SPIS_ClearRxBuffer(); 
+    } else if (PSOC_state == execution_state) { 
+        if (readiness == not_ready) { 
+            SPIS_WriteTxDataZero(NOT_READY); 
+        } else if (readiness == ready) { 
+            PSOC_state = responding_state; 
+            SPIS_WriteTxDataZero(response_value); 
+        } 
+    } else if (PSOC_state == responding_state) { 
+        PSOC_state = idle_state; 
+    } 
+     
+    SPIS_ReadRxStatus(); 
+    SPIS_ClearRxBuffer(); 
+    isr_SS_Rise_ClearPending(); 
+} 
 
 /* The txBuffer size is equal (BUFFER_SIZE-1) because for SPI Mode where CPHA == 0 and
 * CPOL == 0 one byte writes directly in SPI TX FIFO using SPIS_WriteTxDataZero() API.
 */
-
-uint16 rxBuffer [4];
-uint8 temp1;
-uint8 temp2;
-uint8 i;
-uint16 shutdown_count;
-
-
 uint8 isRPiCommand(command rpiCommand) {
     switch (rpiCommand) {
         case read_gpio:
@@ -132,6 +165,7 @@ uint8 isRPiCommand(command rpiCommand) {
         case add_i2c_address:
         case set_spi_trigger:
         case set_trigger_radius:
+        case set_pinmode:
         case read_firmware_date:
             return 1;
             break;
@@ -148,7 +182,6 @@ uint8 isRPiCommand(command rpiCommand) {
 /*Command Structure: 0x0CPQ --> execute command C with parameters P and Q
  *Some commands take no parameters, and are of the form 0x0C00
  */
-
 command InterpretCommand(uint16 data)
 {
     command result = no_command;
@@ -190,6 +223,9 @@ command InterpretCommand(uint16 data)
             break;
         case 0x0c00:
             result = set_trigger_radius;
+            break;
+        case 0x0d00: 
+            result = set_pinmode; 
             break;
         case 0x0f00:
             result = read_firmware_date;
@@ -269,32 +305,40 @@ int main() {
            shutdown_count = 0u;
         }
     
-        // Writes correspondign GPIO high if encoder value is within specified range of trigger value
-        for (int i = 0; i < 4; i++) {
-            uint16 encoderValue;
-            
-            if (i == 3) {
-                encoderValue = ReadEncoder(2, 0);
-            } else {
-                encoderValue = ReadEncoder(1, i);
-            }
-            
-            if ((spi_trigger_value[i] - spi_trigger_radius[i] < encoderValue) && 
-                (spi_trigger_value[i] + spi_trigger_radius[i] > encoderValue)) {
-                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
-                if (spi_trigger_reset[i] == TRIGGER_RESET) {
-                    spi_trigger_reset[i] = 0x0;
-                    spi_trigger_value[i] = TRIGGER_OFF;
+        // Writes corresponding GPIO high if encoder value is within specified range of trigger value
+        if (pinmode == TRIGGER_MODE) { 
+            for (int i = 0; i < 4; i++) { 
+                int encoderValue; 
+             
+                if (i == 3) {
+                    encoderValue = ReadEncoder(2, 0); 
+                } else { 
+                    encoderValue = ReadEncoder(1, i); 
                 }
-            } else {
-                GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
+ 
+                if (abs(encoderValue - spi_trigger_value[i]) < spi_trigger_radius[i]) {
+                    if (spi_trigger_hit[i] == FALSE) {
+                        GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() | (1 << i));
+                        spi_trigger_hit[i] = TRUE;
+                        if (spi_trigger_reset[i] == TRUE) { 
+                            spi_trigger_reset[i] = FALSE; 
+                            spi_trigger_value[i] = TRIGGER_OFF; 
+                        }
+                    } else {
+                        GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
+                    }
+                } else { 
+                    GPIO_Control_Reg_Write(GPIO_Status_Reg_Read() & (0xF-(1 << i)));
+                    spi_trigger_hit[i] = FALSE;
+                } 
             } 
-        }
-    
+        } 
+        
         if (PSOC_state == execution_state) {
             switch(RPi_Command) {      
                 case read_gpio:
-                    SPIS_WriteTxDataZero(GPIO_Status_Reg_Read());
+                    response_value = GPIO_Status_Reg_Read(); 
+                    // SPIS_WriteTxDataZero(GPIO_Status_Reg_Read());
                     break;
                     
                 case write_gpio:
@@ -302,10 +346,10 @@ int main() {
                     break;
                     
                 case read_spi:
-                    if ((RPi_Command_Data & PORT_MASK) == 0x0010) {
-                        SPIS_WriteTxDataZero(ReadWriteSPIM1(RPi_Command_Data & DATA_MASK, 0x0000));
-                    } else if ((RPi_Command & PORT_MASK) == 0x0020){
-                        SPIS_WriteTxDataZero(ReadWriteSPIM2(RPi_Command_Data & DATA_MASK, 0x0000)); 
+                    if ((RPi_Command_Data & PORT_MASK) == 0x0010) { 
+                        response_value = ReadWriteSPIM1(RPi_Command_Data & DATA_MASK, 0x0000); 
+                    } else if ((RPi_Command & PORT_MASK) == 0x0020) { 
+                        response_value = ReadWriteSPIM2(RPi_Command_Data & DATA_MASK, 0x0000); 
                     }
                     break;
                 
@@ -344,10 +388,10 @@ int main() {
                         uint8 i2c_data_read;
                         if ((RPi_Command_Data & DATA_MASK) == 1) {
                             I2C_1_MasterReadBuf(RPi_Data >> 8, &i2c_data_read, 1, I2C_1_MODE_COMPLETE_XFER);
-                            SPIS_WriteTxDataZero(i2c_data_read);
+                            response_value = i2c_data_read; 
                         } else if ((RPi_Command_Data & DATA_MASK) == 2) {
                             I2C_2_MasterReadBuf(RPi_Data >> 8, &i2c_data_read, 1, I2C_2_MODE_COMPLETE_XFER);
-                            SPIS_WriteTxDataZero(i2c_data_read);
+                            response_value = i2c_data_read; 
                         }  
                     }
                     break;       
@@ -360,7 +404,6 @@ int main() {
                     }
                 
                     i2c_byte_count = 0;
-                
                     break;     
                 
                 case add_i2c_data:
@@ -377,7 +420,7 @@ int main() {
                 case set_spi_trigger:
                     spi_trigger_value[RPi_Command_Data & ORDINAL_MASK] = RPi_Data;
                     if ((RPi_Command_Data & TRIGGER_RESET_MASK) == 0x10) {
-                        spi_trigger_reset[RPi_Command_Data & ORDINAL_MASK] = TRIGGER_RESET;
+                        spi_trigger_reset[RPi_Command_Data & ORDINAL_MASK] = TRUE;
                     }
                     break;
 
@@ -388,14 +431,17 @@ int main() {
                 case read_encoder: {
                     uint8 port = (RPi_Command_Data & PORT_MASK) >> 0x4;
                     uint8 channel = RPi_Command_Data & CHANNEL_MASK;
-                    uint16 encoder = ReadEncoder(port, channel);
-                    SPIS_WriteTxDataZero(encoder);
+                    response_value = ReadEncoder(port, channel);
                     break;
                 }
                 
+                case set_pinmode: 
+                    pinmode = RPi_Data; 
+                    break; 
+                 
                 case read_firmware_date: {
-                    SPIS_WriteTxDataZero(firmwareVersionDate[RPi_Command_Data & ORDINAL_MASK]);
-                    break;
+                    response_value = firmwareVersionDate[RPi_Command_Data & ORDINAL_MASK]; 
+                    break; 
                 }
                 
                 case no_command:
@@ -403,8 +449,14 @@ int main() {
                     break;
             }
         
-            PSOC_state = idle_state;
-            SPIS_ClearRxBuffer(); 
+            if (readiness == not_ready) { 
+                readiness = ready;
+                SPIS_WriteTxDataZero(READY); 
+            } else if (readiness == NA) { 
+                PSOC_state = idle_state; 
+            } 
+ 
+            SPIS_ClearRxBuffer();
         }
     }
 }
@@ -435,12 +487,12 @@ uint16 ReadEncoder(uint8 port, uint8 ChannelNumber) {
 
     if (port == 0x01) {
         ReadWriteSPIM1(ChannelNumber, READ_ENCODER);
-        while (ReadWriteSPIM1(ChannelNumber, 0x00) == ENCODER_IDLE){}
+        while (ReadWriteSPIM1(ChannelNumber, 0x00) == ENCODER_IDLE) {}
         MSB = ReadWriteSPIM1(ChannelNumber, 0x00);
         LSB = ReadWriteSPIM1(ChannelNumber, 0x00);
    } else if (port == 0x02) {
         ReadWriteSPIM2(ChannelNumber, READ_ENCODER);
-        while (ReadWriteSPIM2(ChannelNumber, 0x00) == ENCODER_IDLE){}
+        while (ReadWriteSPIM2(ChannelNumber, 0x00) == ENCODER_IDLE) {}
         MSB = ReadWriteSPIM2(ChannelNumber, 0x00);
         LSB = ReadWriteSPIM2(ChannelNumber, 0x00);
    }
