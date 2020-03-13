@@ -73,6 +73,7 @@ class PassCodeScreen(Screen):
         :return: None
         """
         self.ids.pw.text = ""
+        USERPW = ''
         self.parent.current = TRANSITION_BACK_SCREEN
 
     @staticmethod
