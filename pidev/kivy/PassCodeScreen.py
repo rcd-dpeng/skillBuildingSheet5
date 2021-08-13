@@ -72,6 +72,7 @@ class PassCodeScreen(Screen):
         Transition back to given transition back scren
         :return: None
         """
+        global USERPW
         self.ids.pw.text = ""
         USERPW = ''
         self.parent.current = TRANSITION_BACK_SCREEN
