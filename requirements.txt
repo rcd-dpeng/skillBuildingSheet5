@@ -1,0 +1,8 @@
+Kivy~=2.0.0
+spidev~=3.5
+Slush~=0.1d
+pygame~=1.9.4.post1
+requests~=2.21.0
+smbus~=1.1.post2
+pyserial~=3.4
+pidev~=0.1.dev0
