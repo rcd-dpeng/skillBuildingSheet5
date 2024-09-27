@@ -1,0 +1,17 @@
+<Screen2>:
+    name: 'screen2'
+    FloatLayout:
+        size_hint: None, None
+
+    DPEAButton:
+        #Go back button
+        size: 175, 100
+        center_x: root.width * 0.35
+        center_y: root.height * 0.5
+        color: 0, 0, 1, 1
+
+        text: "Main"
+        on_press: goMain()
+
+    Label:
+        text: "Hello!"

@@ -7,6 +7,8 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.properties import Property, ObjectProperty, StringProperty
+from kivy.uix.slider import Slider
 
 from pidev.MixPanel import MixPanel
 from pidev.kivy.PassCodeScreen import PassCodeScreen
@@ -25,6 +27,7 @@ MIXPANEL = MixPanel("Project Name", MIXPANEL_TOKEN)
 SCREEN_MANAGER = ScreenManager()
 MAIN_SCREEN_NAME = 'main'
 ADMIN_SCREEN_NAME = 'admin'
+SCREEN_2_NAME = 'screen2'
 
 
 class ProjectNameGUI(App):
@@ -55,6 +58,27 @@ class MainScreen(Screen):
         """
         print("Callback from MainScreen.pressed()")
 
+    def toggleBTNPress(self):
+        if self.ids['tbtn'].text == "On":
+            self.ids['tbtn'].text = "Off"
+        else:
+            self.ids['tbtn'].text = "On"
+
+    def countBTNPress(self):
+        self.ids['cbtn'].text = str(int(self.ids['cbtn'].text) + 1)
+
+    def motorBTNPress(self):
+        mlbl = self.ids['motorLabel']
+        if mlbl.text == "Motor On":
+            mlbl.text = "Motor Off"
+        else:
+            mlbl.text = "Motor On"
+
+    def sliderMovement(self):
+        sslbl = self.ids['sliderSettingLabel']
+        sslbl.text = "Slider: " + str(int(self.ids['slider1'].value))
+
+
     def admin_action(self):
         """
         Hidden admin button touch event. Transitions to passCodeScreen.
@@ -62,6 +86,10 @@ class MainScreen(Screen):
         :return: None
         """
         SCREEN_MANAGER.current = 'passCode'
+
+    def goScreen2(self):
+        print("Switching to screen2")
+        SCREEN_MANAGER.current = SCREEN_2_NAME
 
 
 class AdminScreen(Screen):
@@ -76,6 +104,7 @@ class AdminScreen(Screen):
         :param kwargs: Normal kivy.uix.screenmanager.Screen attributes
         """
         Builder.load_file('AdminScreen.kv')
+        print("Admin building")
 
         PassCodeScreen.set_admin_events_screen(ADMIN_SCREEN_NAME)  # Specify screen name to transition to after correct password
         PassCodeScreen.set_transition_back_screen(MAIN_SCREEN_NAME)  # set screen name to transition to if "Back to Game is pressed"
@@ -106,6 +135,14 @@ class AdminScreen(Screen):
         """
         quit()
 
+class Screen2Screen(Screen):
+    def __init__(self, **kwargs):
+        print("Loading Screen 2")
+        Builder.load_file('screen2.kv')
+        super(Screen2Screen, self).__init__(**kwargs)
+
+    def goMain(self):
+        SCREEN_MANAGER.current = MAIN_SCREEN_NAME
 
 """
 Widget additions
@@ -116,6 +153,7 @@ SCREEN_MANAGER.add_widget(MainScreen(name=MAIN_SCREEN_NAME))
 SCREEN_MANAGER.add_widget(PassCodeScreen(name='passCode'))
 SCREEN_MANAGER.add_widget(PauseScreen(name='pauseScene'))
 SCREEN_MANAGER.add_widget(AdminScreen(name=ADMIN_SCREEN_NAME))
+SCREEN_MANAGER.add_widget(Screen2Screen(name=SCREEN_2_NAME))
 
 """
 MixPanel

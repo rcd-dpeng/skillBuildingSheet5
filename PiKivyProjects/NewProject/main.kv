@@ -2,6 +2,7 @@
     #: import time __main__.time
 
     name: 'main'
+
     FloatLayout:
         size_hint: None, None
 
@@ -21,6 +22,72 @@
         y: root.height * 0.5
         color: 1, 0, 0, 1
         on_press: root.pressed()
+
+    DPEAButton:
+        id: tbtn
+        size: 80, 80
+        x: root.width * 0.4
+        y: root.height * 0.25
+        color: 0, 0, 1, 1
+        text: "On"
+        on_press: root.toggleBTNPress()
+
+    DPEAButton:
+        id: cbtn
+        size: 80, 80
+        x: root.width * 0.2
+        y: root.height * 0.85
+        color: 0, 0, 1, 1
+        text: "0"
+        on_press: root.countBTNPress()
+
+    DPEAButton:
+        id: mbtn
+        size: 120, 80
+        x: root.width * 0.7
+        y: root.height * 0.80
+        color: 0, 1, 0, 1
+        text: "Toggle Motor"
+        on_press: root.motorBTNPress()
+
+    DPEAButton:
+        id: s2btn
+        size: 100, 30
+        on_press: root.goScreen2()
+        x: root.width * 0.2
+        y: root.height * 0.30
+        color: 0, 0, 1, 1
+        Image:
+            source: 'clickToDownload.png'
+            center_x: self.parent.center_x
+            center_y: self.parent.center_y
+
+    Label:
+        id: motorLabel
+        x: root.width * 0.2
+        y: root.height * 0.1
+        text: "Motor Off"
+        color: 0, 0, 0, 1
+
+    Slider:
+        id: slider1
+        min: 0
+        max: 100
+        step: 1
+        orientation: 'horizontal'
+        on_touch_move: root.sliderMovement()
+        on_touch_up: root.sliderMovement()
+        on_touch_down: root.sliderMovement()
+        size_hint: .45, .1
+        pos_hint: {"center_x": .5, "center_y":0.8}
+        sensitivity: 'handle'
+
+    Label:
+        id: sliderSettingLabel
+        x: root.width * 0.1
+        y: root.height * 0.4
+        text: "Slider: 0"
+        color: 0, 0, 0, 1
 
     SelfUpdatingLabel:
         id: time_label
